@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* Bạn có thể thêm các custom CSS cho Trường Thành Phát ở dưới đây */
+:root {
+  --primary-color: #f59e0b; /* Ví dụ màu vàng cam cho ngành xây dựng */
+}
