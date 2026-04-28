@@ -1,60 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
 const ProjectDetail = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // Lấy ID công trình từ URL
 
   // ==========================================
-  // DỮ LIỆU MẪU (MOCK DATA)
+  // STATE LƯU TRỮ DỮ LIỆU TỪ BACKEND
   // ==========================================
-  const project = {
-    id: id,
-    title: "L's House – Nhà đẹp hiện đại, thông thoáng tại Đà Nẵng",
-    images: [
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=2075",
-      "https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&q=80&w=2000",
-      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=2000",
-      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&q=80&w=2000",
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=2000",
-      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=2070",
-      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=2000",
-      "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&q=80&w=2000"
-    ],
-    info: {
-      location: "An Sơn, Hòa Ninh, Hòa Vang, Đà Nẵng",
-      floors: "02",
-      landArea: "14x24m",
-      buildArea: "12x15m",
-      cost: "3.5 tỷ (2019)"
-    },
-    content: [
-      { type: "heading", value: "Yêu cầu thiết kế từ gia chủ" },
-      { type: "text", value: "Nội thất của L's House sở hữu một cá tính riêng phù hợp với yêu cầu thẩm mỹ và công năng của gia chủ. Là một người yêu thích phong cách sống tối giản, chị L đã yêu cầu TTP Architect thiết kế nội thất hiện đại song không quá cầu kỳ và rườm rà." },
-      { type: "image", value: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=2000", caption: "Với sự tối ưu của công năng trong thiết kế, sang trọng trong nội thất." },
-      { type: "heading", value: "Giải pháp không gian bếp hiện đại" },
-      { type: "text", value: "Các KTS giàu kinh nghiệm của TTP Architect đã hướng thiết kế phòng bếp tới sự hiện đại, thoải mái, nhiều ánh sáng. Bộ bàn ăn chân cao, gam màu xanh lá điểm xuyết của ốp tường... đã góp phần tạo nên không gian bếp ấm áp. Nơi gia đình có những bữa ăn tràn ngập yêu thương." },
-      { type: "image", value: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=2070", caption: "Phòng bếp ấp áp với điểm nhấn bừng sáng không gian" }
-    ]
-  };
-
-  // Dữ liệu cho các công trình liên quan
-  const relatedProjects = [
-    { id: 2, title: 'Nội Thất Căn Hộ Penthouse', imageUrl: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=800' },
-    { id: 3, title: 'Thiết Kế Kiến Trúc Cao Ốc', imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800' },
-    { id: 4, title: 'Nhà Phố Liền Kề Khang Điền', imageUrl: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=800' },
-    { id: 5, title: 'Căn Hộ Centana Thủ Thiêm', imageUrl: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=800' },
-    { id: 6, title: 'Nhà Ở Xã Hội Hòa Khánh', imageUrl: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&q=80&w=800' },
-    { id: 7, title: 'Thi công thực tế Biệt thự A', imageUrl: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&q=80&w=800' },
-    { id: 8, title: 'Nội Thất Nhà Phố Tân Cổ', imageUrl: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=800' },
-    { id: 9, title: 'Dự án Kiến Trúc Xanh', imageUrl: 'https://images.unsplash.com/photo-1518005020251-58296d87ea0b?auto=format&fit=crop&q=80&w=800' },
-  ];
-
-  const [mainImage, setMainImage] = useState(project.images[0]);
+  const [projectData, setProjectData] = useState(null);
+  const [projectContent, setProjectContent] = useState([]);
+  const [relatedProjects, setRelatedProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
   
-  // Logic xử lý Gallery
+  const [mainImage, setMainImage] = useState(null);
+  const [allImages, setAllImages] = useState([]); // Gộp ảnh bìa và album ảnh lại
+
+  // ==========================================
+  // FETCH DỮ LIỆU KHI TRANG ĐƯỢC LOAD
+  // ==========================================
+  useEffect(() => {
+    const fetchProjectDetails = async () => {
+      setLoading(true);
+      try {
+        // 1. Fetch danh sách dự án để lấy thông tin cơ bản & dự án liên quan
+        // (Do backend ta chưa viết route GetById, nên ta lấy từ List và lọc ra)
+        const projRes = await fetch('http://localhost:5000/api/projects/list');
+        const projData = await projRes.json();
+
+        if (projData.success) {
+          // Tìm dự án hiện tại
+          const currentProject = projData.projects.find(p => p._id === id);
+          if (currentProject) {
+            setProjectData(currentProject);
+            setMainImage(currentProject.mainImage);
+            
+            // Gộp ảnh bìa và các ảnh dự án vào 1 mảng để đưa vào Gallery
+            const imagesArray = [currentProject.mainImage, ...(currentProject.projectImages || [])];
+            setAllImages(imagesArray);
+          }
+
+          // Lọc ra các dự án liên quan (Khác ID hiện tại, lấy tối đa 4-8 cái)
+          const related = projData.projects.filter(p => p._id !== id).slice(0, 8);
+          setRelatedProjects(related);
+        }
+
+        // 2. Fetch bài viết chi tiết (Content) của dự án này
+        const contentRes = await fetch(`http://localhost:5000/api/projects/content/${id}`);
+        const contentData = await contentRes.json();
+
+        if (contentData.success && contentData.content) {
+          setProjectContent(contentData.content.sections);
+        } else {
+          setProjectContent([]); // Nếu chưa có bài viết thì mảng rỗng
+        }
+
+      } catch (error) {
+        console.error("Lỗi khi tải dữ liệu công trình:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchProjectDetails();
+      // Scroll lên đầu trang khi chuyển đổi giữa các dự án
+      window.scrollTo(0, 0); 
+    }
+  }, [id]);
+
+  // Logic xử lý Gallery (Dùng biến allImages lấy từ Database)
   const maxThumbnails = 5;
-  const visibleThumbnails = project.images.slice(0, maxThumbnails);
-  const remainingCount = project.images.length - maxThumbnails;
+  const visibleThumbnails = allImages.slice(0, maxThumbnails);
+  const remainingCount = allImages.length - maxThumbnails;
 
   // State & Logic cho Lightbox
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -66,8 +83,8 @@ const ProjectDetail = () => {
   };
 
   const closeLightbox = () => setIsLightboxOpen(false);
-  const nextImage = () => setLightboxIndex((prev) => (prev === project.images.length - 1 ? 0 : prev + 1));
-  const prevImage = () => setLightboxIndex((prev) => (prev === 0 ? project.images.length - 1 : prev - 1));
+  const nextImage = () => setLightboxIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+  const prevImage = () => setLightboxIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
 
   // State form tư vấn
   const [formData, setFormData] = useState({
@@ -81,6 +98,24 @@ const ProjectDetail = () => {
     setFormData({ name: '', phone: '', email: '', area: '', location: '', type: 'Nhà phố', budget: '1.8 - 2.3 tỷ', details: ''});
   };
 
+  // Màn hình Loading trong lúc chờ gọi API
+  if (loading) {
+    return (
+      <div className="pt-32 pb-16 min-h-screen flex items-center justify-center bg-gray-50">
+        <p className="text-xl font-bold text-green-600 animate-pulse">Đang tải dữ liệu công trình...</p>
+      </div>
+    );
+  }
+
+  // Nếu ID sai hoặc dự án bị xóa
+  if (!projectData) {
+    return (
+      <div className="pt-32 pb-16 min-h-screen flex items-center justify-center bg-gray-50">
+        <p className="text-xl font-bold text-red-500">Không tìm thấy công trình này!</p>
+      </div>
+    );
+  }
+
   return (
     <>
       <section className="pt-32 pb-16 bg-gray-50 min-h-screen relative">
@@ -89,7 +124,7 @@ const ProjectDetail = () => {
           {/* TIÊU ĐỀ TRANG CHI TIẾT */}
           <div className="mb-8 border-b border-gray-200 pb-4">
             <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-wide text-black">
-              {project.title}
+              {projectData.title}
             </h1>
           </div>
 
@@ -102,7 +137,7 @@ const ProjectDetail = () => {
               <div className="bg-white p-4 rounded-md shadow-sm border border-gray-100">
                 <div 
                   className="w-full aspect-video rounded-md overflow-hidden mb-4 relative group cursor-pointer"
-                  onClick={() => openLightbox(project.images.indexOf(mainImage))}
+                  onClick={() => openLightbox(allImages.indexOf(mainImage))}
                 >
                   <img 
                     src={mainImage} 
@@ -114,87 +149,109 @@ const ProjectDetail = () => {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-5 gap-2">
-                  {visibleThumbnails.map((img, idx) => {
-                    const isLast = idx === maxThumbnails - 1;
-                    const hasMore = remainingCount > 0;
+                {/* Thumbnails */}
+                {allImages.length > 1 && (
+                  <div className="grid grid-cols-5 gap-2">
+                    {visibleThumbnails.map((img, idx) => {
+                      const isLast = idx === maxThumbnails - 1;
+                      const hasMore = remainingCount > 0;
 
-                    return (
-                      <div 
-                        key={idx} 
-                        onClick={() => {
-                          if (isLast && hasMore) openLightbox(idx);
-                          else setMainImage(img);
-                        }}
-                        className={`relative cursor-pointer aspect-video rounded-sm overflow-hidden border-2 transition-all ${
-                          mainImage === img && (!isLast || !hasMore) ? 'border-green-500 opacity-100' : 'border-transparent opacity-70 hover:opacity-100'
-                        }`}
-                      >
-                        <img src={img} alt={`Thumb ${idx}`} className="w-full h-full object-cover" />
-                        
-                        {isLast && hasMore && (
-                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white text-lg font-bold hover:bg-black/80 transition-colors">
-                            +{remainingCount}
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
+                      return (
+                        <div 
+                          key={idx} 
+                          onClick={() => {
+                            if (isLast && hasMore) openLightbox(idx);
+                            else setMainImage(img);
+                          }}
+                          className={`relative cursor-pointer aspect-video rounded-sm overflow-hidden border-2 transition-all ${
+                            mainImage === img && (!isLast || !hasMore) ? 'border-green-500 opacity-100' : 'border-transparent opacity-70 hover:opacity-100'
+                          }`}
+                        >
+                          <img src={img} alt={`Thumb ${idx}`} className="w-full h-full object-cover" />
+                          
+                          {isLast && hasMore && (
+                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white text-lg font-bold hover:bg-black/80 transition-colors">
+                              +{remainingCount}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
               </div>
 
               {/* 2. BOX THÔNG TIN CÔNG TRÌNH */}
               <div className="rounded-md overflow-hidden shadow-sm">
                 <div className="bg-[#1A1A1A] text-center py-4 px-2 border-b border-green-500">
                   <p className="text-green-500 text-sm uppercase tracking-widest font-semibold mb-1">Thông tin công trình</p>
-                  <h3 className="text-white text-lg font-medium">{project.title}</h3>
+                  <h3 className="text-white text-lg font-medium">{projectData.title}</h3>
                 </div>
                 <div className="bg-green-500 grid grid-cols-2 md:grid-cols-5 divide-x divide-green-600 divide-y md:divide-y-0 text-white">
                   <div className="p-4 flex flex-col items-center text-center col-span-2 md:col-span-1">
                     <span className="font-bold mb-1">Vị trí</span>
-                    <span className="text-sm text-green-50">{project.info.location}</span>
+                    <span className="text-sm text-green-50">{projectData.info?.location || "Đang cập nhật"}</span>
                   </div>
                   <div className="p-4 flex flex-col items-center text-center">
                     <span className="font-bold mb-1">Số tầng</span>
-                    <span className="text-sm text-green-50">{project.info.floors}</span>
+                    <span className="text-sm text-green-50">{projectData.info?.floors || "-"}</span>
                   </div>
                   <div className="p-4 flex flex-col items-center text-center">
                     <span className="font-bold mb-1">Diện tích đất</span>
-                    <span className="text-sm text-green-50">{project.info.landArea}</span>
+                    <span className="text-sm text-green-50">{projectData.info?.landArea || "-"}</span>
                   </div>
                   <div className="p-4 flex flex-col items-center text-center">
                     <span className="font-bold mb-1">Diện tích XD</span>
-                    <span className="text-sm text-green-50">{project.info.buildArea}</span>
+                    <span className="text-sm text-green-50">{projectData.info?.buildArea || "-"}</span>
                   </div>
                   <div className="p-4 flex flex-col items-center text-center col-span-2 md:col-span-1">
                     <span className="font-bold mb-1">Chi phí XD</span>
-                    <span className="text-sm text-green-50">{project.info.cost}</span>
+                    <span className="text-sm text-green-50">{projectData.info?.cost || "Liên hệ"}</span>
                   </div>
                 </div>
               </div>
 
-              {/* 3. NỘI DUNG BÀI VIẾT */}
+              {/* 3. NỘI DUNG BÀI VIẾT (Render theo mảng sections từ DB) */}
               <div className="bg-white p-6 md:p-8 rounded-md shadow-sm border border-gray-100 text-gray-700 leading-relaxed">
-                {project.content.map((block, index) => {
-                  if (block.type === 'heading') {
-                    return <h2 key={index} className="text-xl md:text-2xl font-bold text-black mt-8 mb-4 first:mt-0">{block.value}</h2>;
-                  } else if (block.type === 'text') {
-                    return <p key={index} className="text-justify text-base mb-6 text-gray-600">{block.value}</p>;
-                  } else if (block.type === 'image') {
-                    return (
-                      <div key={index} className="my-8">
-                        <img src={block.value} alt="Project content" className="w-full rounded-sm object-cover" />
-                        {block.caption && <div className="bg-gray-100 text-gray-500 text-center py-2 text-sm italic font-medium mt-1">{block.caption}</div>}
-                      </div>
-                    );
-                  }
-                  return null;
-                })}
+                {projectContent.length > 0 ? (
+                  projectContent.map((section, index) => (
+                    <div key={index}>
+                      {/* Render Heading nếu có */}
+                      {section.heading && (
+                        <h2 className="text-xl md:text-2xl font-bold text-black mt-8 mb-4 first:mt-0">
+                          {section.heading}
+                        </h2>
+                      )}
+                      
+                      {/* Render Paragraph nếu có */}
+                      {section.paragraph && (
+                        <p className="text-justify text-base mb-6 text-gray-600 whitespace-pre-line">
+                          {section.paragraph}
+                        </p>
+                      )}
+                      
+                      {/* Render Image & Caption nếu có */}
+                      {section.imageUrl && (
+                        <div className="my-8">
+                          <img src={section.imageUrl} alt="Project content" className="w-full rounded-sm object-cover" />
+                          {section.caption && (
+                            <div className="bg-gray-100 text-gray-500 text-center py-2 text-sm italic font-medium mt-1">
+                              {section.caption}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-center italic text-gray-500">Nội dung chi tiết đang được cập nhật...</p>
+                )}
               </div>
             </div>
 
-            {/* CỘT PHẢI: FORM TƯ VẤN */}
+            {/* CỘT PHẢI: FORM TƯ VẤN (Giữ nguyên không đổi) */}
             <div className="lg:w-1/3 xl:w-1/4 sticky top-28 z-10 w-full">
+              {/* Đoạn code giao diện Form Tư Vấn của bạn vẫn giữ nguyên y hệt ở đây */}
               <div className="bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
                 <div className="bg-[#1A1A1A] text-center py-3 border-b-2 border-green-500">
                   <h3 className="text-green-500 text-lg font-bold uppercase tracking-wider">Nhận tư vấn ngay</h3>
@@ -232,50 +289,51 @@ const ProjectDetail = () => {
 
           </div>
 
-          {/* 4. CÔNG TRÌNH LIÊN QUAN */}
-          <div className="mt-16 border-t border-gray-200 pt-10">
-            <h2 className="text-lg md:text-xl font-bold uppercase tracking-widest text-black mb-6">
-              Công trình liên quan
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {relatedProjects.map((item) => (
-                <Link 
-                  to={`/hang-muc/cong-trinh-chi-tiet/${item.id}`} 
-                  key={item.id}
-                  className="group block rounded-sm overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
-                >
-                  <div className="aspect-4/3 w-full overflow-hidden relative">
-                    <img 
-                      src={item.imageUrl} 
-                      alt={item.title} 
-                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
-                    />
-                    {/* Lớp phủ mờ khi di chuột */}
-                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                       <span className="text-white border border-white px-3 py-1 text-[10px] uppercase tracking-widest font-bold bg-black/20 backdrop-blur-sm">
-                          Xem chi tiết
-                       </span>
+          {/* 4. CÔNG TRÌNH LIÊN QUAN (Sử dụng dữ liệu fetch từ DB) */}
+          {relatedProjects.length > 0 && (
+            <div className="mt-16 border-t border-gray-200 pt-10">
+              <h2 className="text-lg md:text-xl font-bold uppercase tracking-widest text-black mb-6">
+                Công trình liên quan
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {relatedProjects.map((item) => (
+                  <Link 
+                    to={`/hang-muc/cong-trinh-chi-tiet/${item._id}`} // Dùng item._id của MongoDB
+                    key={item._id}
+                    className="group block rounded-sm overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
+                  >
+                    <div className="aspect-4/3 w-full overflow-hidden relative">
+                      <img 
+                        src={item.mainImage} // Ảnh bìa của công trình
+                        alt={item.title} 
+                        className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                      />
+                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                         <span className="text-white border border-white px-3 py-1 text-[10px] uppercase tracking-widest font-bold bg-black/20 backdrop-blur-sm">
+                           Xem chi tiết
+                         </span>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
         </div>
       </section>
 
       {/* =========================================
-          LIGHTBOX MODAL (Toàn màn hình)
+          LIGHTBOX MODAL (Toàn màn hình) - Giữ nguyên logic
       ========================================= */}
-      {isLightboxOpen && (
-        <div className="fixed inset-0 z-100 bg-black/95 flex flex-col items-center justify-center select-none backdrop-blur-sm">
+      {isLightboxOpen && allImages.length > 0 && (
+        <div className="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center select-none backdrop-blur-sm">
           <button onClick={closeLightbox} className="absolute top-5 right-5 text-gray-400 hover:text-green-500 z-50 p-2 transition-colors">
             <svg className="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
 
           <div className="absolute top-5 left-5 text-white text-lg font-bold tracking-widest z-50 bg-black/50 px-4 py-1 rounded-full">
-            {lightboxIndex + 1} / {project.images.length}
+            {lightboxIndex + 1} / {allImages.length}
           </div>
 
           <button onClick={prevImage} className="absolute left-2 md:left-10 top-1/2 -translate-y-1/2 text-white hover:text-green-500 z-50 p-2 md:p-4 bg-black/50 hover:bg-black/80 rounded-full transition-all">
@@ -284,7 +342,7 @@ const ProjectDetail = () => {
 
           <div className="w-full max-w-6xl px-4 md:px-20 flex items-center justify-center h-[70vh]">
             <img 
-              src={project.images[lightboxIndex]} 
+              src={allImages[lightboxIndex]} 
               alt={`Gallery ${lightboxIndex}`} 
               className="max-w-full max-h-full object-contain shadow-2xl"
             />
@@ -295,7 +353,7 @@ const ProjectDetail = () => {
           </button>
 
           <div className="absolute bottom-5 left-0 right-0 flex justify-center gap-2 px-4 overflow-x-auto pb-4">
-             {project.images.map((img, idx) => (
+             {allImages.map((img, idx) => (
                 <img 
                   key={idx}
                   src={img}

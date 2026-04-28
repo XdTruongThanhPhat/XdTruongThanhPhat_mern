@@ -13,6 +13,8 @@ import Quotation from './pages/Quotation';
 import Contact from './pages/Contact';
 import About from './pages/About';
 import Team from './pages/Team';
+import FloatingContact from './components/FloatingContact';
+
 
 // TÍNH NĂNG MỞ RỘNG: Tự động cuộn lên đầu trang mỗi khi chuyển link
 const ScrollToTop = () => {
@@ -55,10 +57,11 @@ function App() {
             <Route path="/ve-ttp" element={<About />} />
 
             <Route path="/ve-ttp/doi-ngu-nhan-su" element={<Team />} />
+            
           </Routes>
         </main>
         <Footer />
-        
+        <FloatingContact />
       </div>
     </Router>
   );

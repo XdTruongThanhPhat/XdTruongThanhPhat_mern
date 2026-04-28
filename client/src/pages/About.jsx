@@ -61,7 +61,7 @@ const About = () => {
 
           {/* Nút điều hướng */}
           <div className="pt-10 flex justify-center gap-4">
-             <Link to="/ve-ttp/doi-ngu" className="bg-black hover:bg-green-500 text-white px-8 py-3 rounded-sm font-bold uppercase tracking-widest text-sm transition-colors shadow-md">
+             <Link to="/ve-ttp/doi-ngu-nhan-su" className="bg-black hover:bg-green-500 text-white px-8 py-3 rounded-sm font-bold uppercase tracking-widest text-sm transition-colors shadow-md">
                Xem Đội Ngũ TTP
              </Link>
              <Link to="/lien-he" className="border-2 border-green-500 text-green-500 hover:bg-green-500 hover:text-white px-8 py-3 rounded-sm font-bold uppercase tracking-widest text-sm transition-colors shadow-md">

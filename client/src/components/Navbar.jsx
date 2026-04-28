@@ -41,7 +41,7 @@ const Navbar = () => {
 
   return (
     // Nền chuyển sang màu Đen (bg-black)
-    <nav className={`fixed w-full z-50 top-0 transition-all duration-300 bg-[#151C26] ${
+    <nav className={`fixed w-full z-50 top-0 transition-all duration-300 bg-[#6dc3de] ${
       scrolled ? 'py-1 shadow-2xl border-b border-gray-800' : 'py-3'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -52,7 +52,7 @@ const Navbar = () => {
             <Link to="/">
               <img 
                 className="h-12 md:h-24 w-auto transition-transform duration-300 hover:scale-105" 
-                src={assets.logo} 
+                src={assets.TTP} 
                 alt="Trường Thành Phát" 
               />
             </Link>
@@ -65,9 +65,8 @@ const Navbar = () => {
                 <NavLink
                   to={link.path}
                   className={({ isActive }) =>
-                    `text-[14px] lg:text-[15px] font-bold uppercase tracking-widest transition-all duration-300 flex items-center gap-1.5 ${
-                      // Chữ khi chưa nhấn: Trắng | Khi chọn: Xanh lá (green-500)
-                      isActive ? 'text-green-500' : 'text-white hover:text-green-500'
+                    `relative text-[14px] lg:text-[15px] font-bold uppercase tracking-widest transition-all duration-300 flex items-center gap-1.5 py-1 text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-green-500 after:transition-all after:duration-300 ${
+                      isActive ? 'after:w-full' : 'after:w-0 hover:after:w-full'
                     }`
                   }
                 >
@@ -97,13 +96,6 @@ const Navbar = () => {
                 )}
               </div>
             ))}
-            
-            {/* Nút Tìm kiếm */}
-            <button className="ml-4 p-2 text-white hover:text-green-500 transition-colors">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </button>
           </div>
 
           {/* MOBILE BUTTON */}
@@ -134,7 +126,9 @@ const Navbar = () => {
                 to={link.path}
                 onClick={() => !link.submenu && setIsMobileOpen(false)}
                 className={({ isActive }) => 
-                  `block text-base font-bold uppercase tracking-widest ${isActive ? 'text-green-500' : 'text-white'}`
+                  `relative inline-block text-base font-bold uppercase tracking-widest text-white pb-1 after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-green-500 after:transition-all after:duration-300 ${
+                    isActive ? 'after:w-full' : 'after:w-0'
+                  }`
                 }
               >
                 {link.name}

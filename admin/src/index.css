@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Thêm một chút màu nền mặc định cho trang web */
+body {
+  background-color: #f9fafb;
+}
