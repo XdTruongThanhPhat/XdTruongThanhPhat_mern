@@ -3,25 +3,42 @@ import { Link } from 'react-router-dom';
 import { assets } from '../assets/assets';
 
 const Hero = () => {
-  const slides = [
+  // Dữ liệu mặc định đề phòng Backend chưa có data
+  const defaultSlides = [
     {
-      url: assets.demo1,
+      imageUrl: assets.demo1,
       title: 'Kiến Tạo Không Gian Sống Đẳng Cấp',
       subtitle: 'Trường Thành Phát đồng hành cùng bạn xây dựng ngôi nhà mơ ước với chất lượng vượt trội.'
     },
     {
-      url: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=2071',
+      imageUrl: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=2071',
       title: 'Thiết Kế Đột Phá, Thi Công Chuyên Nghiệp',
       subtitle: 'Mang đến giải pháp tối ưu, tiết kiệm chi phí cho mọi công trình của bạn.'
-    },
-    {
-      url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=2070',
-      title: 'Uy Tín - Chất Lượng - Tận Tâm',
-      subtitle: 'Bảo hành dài hạn, cam kết tiến độ và minh bạch trong từng vật tư.'
     }
   ];
 
+  const [slides, setSlides] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Fetch Banners từ MongoDB
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/banners');
+        const data = await res.json();
+        
+        if (data.success && data.banners.length > 0) {
+          setSlides(data.banners);
+        } else {
+          setSlides(defaultSlides); // Nếu DB trống thì dùng mặc định
+        }
+      } catch (error) {
+        console.error("Lỗi khi tải Banner:", error);
+        setSlides(defaultSlides);
+      }
+    };
+    fetchBanners();
+  }, []);
 
   const prevSlide = () => {
     const isFirstSlide = currentIndex === 0;
@@ -40,17 +57,20 @@ const Hero = () => {
   };
 
   useEffect(() => {
-    const slideInterval = setInterval(() => {
-      nextSlide();
-    }, 10000); 
-    return () => clearInterval(slideInterval);
-  }, [currentIndex]);
+    if (slides.length > 1) {
+      const slideInterval = setInterval(() => {
+        nextSlide();
+      }, 8000); // Thay đổi sau mỗi 8 giây
+      return () => clearInterval(slideInterval);
+    }
+  }, [currentIndex, slides.length]);
+
+  if (slides.length === 0) return null;
 
   return (
-    // Đã XÓA mt-[64px] và TĂNG chiều cao lên full màn hình (h-screen)
     <div className="relative w-full h-[85vh] md:h-screen group bg-black">
       
-      {/* KHU VỰC HIỂN THỊ ẢNH - Nằm sát mép trên cùng top-0 */}
+      {/* KHU VỰC HIỂN THỊ ẢNH */}
       <div className="w-full h-full relative overflow-hidden">
         {slides.map((slide, index) => (
           <div
@@ -62,12 +82,12 @@ const Hero = () => {
             {/* Ảnh nền */}
             <div
               className="w-full h-full bg-center bg-cover transition-transform duration-1000"
-              style={{ backgroundImage: `url(${slide.url})` }}
+              style={{ backgroundImage: `url(${slide.imageUrl})` }} // Chú ý: Backend trả về imageUrl
             >
               <div className="absolute inset-0 bg-black/60"></div>
             </div>
 
-            {/* Nội dung chữ - ĐÃ THÊM pt-[80px] md:pt-[104px] để chữ bị đẩy xuống dưới Navbar */}
+            {/* Nội dung chữ */}
             <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4 pt-[80px] md:pt-[104px]">
               <h1 className={`text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4 uppercase tracking-wide drop-shadow-lg ${index === currentIndex ? 'animate-fade-in-up' : 'opacity-0'}`}>
                 {slide.title}
@@ -77,14 +97,6 @@ const Hero = () => {
                 {slide.subtitle}
               </p>
               
-              <div className={`flex gap-4 ${index === currentIndex ? 'animate-fade-in-up [animation-delay:600ms]' : 'opacity-0'}`}>
-                <Link to="/bao-gia" className="bg-green-600 hover:bg-green-500 text-white px-8 py-3 rounded-sm font-bold text-lg transition-colors shadow-lg uppercase">
-                  Nhận Báo Giá
-                </Link>
-                <Link to="/hang-muc-cong-trinh" className="bg-transparent border-2 border-white hover:bg-white hover:text-black text-white px-8 py-3 rounded-sm font-bold text-lg transition-colors shadow-lg uppercase">
-                  Xem Dự Án
-                </Link>
-              </div>
             </div>
           </div>
         ))}
@@ -110,7 +122,7 @@ const Hero = () => {
 
       {/* DẤU CHẤM ĐIỀU HƯỚNG */}
       <div className="absolute bottom-6 left-0 right-0 flex justify-center py-2 z-20 gap-3">
-        {slides.map((slide, slideIndex) => (
+        {slides.map((_, slideIndex) => (
           <div
             key={slideIndex}
             onClick={() => goToSlide(slideIndex)}

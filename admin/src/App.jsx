@@ -8,6 +8,9 @@ import ManageProject from './pages/ManageProject';
 import Content from './pages/Content'; // <-- 1. Import Content vào đây
 import ManageMember from './pages/ManageMember';
 import ManageTestimonial from './pages/ManageTestimonial'
+import ManageBlog from './pages/ManageBlog';
+import ManageBanner from './pages/ManageBanner';
+
 
 function App() {
   return (
@@ -22,6 +25,9 @@ function App() {
           <Route path="content" element={<Content />} /> {/* <-- 2. Thêm Route này */}
           <Route path="manage-member" element={<ManageMember />} />
           <Route path="manage-testimonial" element={<ManageTestimonial/>} />
+          <Route path="manage-blog" element={<ManageBlog/>} />
+          <Route path="manage-banner" element={<ManageBanner/>} />
+
         </Route>
       </Routes>
     </BrowserRouter>

@@ -5,10 +5,12 @@ import Navbar from '../components/Navbar';
 const Dashboard = () => {
   const menuItems = [
     { name: 'Thêm dự án mới', path: '/add-project', icon: '➕' },
-    { name: 'Quản lý dự án', path: '/manage-projects', icon: '📁' },
+    { name: 'Quản lý dự án', path: '/manage-projects', icon: '⚙' },
     { name: 'Nội dung dự án', path: '/content', icon: '📁' },
     { name: 'Quản lý nhân sự', path: '/manage-member', icon: '👥' },
-    { name: 'Phản hồi', path: '/manage-testimonial', icon: '👥' },
+    { name: 'Phản hồi', path: '/manage-testimonial', icon: '📢' },
+    { name: 'Quản lý tin tức', path: '/manage-blog', icon: '✉' },
+    { name: 'Quản lý banner', path: '/manage-banner', icon: '🌅' },
   ];
 
   return (

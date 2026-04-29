@@ -76,9 +76,9 @@ const FeaturedProjects = () => {
                   <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
                   {/* Badge Category */}
                   <div className="absolute top-4 left-4 z-10">
-                    <span className="px-3 py-1 bg-green-500 text-white text-xs font-bold uppercase tracking-wider rounded-sm shadow-md">
+                    {/* <span className="px-3 py-1 bg-green-500 text-white text-xs font-bold uppercase tracking-wider rounded-sm shadow-md">
                       {project.category}
-                    </span>
+                    </span> */}
                   </div>
                 </div>
 

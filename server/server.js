@@ -5,6 +5,8 @@ import connectDB from "./config/db.js";
 import projectRouter from "./routes/projectRoutes.js";
 import teamRouter from "./routes/teamRoutes.js";
 import testimonialRouter from "./routes/testimonialRoutes.js"
+import blogRouter from "./routes/blogRoutes.js";
+import bannerRouter from "./routes/bannerRoutes.js";
 import { setServers } from "dns";
 setServers(["8.8.8.8", "8.8.4.4"]);
 
@@ -23,6 +25,8 @@ await connectDB();
 app.use("/api/projects", projectRouter);
 app.use("/api/team", teamRouter);
 app.use("/api/testimonials", testimonialRouter);
+app.use("/api/blogs", blogRouter);
+app.use("/api/banners", bannerRouter);
 
 app.get("/", (req, res) => res.send("Server is running"));
 

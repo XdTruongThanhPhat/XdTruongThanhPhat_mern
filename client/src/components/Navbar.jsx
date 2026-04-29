@@ -36,6 +36,7 @@ const Navbar = () => {
         { name: 'Đội ngũ nhân sự', path: '/ve-ttp/doi-ngu-nhan-su' },
       ]
     },
+    { name: 'Tin tức', path: '/tin-tuc' },
     { name: 'Liên hệ', path: '/lien-he' },
   ];
 

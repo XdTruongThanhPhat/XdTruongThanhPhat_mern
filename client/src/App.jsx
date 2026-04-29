@@ -14,6 +14,9 @@ import Contact from './pages/Contact';
 import About from './pages/About';
 import Team from './pages/Team';
 import FloatingContact from './components/FloatingContact';
+import News from './pages/News';
+import NewsDetail from './pages/NewsDetail';
+
 
 
 // TÍNH NĂNG MỞ RỘNG: Tự động cuộn lên đầu trang mỗi khi chuyển link
@@ -57,6 +60,9 @@ function App() {
             <Route path="/ve-ttp" element={<About />} />
 
             <Route path="/ve-ttp/doi-ngu-nhan-su" element={<Team />} />
+
+            <Route path="/tin-tuc" element={<News />} />
+            <Route path="/tin-tuc/:id" element={<NewsDetail />} />
             
           </Routes>
         </main>
