@@ -11,7 +11,7 @@ const ManageMember = () => {
   // 1. Fetch Dữ liệu
   const fetchTeamData = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/team');
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/team`);
       const data = await res.json();
       if (data.success) setTeamData(data.team);
     } catch (error) {
@@ -30,7 +30,7 @@ const ManageMember = () => {
     try {
       const formData = new FormData();
       formData.append('banner', file);
-      const res = await fetch('http://localhost:5000/api/team/banner', { method: 'PUT', body: formData });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/team/banner`, { method: 'PUT', body: formData });
       const data = await res.json();
       if (data.success) {
           setTeamData(data.team);
@@ -51,7 +51,7 @@ const ManageMember = () => {
       formData.append('role', managerForm.role);
       formData.append('image', managerForm.file);
 
-      const res = await fetch('http://localhost:5000/api/team/management', { method: 'POST', body: formData });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/team/management`, { method: 'POST', body: formData });
       const data = await res.json();
       if (data.success) {
           setTeamData(data.team);
@@ -71,7 +71,7 @@ const ManageMember = () => {
       const formData = new FormData();
       files.forEach(file => formData.append('images', file));
 
-      const res = await fetch('http://localhost:5000/api/team/staff', { method: 'POST', body: formData });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/team/staff`, { method: 'POST', body: formData });
       const data = await res.json();
       if (data.success) {
           setTeamData(data.team);
@@ -84,7 +84,7 @@ const ManageMember = () => {
   const handleDelete = async (type, id) => {
     if(!window.confirm("Xóa nhân sự này?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/team/${type}/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/team/${type}/${id}`, { method: 'DELETE' });
       const data = await res.json();
       if(data.success) setTeamData(data.team);
     } catch (error) { toast.error("Lỗi khi xóa"); }

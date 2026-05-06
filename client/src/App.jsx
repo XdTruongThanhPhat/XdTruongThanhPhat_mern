@@ -16,6 +16,8 @@ import Team from './pages/Team';
 import FloatingContact from './components/FloatingContact';
 import News from './pages/News';
 import NewsDetail from './pages/NewsDetail';
+import NotFound from './components/NotFound';
+
 
 
 
@@ -64,6 +66,7 @@ function App() {
             <Route path="/tin-tuc" element={<News />} />
             <Route path="/tin-tuc/:id" element={<NewsDetail />} />
             
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
         <Footer />

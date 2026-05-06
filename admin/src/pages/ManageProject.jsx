@@ -16,7 +16,7 @@ const ManageProject = () => {
   // Fetch danh sách dự án
   const fetchProjects = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/projects/list');
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/list`);
       const data = await res.json();
       if (data.success) {
         setProjects(data.projects);
@@ -36,7 +36,7 @@ const ManageProject = () => {
   const handleDelete = async (id) => {
     if(window.confirm("Bạn có chắc chắn muốn xóa dự án này? Hành động này không thể hoàn tác!")) {
       try {
-        const res = await fetch(`http://localhost:5000/api/projects/${id}`, { method: 'DELETE' });
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/${id}`, { method: 'DELETE' });
         const data = await res.json();
         if(data.success) {
             toast.success("Xóa dự án thành công!");
@@ -113,7 +113,7 @@ const ManageProject = () => {
         formData.append('projectImages', file);
       });
 
-      const res = await fetch(`http://localhost:5000/api/projects/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/${id}`, {
         method: 'PUT',
         body: formData // Không set header Content-Type, trình duyệt sẽ tự lo
       });
@@ -133,7 +133,7 @@ const ManageProject = () => {
   // Bật/Tắt dự án tiêu biểu
   const handleToggleFeature = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/projects/${id}/feature`, { method: 'PATCH' });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/${id}/feature`, { method: 'PATCH' });
       const data = await res.json();
       
       if(data.success) {

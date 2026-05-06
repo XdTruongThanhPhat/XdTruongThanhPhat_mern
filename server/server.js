@@ -7,14 +7,33 @@ import teamRouter from "./routes/teamRoutes.js";
 import testimonialRouter from "./routes/testimonialRoutes.js"
 import blogRouter from "./routes/blogRoutes.js";
 import bannerRouter from "./routes/bannerRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import contactRoutes from './routes/contactRoutes.js';
 import { setServers } from "dns";
 setServers(["8.8.8.8", "8.8.4.4"]);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
+// CORS - cho phép domain từ biến môi trường
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  process.env.ADMIN_URL,
+  "http://localhost:3000",
+  "http://localhost:3001",
+].filter(Boolean); // loại bỏ giá trị undefined
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Cho phép request không có origin (Postman, server-to-server)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error("Not allowed by CORS: " + origin));
+  },
+  credentials: true,
+}));
 app.use(express.json());
 // LƯU Ý: Đã xóa app.use(multer().none()) để cho phép nhận file
 
@@ -27,6 +46,8 @@ app.use("/api/team", teamRouter);
 app.use("/api/testimonials", testimonialRouter);
 app.use("/api/blogs", blogRouter);
 app.use("/api/banners", bannerRouter);
+app.use("/api/auth", authRoutes);
+app.use('/api/contact', contactRoutes);
 
 app.get("/", (req, res) => res.send("Server is running"));
 

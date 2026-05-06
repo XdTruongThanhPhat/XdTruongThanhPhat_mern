@@ -13,7 +13,7 @@ const Content = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/projects/list');
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/list`);
         const data = await res.json();
         if (data.success) {
           setProjects(data.projects);
@@ -33,7 +33,7 @@ const Content = () => {
     setSections([]); // Reset giao diện
     
     try {
-      const res = await fetch(`http://localhost:5000/api/projects/content/${project._id}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/content/${project._id}`);
       const data = await res.json();
       
       if (data.success && data.content && data.content.sections) {
@@ -94,7 +94,7 @@ const Content = () => {
         }
       });
 
-      const res = await fetch(`http://localhost:5000/api/projects/content/${selectedProject._id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/content/${selectedProject._id}`, {
         method: 'POST',
         body: formData
       });

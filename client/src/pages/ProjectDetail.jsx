@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import toast from 'react-hot-toast'; // Bổ sung thư viện thông báo
 
 const ProjectDetail = () => {
   const { id } = useParams(); // Lấy ID công trình từ URL
@@ -23,8 +24,7 @@ const ProjectDetail = () => {
       setLoading(true);
       try {
         // 1. Fetch danh sách dự án để lấy thông tin cơ bản & dự án liên quan
-        // (Do backend ta chưa viết route GetById, nên ta lấy từ List và lọc ra)
-        const projRes = await fetch('http://localhost:5000/api/projects/list');
+        const projRes = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/list`);
         const projData = await projRes.json();
 
         if (projData.success) {
@@ -45,7 +45,7 @@ const ProjectDetail = () => {
         }
 
         // 2. Fetch bài viết chi tiết (Content) của dự án này
-        const contentRes = await fetch(`http://localhost:5000/api/projects/content/${id}`);
+        const contentRes = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/content/${id}`);
         const contentData = await contentRes.json();
 
         if (contentData.success && contentData.content) {
@@ -86,16 +86,48 @@ const ProjectDetail = () => {
   const nextImage = () => setLightboxIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
   const prevImage = () => setLightboxIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
 
-  // State form tư vấn
+  // ==========================================
+  // STATE VÀ LOGIC GỬI FORM TƯ VẤN (BÁO GIÁ)
+  // ==========================================
   const [formData, setFormData] = useState({
     name: '', phone: '', email: '', area: '', location: '', type: 'Nhà phố', budget: '1.8 - 2.3 tỷ', details: ''
   });
+  
+  // State vô hiệu hóa nút bấm trong lúc đợi phản hồi
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Dữ liệu gửi đi:", formData);
-    alert("Đã gửi yêu cầu tư vấn thành công! Chúng tôi sẽ liên hệ lại sớm nhất.");
-    setFormData({ name: '', phone: '', email: '', area: '', location: '', type: 'Nhà phố', budget: '1.8 - 2.3 tỷ', details: ''});
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    const toastId = toast.loading("Đang gửi yêu cầu báo giá...");
+
+    try {
+      // Bắn dữ liệu về đúng API /project-details
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/contact/project-details`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      
+      const data = await res.json();
+
+      if (data.success) {
+        toast.success("Gửi yêu cầu thành công! Kiến trúc sư sẽ liên hệ lại sớm nhất.", { id: toastId });
+        // Xóa trắng dữ liệu trên form
+        setFormData({ 
+          name: '', phone: '', email: '', area: '', location: '', type: 'Nhà phố', budget: '1.8 - 2.3 tỷ', details: ''
+        });
+      } else {
+        toast.error("Có lỗi xảy ra, vui lòng thử lại.", { id: toastId });
+      }
+    } catch (error) {
+      console.error("Lỗi khi gửi yêu cầu báo giá:", error);
+      toast.error("Lỗi kết nối máy chủ!", { id: toastId });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Màn hình Loading trong lúc chờ gọi API
@@ -187,8 +219,9 @@ const ProjectDetail = () => {
                   <p className="text-green-500 text-sm uppercase tracking-widest font-semibold mb-1">Thông tin công trình</p>
                   <h3 className="text-white text-lg font-medium">{projectData.title}</h3>
                 </div>
-                <div className="bg-green-500 grid grid-cols-2 md:grid-cols-5 divide-x divide-green-600 divide-y md:divide-y-0 text-white">
-                  <div className="p-4 flex flex-col items-center text-center col-span-2 md:col-span-1">
+                {/* Thay đổi md:grid-cols-5 thành md:grid-cols-4 và bỏ các col-span thừa */}
+                <div className="bg-green-500 grid grid-cols-2 md:grid-cols-4 divide-x divide-green-600 divide-y md:divide-y-0 text-white">
+                  <div className="p-4 flex flex-col items-center text-center">
                     <span className="font-bold mb-1">Vị trí</span>
                     <span className="text-sm text-green-50">{projectData.info?.location || "Đang cập nhật"}</span>
                   </div>
@@ -197,14 +230,10 @@ const ProjectDetail = () => {
                     <span className="text-sm text-green-50">{projectData.info?.floors || "-"}</span>
                   </div>
                   <div className="p-4 flex flex-col items-center text-center">
-                    <span className="font-bold mb-1">Diện tích đất</span>
-                    <span className="text-sm text-green-50">{projectData.info?.landArea || "-"}</span>
-                  </div>
-                  <div className="p-4 flex flex-col items-center text-center">
                     <span className="font-bold mb-1">Diện tích XD</span>
                     <span className="text-sm text-green-50">{projectData.info?.buildArea || "-"}</span>
                   </div>
-                  <div className="p-4 flex flex-col items-center text-center col-span-2 md:col-span-1">
+                  <div className="p-4 flex flex-col items-center text-center">
                     <span className="font-bold mb-1">Chi phí XD</span>
                     <span className="text-sm text-green-50">{projectData.info?.cost || "Liên hệ"}</span>
                   </div>
@@ -249,9 +278,8 @@ const ProjectDetail = () => {
               </div>
             </div>
 
-            {/* CỘT PHẢI: FORM TƯ VẤN (Giữ nguyên không đổi) */}
+            {/* CỘT PHẢI: FORM TƯ VẤN */}
             <div className="lg:w-1/3 xl:w-1/4 sticky top-28 z-10 w-full">
-              {/* Đoạn code giao diện Form Tư Vấn của bạn vẫn giữ nguyên y hệt ở đây */}
               <div className="bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden">
                 <div className="bg-[#1A1A1A] text-center py-3 border-b-2 border-green-500">
                   <h3 className="text-green-500 text-lg font-bold uppercase tracking-wider">Nhận tư vấn ngay</h3>
@@ -281,7 +309,13 @@ const ProjectDetail = () => {
                   </div>
                   <textarea rows="2" placeholder="Yêu cầu chi tiết nếu có!" value={formData.details} onChange={(e) => setFormData({...formData, details: e.target.value})} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-sm resize-none"></textarea>
                   <div className="pt-1">
-                    <button type="submit" className="w-full bg-green-500 hover:bg-green-600 text-white font-bold uppercase tracking-widest py-2.5 rounded-sm shadow-md transition-colors text-sm">Gửi yêu cầu ngay</button>
+                    <button 
+                      type="submit" 
+                      disabled={isSubmitting}
+                      className={`w-full text-white font-bold uppercase tracking-widest py-2.5 rounded-sm shadow-md transition-colors text-sm ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'}`}
+                    >
+                      {isSubmitting ? 'Đang gửi...' : 'Gửi yêu cầu ngay'}
+                    </button>
                   </div>
                 </form>
               </div>

@@ -7,7 +7,7 @@ const ManageBanner = () => {
 
   const fetchBanners = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/banners');
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/banners`);
       const data = await res.json();
       if(data.success) setBanners(data.banners);
     } catch (error) { toast.error("Lỗi tải dữ liệu!"); }
@@ -26,7 +26,7 @@ const ManageBanner = () => {
     data.append('image', formData.file);
 
     try {
-      const res = await fetch('http://localhost:5000/api/banners', { method: 'POST', body: data });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/banners`, { method: 'POST', body: data });
       const result = await res.json();
       if (result.success) {
         toast.success("Thêm banner thành công!", { id: toastId });
@@ -40,7 +40,7 @@ const ManageBanner = () => {
 
   const handleDelete = async (id) => {
     if(!window.confirm("Xóa banner này?")) return;
-    await fetch(`http://localhost:5000/api/banners/${id}`, { method: 'DELETE' });
+    await fetch(`${import.meta.env.VITE_API_URL}/api/banners/${id}`, { method: 'DELETE' });
     setBanners(banners.filter(b => b._id !== id));
     toast.success("Đã xóa!");
   };

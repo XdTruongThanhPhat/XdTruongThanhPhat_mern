@@ -13,7 +13,7 @@ const ManageTestimonial = () => {
   // 1. Fetch Dữ liệu
   const fetchTestimonials = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/testimonials');
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/testimonials`);
       const data = await res.json();
       if (data.success) setTestimonials(data.testimonials);
     } catch (error) {
@@ -37,7 +37,7 @@ const ManageTestimonial = () => {
       if (formData.file) data.append('avatar', formData.file);
       if (isEditing) data.append('existingAvatar', formData.existingAvatar);
 
-      const url = isEditing ? `http://localhost:5000/api/testimonials/${editingId}` : 'http://localhost:5000/api/testimonials';
+      const url = isEditing ? `${import.meta.env.VITE_API_URL}/api/testimonials/${editingId}` : `${import.meta.env.VITE_API_URL}/api/testimonials`;
       const method = isEditing ? 'PUT' : 'POST';
 
       const res = await fetch(url, { method, body: data });
@@ -66,7 +66,7 @@ const ManageTestimonial = () => {
   const handleDelete = async (id) => {
     if(!window.confirm("Xóa phản hồi này?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/testimonials/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/testimonials/${id}`, { method: 'DELETE' });
       const data = await res.json();
       if(data.success) {
           toast.success("Xóa thành công");

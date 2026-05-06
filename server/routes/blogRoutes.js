@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer";
-import { getBlogs, addBlog, deleteBlog,toggleFeaturedBlog } from "../controllers/blogController.js";
+import { getBlogs, addBlog, deleteBlog,toggleFeaturedBlog, uploadBlogImage } from "../controllers/blogController.js";
 
 const router = express.Router();
 
@@ -17,5 +17,7 @@ router.post("/", upload.single("image"), addBlog);
 router.delete("/:id", deleteBlog);
 
 router.patch("/:id/feature", toggleFeaturedBlog);
+
+router.post('/upload-image', upload.single('image'), uploadBlogImage);
 
 export default router;
