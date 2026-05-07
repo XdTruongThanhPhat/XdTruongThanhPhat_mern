@@ -14,7 +14,7 @@ const About = () => {
           <div className="w-full h-[25vh] sm:h-[40vh] md:h-[60vh] bg-gray-100 rounded-lg overflow-hidden shadow-sm">
             <img 
               src="https://res.cloudinary.com/dia0hytop/image/upload/v1776675604/z7731184451078_e2096bacf215f8b507086b7a6712faa3_bjzvxz.png" 
-              alt="Về TTP Architect" 
+              alt="Về Trường Thành Phát" 
               className="w-full h-full object-cover"
             />
           </div>
@@ -42,9 +42,9 @@ const About = () => {
               I. TẦM NHÌN ĐẾN NĂM 2030
             </h2>
             <ul className="list-disc list-outside space-y-2 md:space-y-3 pl-4 md:pl-6 ml-2">
-              <li>Đến năm 2030, TTP Architect định hướng trở thành văn phòng kiến trúc hàng đầu trong lĩnh vực thiết kế nhà ở tại Việt Nam, với hệ thống chi nhánh hoạt động tại ba miền Bắc – Trung – Nam.</li>
-              <li>TTP tiên phong theo đuổi kiến trúc xanh, đề cao giải pháp bền vững và thân thiện với môi trường, nhằm tạo ra những công trình có giá trị lâu dài cả về thẩm mỹ lẫn công năng sử dụng.</li>
-              <li>Song song với phát triển chuyên môn, TTP tập trung xây dựng văn hóa doanh nghiệp vững mạnh và phát triển đội ngũ nhân sự từ nền tảng cốt lõi. Chúng tôi tin rằng con người chính là khởi nguồn của những sản phẩm chất lượng.</li>
+              <li>Đến năm 2030, Trường Thành Phát định hướng trở thành thương hiệu Thiết kế và Thi công trọn gói được tin chọn hàng đầu, phát triển vững chắc từ nền tảng khu vực miền Trung và mở rộng mạng lưới phục vụ trên toàn quốc.</li>
+              <li>Chúng tôi không chạy theo những xu hướng phô trương nhất thời, mà tập trung vào kiến trúc thực dụng, tối ưu hóa không gian sống để kiến tạo nên những công trình bền bỉ, thích ứng tốt với điều kiện khí hậu và ngân sách.</li>
+              <li>TRƯỜNG THÀNH PHÁT hướng đến việc hoàn thiện chuỗi cung ứng khép kín từ khâu tư vấn, thiết kế, đến thi công và nội thất, đảm bảo chất lượng được kiểm soát nghiêm ngặt và hạn chế tối đa chi phí phát sinh cho gia chủ.</li>
             </ul>
           </div>
 
@@ -57,21 +57,39 @@ const About = () => {
             <div className="space-y-4 md:space-y-6 pl-2 md:pl-4">
               <div>
                 <h3 className="font-bold text-black mb-1 md:mb-2 text-base">1. Với khách hàng</h3>
-                <p>Mang đến những công trình kiến trúc mang bản sắc riêng, được thiết kế phù hợp với nhu cầu sử dụng và ngân sách thực tế của từng gia đình. TTP không theo đuổi sự phô trương, mà đề cao tính ứng dụng, tính bền vững và giá trị sử dụng lâu dài.</p>
+                <p>Không vẽ nên những bản thiết kế xa rời thực tế, TRƯỜNG THÀNH PHÁT cam kết mang đến các giải pháp dung hòa giữa tính thẩm mỹ, nhu cầu sinh hoạt kết nối các thế hệ và khả năng tài chính của từng gia đình. Chúng tôi xây nhà để bạn sống thoải mái, chứ không chỉ để trưng bày.</p>
               </div>
               
               <div>
                 <h3 className="font-bold text-black mb-1 md:mb-2 text-base">2. Với xã hội</h3>
-                <p>Đóng góp vào sự phát triển của đô thị bằng những công trình xanh, thân thiện với môi trường. Tạo ra không gian sống chất lượng, nâng tầm chuẩn mực kiến trúc nhà ở tại Việt Nam.</p>
+                <p>Góp phần kiến tạo diện mạo đô thị và nông thôn bằng những công trình chuẩn mực, an toàn. Đề cao các giải pháp thông gió, chiếu sáng tự nhiên nhằm tiết kiệm năng lượng và thân thiện với môi trường.</p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-black mb-1 md:mb-2 text-base">3. Với đội ngũ nhân sự</h3>
+                <p>Xây dựng một môi trường làm việc thực chiến, minh bạch. Tạo không gian để các kỹ sư, kiến trúc sư cọ xát thực địa, nâng cao tay nghề và có thu nhập xứng đáng để gắn bó đường dài.</p>
               </div>
             </div>
+          </div>
+
+          {/* Giá trị thực tiễn */}
+          <div>
+            <h2 className="text-lg md:text-xl font-bold text-black uppercase tracking-widest mb-3 md:mb-4 border-l-4 border-green-500 pl-3 md:pl-4">
+              III. GIÁ TRỊ THỰC TIỄN
+            </h2>
+            <ul className="list-none space-y-3 md:space-y-4 pl-2 md:pl-4">
+              <li><strong className="text-black">Thực tế & Tối ưu:</strong> Mọi nét vẽ đều phải thi công được. Ưu tiên công năng sử dụng, loại bỏ các chi tiết rườm rà gây lãng phí.</li>
+              <li><strong className="text-black">Thấu hiểu:</strong> Mỗi ngôi nhà là thành quả tích lũy và là nơi gắn kết gia đình. TRƯỜNG THÀNH PHÁT thiết kế dựa trên thói quen sinh hoạt và câu chuyện riêng của từng chủ đầu tư.</li>
+              <li><strong className="text-black">Trách nhiệm:</strong> Đồng hành cùng gia chủ từ nét vẽ đầu tiên cho đến khi công trình hoàn thiện. Làm việc với tinh thần: "Tư vấn chân thành - Thi công trách nhiệm".</li>
+              <li><strong className="text-black">Công nghệ:</strong> Ứng dụng công nghệ 3D, phần mềm mô phỏng vào quá trình tư vấn để khách hàng hình dung trực quan nhất không gian sống trước khi đặt viên gạch đầu tiên.</li>
+            </ul>
           </div>
 
           {/* Nút điều hướng */}
           {/* TỐI ƯU: Đổi sang flex-col trên mobile nhỏ để 2 nút không bị bóp nghẹt, từ màn hình sm mới xếp ngang */}
           <div className="pt-6 md:pt-10 flex flex-col sm:flex-row justify-center gap-3 md:gap-4">
-             <Link to="/ve-ttp/doi-ngu-nhan-su" className="bg-black hover:bg-green-500 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-sm font-bold uppercase tracking-widest text-xs md:text-sm transition-colors shadow-md text-center">
-               Xem Đội Ngũ TTP
+             <Link to="/ve-TRƯỜNG THÀNH PHÁT/doi-ngu-nhan-su" className="bg-black hover:bg-green-500 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-sm font-bold uppercase tracking-widest text-xs md:text-sm transition-colors shadow-md text-center">
+               Xem Đội Ngũ TRƯỜNG THÀNH PHÁT
              </Link>
              <Link to="/lien-he" className="border-2 border-green-500 text-green-500 hover:bg-green-500 hover:text-white px-6 md:px-8 py-2.5 md:py-3 rounded-sm font-bold uppercase tracking-widest text-xs md:text-sm transition-colors shadow-md text-center">
                Liên Hệ Ngay
