@@ -21,7 +21,7 @@ const Navbar = () => {
       path: '/hang-muc-cong-trinh',
       submenu: [
         { name: 'Nội thất', path: '/hang-muc-cong-trinh/noi-that' },
-        { name: 'Nhà ở', path: '/hang-muc-cong-trinh/nha-o' },
+        { name: 'Biệt thự', path: '/hang-muc-cong-trinh/biet-thu' },
         { name: 'Căn hộ', path: '/hang-muc-cong-trinh/can-ho' },
         { name: 'Nhà phố', path: '/hang-muc-cong-trinh/nha-pho' },
         { name: 'Công trình thực tế', path: '/hang-muc-cong-trinh/cong-trinh-thuc-te' },

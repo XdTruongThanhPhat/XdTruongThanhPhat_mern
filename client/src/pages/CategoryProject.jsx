@@ -2,29 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 
 const CategoryProject = () => {
-  // 1. Tạo bản đồ ánh xạ (Mapping) giữa Tên hiển thị và Đường dẫn URL (slug)
+  // 1. CHUẨN HÓA BẢN ĐỒ ÁNH XẠ ĐÚNG 5 MỤC
   const categoryMap = [
     { name: "Tất cả", slug: "" },
     { name: "Nội thất", slug: "noi-that" },
-    { name: "Nhà ở", slug: "nha-o" },
+    { name: "Biệt thự", slug: "biet-thu" }, // Đã thay Nhà ở thành Biệt thự
     { name: "Căn hộ", slug: "can-ho" },
     { name: "Nhà phố", slug: "nha-pho" },
     { name: "Công trình thực tế", slug: "cong-trinh-thuc-te" }
   ];
 
-  // 2. Lấy thông tin đường dẫn từ URL
   const { categorySlug } = useParams();
   const navigate = useNavigate();
 
-  // Xác định Tab đang active dựa vào URL hiện tại
   const currentCategory = categoryMap.find(cat => cat.slug === categorySlug) || categoryMap[0];
   const activeTab = currentCategory.name;
 
-  // 3. State quản lý dữ liệu từ MongoDB
   const [allProjects, setAllProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // FETCH DỮ LIỆU TỪ BACKEND
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -44,11 +40,9 @@ const CategoryProject = () => {
     fetchProjects();
   }, []);
 
-  // Cấu hình phân trang
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 8; 
 
-  // Xử lý chuyển URL khi nhấn vào nút hạng mục
   const handleTabClick = (slug) => {
     if (slug === "") {
       navigate('/hang-muc-cong-trinh');
@@ -57,29 +51,39 @@ const CategoryProject = () => {
     }
   };
 
-  // 4. Lọc dữ liệu dựa trên hạng mục đang chọn
   const filteredProjects = activeTab === "Tất cả" 
     ? allProjects 
     : allProjects.filter(p => p.category === activeTab);
 
-  // Tính toán dữ liệu hiển thị cho trang hiện tại
   const indexOfLastProject = currentPage * projectsPerPage;
   const indexOfFirstProject = indexOfLastProject - projectsPerPage;
   const currentProjects = filteredProjects.slice(indexOfFirstProject, indexOfLastProject);
   const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
 
-  // Đặt lại về trang 1 mỗi khi đổi hạng mục
   useEffect(() => {
     setCurrentPage(1);
   }, [activeTab]);
 
-  // FIX LỖI UX: Tự động cuộn lên đầu trang mượt mà khi chuyển trang hoặc đổi Tab
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage, activeTab]);
+
+  // HÀM TẠO SLUG CHO URL (Chuẩn như ở ProjectDetail)
+  const generateSlug = (text) => {
+    if (!text) return '';
+    return text.toString().toLowerCase()
+      .replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ặ|ẵ|â|ấ|ầ|ẩ|ậ|ẫ/g, "a")
+      .replace(/é|è|ẻ|ẹ|ẽ|ê|ế|ề|ể|ệ|ễ/g, "e")
+      .replace(/i|í|ì|ỉ|ị|ĩ/g, "i")
+      .replace(/ó|ò|ỏ|ọ|õ|ô|ố|ồ|ổ|ộ|ỗ|ơ|ớ|ờ|ở|ợ|ỡ/g, "o")
+      .replace(/ú|ù|ủ|ụ|ũ|ư|ứ|ừ|ử|ự|ữ/g, "u")
+      .replace(/ý|ỳ|ỷ|ỵ|ỹ/g, "y")
+      .replace(/đ/g, "d")
+      .replace(/([^0-9a-z-\s])/g, '')
+      .replace(/(\s+)/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  };
 
   return (
     <section className="pt-24 md:pt-32 pb-10 md:pb-16 bg-white min-h-screen">
@@ -102,23 +106,22 @@ const CategoryProject = () => {
           ))}
         </div>
 
-        {/* XỬ LÝ GIAO DIỆN KHI ĐANG TẢI */}
         {loading ? (
           <div className="flex justify-center items-center py-10 md:py-20">
             <p className="text-gray-500 text-sm md:text-base font-medium animate-pulse">Đang tải danh sách công trình...</p>
           </div>
         ) : (
           <>
-            {/* LƯỚI CÔNG TRÌNH */}
             {currentProjects.length === 0 ? (
                 <div className="text-center py-10 text-xs md:text-sm text-gray-500">Chưa có công trình nào trong hạng mục này.</div>
             ) : (
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 relative z-0">
                 {currentProjects.map((project) => (
+                    // Áp dụng Slug lai ID cho đường dẫn
                     <Link 
-                    to={`/hang-muc/cong-trinh-chi-tiet/${project._id}`} 
-                    key={project._id}
-                    className="group bg-white overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col h-full rounded-sm"
+                      to={`/hang-muc/cong-trinh-chi-tiet/${generateSlug(project.title)}-${project._id}`} 
+                      key={project._id}
+                      className="group bg-white overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col h-full rounded-sm"
                     >
                     <div className="relative aspect-[4/3] overflow-hidden shrink-0">
                         <img

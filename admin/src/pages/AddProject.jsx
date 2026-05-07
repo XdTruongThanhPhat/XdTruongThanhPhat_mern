@@ -3,21 +3,20 @@ import toast from 'react-hot-toast';
 
 const AddProject = () => {
   const [loading, setLoading] = useState(false);
+  
+  // SỬA LỖI 1: Khởi tạo giá trị mặc định khớp với lựa chọn đầu tiên trong thẻ select
   const [formData, setFormData] = useState({
-    title: '', category: 'Biệt thự', location: '', floors: '', landArea: '', buildArea: '', cost: ''
+    title: '', category: 'Nội thất', location: '', floors: '', landArea: '', buildArea: '', cost: ''
   });
   
-  // State lưu danh sách ảnh đã chọn
   const [images, setImages] = useState([]);
 
-  // Hàm chọn ảnh: Cộng dồn ảnh mới vào danh sách ảnh cũ
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     setImages((prev) => [...prev, ...files]);
-    e.target.value = null; // Reset input để có thể chọn lại file vừa xóa nếu đổi ý
+    e.target.value = null; 
   };
 
-  // Hàm xóa ảnh khỏi danh sách dựa theo vị trí (index)
   const removeImage = (indexToRemove) => {
     setImages((prev) => prev.filter((_, index) => index !== indexToRemove));
   };
@@ -35,10 +34,8 @@ const AddProject = () => {
             location: formData.location, floors: formData.floors, landArea: formData.landArea, buildArea: formData.buildArea, cost: formData.cost
         }));
 
-        // ẢNH ĐẦU TIÊN LÀM ẢNH BÌA (mainImage)
         data.append('mainImage', images[0]);
         
-        // CÁC ẢNH CÒN LẠI LÀM ALBUM (projectImages)
         if (images.length > 1) {
             for (let i = 1; i < images.length; i++) {
                 data.append('projectImages', images[i]);
@@ -53,7 +50,8 @@ const AddProject = () => {
 
         if (result.success) {
             toast.success("Thêm dự án thành công!");
-            setFormData({ title: '', category: 'Biệt thự', location: '', floors: '', landArea: '', buildArea: '', cost: '' });
+            // SỬA LỖI 2: Khi reset form sau khi gửi thành công, cũng phải set về 'Nội thất'
+            setFormData({ title: '', category: 'Nội thất', location: '', floors: '', landArea: '', buildArea: '', cost: '' });
             setImages([]);
         } else {
             toast.error(result.message);
@@ -73,7 +71,6 @@ const AddProject = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* CỘT THÔNG TIN (Giữ nguyên như cũ) */}
         <div className="lg:col-span-2 space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -82,9 +79,10 @@ const AddProject = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Loại hình</label>
+              {/* SỬA LỖI 3: Cập nhật đúng 5 danh mục mà bạn mong muốn */}
               <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:border-green-500">
                 <option value="Nội thất">Nội thất</option>
-                <option value="Nhà ở">Nhà ở</option>
+                <option value="Biệt thự">Biệt thự</option>
                 <option value="Căn hộ">Căn hộ</option>
                 <option value="Nhà phố">Nhà phố</option>
                 <option value="Công trình thực tế">Công trình thực tế</option>
@@ -99,17 +97,14 @@ const AddProject = () => {
           </div>
         </div>
 
-        {/* CỘT ẢNH MỚI: TÍCH LŨY VÀ XÓA ẢNH */}
         <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
           <label className="block text-sm font-medium text-gray-700 mb-2">Hình ảnh công trình ({images.length})</label>
           
-          {/* Nút giả làm Input File để thiết kế đẹp hơn */}
           <label className="flex items-center justify-center w-full h-10 border-2 border-dashed border-green-400 rounded-lg cursor-pointer hover:bg-green-100 transition-colors mb-4 bg-green-50 text-green-600 font-medium text-sm">
             + Chọn thêm ảnh
             <input type="file" multiple accept="image/*" onChange={handleImageChange} className="hidden" />
           </label>
           
-          {/* Hiển thị Preview Ảnh */}
           {images.length > 0 && (
             <div className="mt-4 space-y-2 max-h-[400px] overflow-y-auto pr-2">
                 <p className="text-xs font-bold text-green-600">★ Ảnh bìa (Main):</p>
@@ -129,7 +124,7 @@ const AddProject = () => {
                         <p className="text-xs font-bold text-gray-600 mt-3">Các ảnh nội dung ({images.length - 1}):</p>
                         <div className="grid grid-cols-3 gap-2">
                             {images.slice(1).map((img, idx) => {
-                                const realIndex = idx + 1; // Cân bằng lại index vì mảng đã bị slice
+                                const realIndex = idx + 1; 
                                 return (
                                   <div key={realIndex} className="relative group">
                                       <img src={URL.createObjectURL(img)} alt="Gallery" className="w-full h-16 object-cover rounded border border-gray-300" />

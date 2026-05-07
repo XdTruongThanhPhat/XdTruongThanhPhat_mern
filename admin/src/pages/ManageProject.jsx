@@ -9,11 +9,10 @@ const ManageProject = () => {
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({
     title: '', category: '', info: {}, 
-    existingMainImage: '', existingImages: [], // Ảnh cũ giữ lại
-    newMainFile: null, newImageFiles: [] // Ảnh mới thêm vào
+    existingMainImage: '', existingImages: [],
+    newMainFile: null, newImageFiles: []
   });
 
-  // Fetch danh sách dự án
   const fetchProjects = async () => {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/list`);
@@ -32,7 +31,6 @@ const ManageProject = () => {
     fetchProjects();
   }, []);
 
-  // Xóa dự án
   const handleDelete = async (id) => {
     if(window.confirm("Bạn có chắc chắn muốn xóa dự án này? Hành động này không thể hoàn tác!")) {
       try {
@@ -50,12 +48,11 @@ const ManageProject = () => {
     }
   };
 
-  // KÍCH HOẠT CHẾ ĐỘ SỬA: Đổ dữ liệu cũ (bao gồm cả ảnh) vào State
   const handleEdit = (project) => {
     setEditingId(project._id);
     setEditForm({
       title: project.title,
-      category: project.category,
+      category: project.category, // Backend trả về sao thì hứng vậy
       info: project.info || {},
       existingMainImage: project.mainImage,
       existingImages: project.projectImages || [],
@@ -64,48 +61,38 @@ const ManageProject = () => {
     });
   };
 
-  // ---------------- LÀM VIỆC VỚI ẢNH TRONG CHẾ ĐỘ SỬA ----------------
-  
-  // 1. Đổi ảnh bìa mới
   const handleChangeMainImage = (e) => {
     if (e.target.files && e.target.files[0]) {
       setEditForm({ ...editForm, newMainFile: e.target.files[0] });
     }
   };
 
-  // 2. Xóa ảnh cũ trong album
   const handleRemoveExistingImage = (index) => {
     const updatedImages = editForm.existingImages.filter((_, i) => i !== index);
     setEditForm({ ...editForm, existingImages: updatedImages });
   };
 
-  // 3. Thêm ảnh mới vào album
   const handleAddNewImages = (e) => {
     const files = Array.from(e.target.files);
     setEditForm({ ...editForm, newImageFiles: [...editForm.newImageFiles, ...files] });
-    e.target.value = null; // Reset input
+    e.target.value = null; 
   };
 
-  // 4. Xóa ảnh mới vừa chọn
   const handleRemoveNewImage = (index) => {
     const updatedNewFiles = editForm.newImageFiles.filter((_, i) => i !== index);
     setEditForm({ ...editForm, newImageFiles: updatedNewFiles });
   };
 
-  // ---------------- XÁC NHẬN LƯU DỰ ÁN ----------------
   const handleSave = async (id) => {
     try {
-      // Vì có File ảnh nên phải dùng FormData thay vì JSON
       const formData = new FormData();
       formData.append('title', editForm.title);
       formData.append('category', editForm.category);
       formData.append('info', JSON.stringify(editForm.info));
       
-      // Gửi mảng ảnh cũ cần giữ lại
       formData.append('existingMainImage', editForm.existingMainImage);
       formData.append('existingImages', JSON.stringify(editForm.existingImages));
 
-      // Gửi các file ảnh mới (nếu có)
       if (editForm.newMainFile) {
         formData.append('mainImage', editForm.newMainFile);
       }
@@ -115,7 +102,7 @@ const ManageProject = () => {
 
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/${id}`, {
         method: 'PUT',
-        body: formData // Không set header Content-Type, trình duyệt sẽ tự lo
+        body: formData 
       });
       
       const data = await res.json();
@@ -130,14 +117,13 @@ const ManageProject = () => {
       toast.error("Lỗi khi cập nhật");
     }
   };
-  // Bật/Tắt dự án tiêu biểu
+
   const handleToggleFeature = async (id) => {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/${id}/feature`, { method: 'PATCH' });
       const data = await res.json();
       
       if(data.success) {
-        // Cập nhật lại UI ngay lập tức
         setProjects(projects.map(p => p._id === id ? { ...p, isFeatured: data.isFeatured } : p));
         toast.success(data.isFeatured ? "Đã ghim lên Dự án tiêu biểu!" : "Đã gỡ khỏi Dự án tiêu biểu!");
       }
@@ -163,20 +149,20 @@ const ManageProject = () => {
               <th className="p-4 font-semibold text-gray-700 text-sm">Tên dự án</th>
               <th className="p-4 font-semibold text-gray-700 text-sm">Loại hình</th>
               <th className="p-4 font-semibold text-gray-700 text-sm">Vị trí</th>
-              <th className="p-4 font-semibold text-gray-700 text-sm text-center">Tiêu biểu</th> {/* <-- Thêm cột này */}
+              <th className="p-4 font-semibold text-gray-700 text-sm text-center">Tiêu biểu</th> 
               <th className="p-4 font-semibold text-gray-700 text-sm text-center">Thao tác</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {projects.length === 0 ? (
-              <tr><td colSpan="5" className="p-8 text-center text-gray-500">Chưa có dự án nào</td></tr>
+              <tr><td colSpan="6" className="p-8 text-center text-gray-500">Chưa có dự án nào</td></tr> // Đổi colspan thành 6 vì có 6 cột
             ) : (
               projects.map(proj => (
                 <React.Fragment key={proj._id}>
                   {editingId === proj._id ? (
-                    // ================= KHU VỰC ĐANG CHỈNH SỬA (Mở rộng ra toàn bảng) =================
+                    // ================= KHU VỰC ĐANG CHỈNH SỬA =================
                     <tr className="bg-green-50/30">
-                      <td colSpan="5" className="p-6 border-2 border-green-400 rounded-lg">
+                      <td colSpan="6" className="p-6 border-2 border-green-400 rounded-lg">
                         <div className="space-y-6">
                           <h3 className="font-bold text-green-700 text-lg border-b border-green-200 pb-2">Đang chỉnh sửa: {proj.title}</h3>
                           
@@ -188,10 +174,13 @@ const ManageProject = () => {
                             </div>
                             <div>
                                 <label className="text-sm font-medium text-gray-700">Loại hình</label>
+                                {/* SỬA LỖI Ở ĐÂY: Thêm đầy đủ 5 option */}
                                 <select value={editForm.category} onChange={(e) => setEditForm({...editForm, category: e.target.value})} className="border rounded p-2 w-full text-sm outline-none focus:border-green-500 mt-1 bg-white">
-                                    <option value="Biệt thự">Biệt thự</option>
-                                    <option value="Nhà phố">Nhà phố</option>
                                     <option value="Nội thất">Nội thất</option>
+                                    <option value="Biệt thự">Biệt thự</option>
+                                    <option value="Căn hộ">Căn hộ</option>
+                                    <option value="Nhà phố">Nhà phố</option>
+                                    <option value="Công trình thực tế">Công trình thực tế</option>
                                 </select>
                             </div>
                             <div>
@@ -202,8 +191,6 @@ const ManageProject = () => {
 
                           {/* 2. Form Sửa Ảnh */}
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-gray-200">
-                            
-                            {/* Cột Ảnh Bìa */}
                             <div className="bg-white p-4 rounded-lg border shadow-sm">
                                 <label className="text-sm font-bold text-gray-700 mb-2 block">Ảnh Bìa (Main Image)</label>
                                 <div className="relative group">
@@ -218,7 +205,6 @@ const ManageProject = () => {
                                 </label>
                             </div>
 
-                            {/* Cột Album Ảnh */}
                             <div className="md:col-span-2 bg-white p-4 rounded-lg border shadow-sm">
                                 <div className="flex justify-between items-center mb-2">
                                     <label className="text-sm font-bold text-gray-700">Album Công Trình</label>
@@ -229,7 +215,6 @@ const ManageProject = () => {
                                 </div>
                                 
                                 <div className="grid grid-cols-4 lg:grid-cols-5 gap-2 max-h-40 overflow-y-auto pr-1">
-                                    {/* Danh sách ảnh cũ (đã up lên Cloudinary) */}
                                     {editForm.existingImages.map((imgUrl, index) => (
                                         <div key={`old-${index}`} className="relative group">
                                             <img src={imgUrl} alt="Old" className="w-full h-16 object-cover rounded border border-gray-300" />
@@ -237,7 +222,6 @@ const ManageProject = () => {
                                         </div>
                                     ))}
                                     
-                                    {/* Danh sách ảnh mới (File mới chọn từ máy tính) */}
                                     {editForm.newImageFiles.map((file, index) => (
                                         <div key={`new-${index}`} className="relative group">
                                             <img src={URL.createObjectURL(file)} alt="New" className="w-full h-16 object-cover rounded border-2 border-blue-400" />
@@ -248,7 +232,6 @@ const ManageProject = () => {
                                 </div>
                             </div>
                           </div>
-                          {/* 3. Nút Hành Động */}
                           <div className="flex justify-end gap-3 pt-4">
                               <button onClick={() => setEditingId(null)} className="bg-gray-400 text-white px-6 py-2 rounded font-medium hover:bg-gray-500 transition">Hủy bỏ</button>
                               <button onClick={() => handleSave(proj._id)} className="bg-green-600 text-white px-6 py-2 rounded font-medium hover:bg-green-700 transition shadow-lg">LƯU CẬP NHẬT</button>
@@ -265,17 +248,17 @@ const ManageProject = () => {
                       <td className="p-4 text-gray-800 font-medium">{proj.title}</td>
                       <td className="p-4 text-gray-600">{proj.category}</td>
                       <td className="p-4 text-gray-600">{proj.info?.location || '-'}</td>
+                      <td className="p-4 text-center">
+                        {/* SỬA LỖI Ở ĐÂY: Xóa bớt thẻ <td> thừa */}
+                        <button 
+                          onClick={() => handleToggleFeature(proj._id)}
+                          className={`text-2xl transition-transform hover:scale-125 ${proj.isFeatured ? 'text-yellow-400 drop-shadow-md' : 'text-gray-300 hover:text-yellow-200'}`}
+                          title={proj.isFeatured ? "Bỏ ghim tiêu biểu" : "Ghim làm tiêu biểu"}
+                        >
+                          ★
+                        </button>
+                      </td>
                       <td className="p-4">
-                        {/* THÊM CỘT HIỂN THỊ NGÔI SAO Ở ĐÂY */}
-                  <td className="p-4 text-center">
-                    <button 
-                      onClick={() => handleToggleFeature(proj._id)}
-                      className={`text-2xl transition-transform hover:scale-125 ${proj.isFeatured ? 'text-yellow-400 drop-shadow-md' : 'text-gray-300 hover:text-yellow-200'}`}
-                      title={proj.isFeatured ? "Bỏ ghim tiêu biểu" : "Ghim làm tiêu biểu"}
-                    >
-                      ★
-                    </button>
-                  </td>
                         <div className="flex justify-center gap-2">
                           <button onClick={() => handleEdit(proj)} className="bg-blue-50 text-blue-600 px-3 py-1.5 rounded hover:bg-blue-100 text-sm font-medium">Sửa</button>
                           <button onClick={() => handleDelete(proj._id)} className="bg-red-50 text-red-600 px-3 py-1.5 rounded hover:bg-red-100 text-sm font-medium">Xóa</button>
