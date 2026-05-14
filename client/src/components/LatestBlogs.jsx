@@ -1,6 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+// HÀM TẠO URL CHUẨN SEO (giống News.jsx)
+const generateSlug = (text) => {
+  if (!text) return '';
+  return text.toString().toLowerCase()
+    .replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ặ|ẵ|â|ấ|ầ|ẩ|ậ|ẫ/g, "a")
+    .replace(/é|è|ẻ|ẹ|ẽ|ê|ế|ề|ể|ệ|ễ/g, "e")
+    .replace(/i|í|ì|ỉ|ị|ĩ/g, "i")
+    .replace(/ó|ò|ỏ|ọ|õ|ô|ố|ồ|ổ|ộ|ỗ|ơ|ớ|ờ|ở|ợ|ỡ/g, "o")
+    .replace(/ú|ù|ủ|ụ|ũ|ư|ứ|ừ|ử|ự|ữ/g, "u")
+    .replace(/ý|ỳ|ỷ|ỵ|ỹ/g, "y")
+    .replace(/đ/g, "d")
+    .replace(/([^0-9a-z-\s])/g, '')
+    .replace(/(\s+)/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+};
+
 // HÀM LÀM SẠCH MÃ HTML TỪ DATABASE THÀNH TEXT THƯỜNG
 const stripHtml = (html) => {
   if (!html) return '';
@@ -82,7 +99,7 @@ const LatestBlogs = () => {
               {featuredBlog && (
                 <div className="col-span-2 flex flex-col h-full bg-white rounded-md md:rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group">
                   {/* PHẦN ẢNH */}
-                  <Link to={`/tin-tuc/${featuredBlog._id}`} className="block relative aspect-[4/3] md:aspect-[16/10] overflow-hidden shrink-0">
+                  <Link to={`/tin-tuc/${generateSlug(featuredBlog.title)}-${featuredBlog._id}`} className="block relative aspect-[4/3] md:aspect-[16/10] overflow-hidden shrink-0">
                     <img
                       src={featuredBlog.imageUrl}
                       alt={featuredBlog.title}
@@ -101,7 +118,7 @@ const LatestBlogs = () => {
                     </p>
 
                     {/* Tiêu đề */}
-                    <Link to={`/tin-tuc/${featuredBlog._id}`} className="shrink-0">
+                    <Link to={`/tin-tuc/${generateSlug(featuredBlog.title)}-${featuredBlog._id}`} className="shrink-0">
                       <h3 className="text-sm sm:text-base md:text-2xl lg:text-3xl font-bold text-gray-900 group-hover:text-green-600 transition-colors duration-300 line-clamp-2 leading-snug md:mb-3">
                         {featuredBlog.title}
                       </h3>
@@ -119,7 +136,7 @@ const LatestBlogs = () => {
                     {/* Nút Đọc tiếp */}
                     <div className="mt-4 pt-3 md:pt-4 border-t border-gray-100 flex shrink-0">
                       <Link
-                        to={`/tin-tuc/${featuredBlog._id}`}
+                        to={`/tin-tuc/${generateSlug(featuredBlog.title)}-${featuredBlog._id}`}
                         className="inline-flex items-center gap-1 text-[10px] sm:text-xs md:text-sm font-bold text-green-600 uppercase tracking-widest hover:text-green-700 transition-colors"
                       >
                         Đọc tiếp
@@ -141,7 +158,7 @@ const LatestBlogs = () => {
                   <div className="flex flex-col gap-2 md:gap-4 flex-1">
                     {recentBlogs.map(blog => (
                       <Link
-                        to={`/tin-tuc/${blog._id}`}
+                        to={`/tin-tuc/${generateSlug(blog.title)}-${blog._id}`}
                         key={blog._id}
                         className="group flex flex-col sm:flex-row gap-1.5 md:gap-3 lg:gap-4 bg-white rounded md:rounded-lg p-1.5 sm:p-2 md:p-3 hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-gray-200 h-full"
                       >

@@ -91,8 +91,8 @@ const News = () => {
               onClick={() => setActiveCategory(cat)}
               // TỐI ƯU: Nút bộ lọc nhỏ hơn trên mobile
               className={`px-3 py-1.5 md:px-5 md:py-2 text-[10px] md:text-sm font-bold uppercase tracking-widest transition-all duration-300 border rounded-full ${activeCategory === cat
-                  ? 'bg-black text-white border-black shadow-lg'
-                  : 'bg-white text-gray-500 border-gray-200 hover:border-black hover:text-black'
+                ? 'bg-black text-white border-black shadow-lg'
+                : 'bg-white text-gray-500 border-gray-200 hover:border-black hover:text-black'
                 }`}
             >
               {cat}

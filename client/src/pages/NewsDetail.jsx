@@ -2,8 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
+// HÀM TẠO URL CHUẨN SEO
+const generateSlug = (text) => {
+  if (!text) return '';
+  return text.toString().toLowerCase()
+    .replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ặ|ẵ|â|ấ|ầ|ẩ|ậ|ẫ/g, "a")
+    .replace(/é|è|ẻ|ẹ|ẽ|ê|ế|ề|ể|ệ|ễ/g, "e")
+    .replace(/i|í|ì|ỉ|ị|ĩ/g, "i")
+    .replace(/ó|ò|ỏ|ọ|õ|ô|ố|ồ|ổ|ộ|ỗ|ơ|ớ|ờ|ở|ợ|ỡ/g, "o")
+    .replace(/ú|ù|ủ|ụ|ũ|ư|ứ|ừ|ử|ự|ữ/g, "u")
+    .replace(/ý|ỳ|ỷ|ỵ|ỹ/g, "y")
+    .replace(/đ/g, "d")
+    .replace(/([^0-9a-z-\s])/g, '')
+    .replace(/(\s+)/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+};
+
 const NewsDetail = () => {
-  const { id } = useParams();
+  const { id: slug } = useParams();
   const [blog, setBlog] = useState(null);
   const [recentBlogs, setRecentBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,14 +49,17 @@ const NewsDetail = () => {
         const data = await res.json();
 
         if (data.success) {
-          const current = data.blogs.find(b => b._id === id);
+          // TÌM BÀI VIẾT: So khớp _id trực tiếp HOẶC kiểm tra URL kết thúc bằng _id
+          // - Từ trang chủ: slug = "682456abc123" (chỉ _id) → khớp điều kiện 1
+          // - Từ trang News: slug = "ten-bai-viet-682456abc123" (slug-_id) → khớp điều kiện 2
+          const current = data.blogs.find(b => b._id === slug || slug.endsWith(b._id));
           if (current) {
             current.date = new Date(current.createdAt).toLocaleDateString('vi-VN');
             setBlog(current);
           }
 
           const recents = data.blogs
-            .filter(b => b._id !== id)
+            .filter(b => !current || b._id !== current._id)
             .slice(0, 5)
             .map(b => ({
               ...b,
@@ -51,11 +71,11 @@ const NewsDetail = () => {
       finally { setLoading(false); }
     };
 
-    if (id) {
+    if (slug) {
       fetchBlogData();
       window.scrollTo(0, 0);
     }
-  }, [id]);
+  }, [slug]);
 
   // LOGIC: BÓC TÁCH MỤC LỤC & CẤY ID VĨNH VIỄN
   useEffect(() => {
@@ -245,7 +265,7 @@ const NewsDetail = () => {
                   <p className="text-xs md:text-sm text-gray-500 italic text-center">Chưa có bài viết khác.</p>
                 ) : (
                   recentBlogs.map(item => (
-                    <Link to={`/tin-tuc/${item._id}`} key={item._id} className="group flex gap-3 md:gap-4 items-start border-b border-gray-50 pb-3 md:pb-0 md:border-none last:border-none">
+                    <Link to={`/tin-tuc/${generateSlug(item.title)}-${item._id}`} key={item._id} className="group flex gap-3 md:gap-4 items-start border-b border-gray-50 pb-3 md:pb-0 md:border-none last:border-none">
                       <div className="w-20 h-16 md:w-24 md:h-20 shrink-0 overflow-hidden rounded border border-gray-100">
                         <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                       </div>
