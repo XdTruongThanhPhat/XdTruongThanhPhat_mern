@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import toast from 'react-hot-toast'; // Bổ sung thư viện thông báo
+import { Helmet } from 'react-helmet-async';
+import { generateSlug } from '../utils/slugify';
 
 const ProjectDetail = () => {
   const { id } = useParams(); // Lấy ID công trình từ URL
+
+  // Trích xuất MongoDB ObjectId thật từ slug (vd: "ten-ct-69fb0b..." → "69fb0b...")
+  const realId = (() => {
+    const match = id?.match(/([a-f0-9]{24})$/i);
+    return match ? match[1] : id;
+  })();
 
   // ==========================================
   // STATE LƯU TRỮ DỮ LIỆU TỪ BACKEND
@@ -28,8 +36,8 @@ const ProjectDetail = () => {
         const projData = await projRes.json();
 
         if (projData.success) {
-          // Tìm dự án hiện tại
-          const currentProject = projData.projects.find(p => p._id === id);
+          // Tìm dự án hiện tại dùng realId (ObjectId thuần)
+          const currentProject = projData.projects.find(p => p._id === realId);
           if (currentProject) {
             setProjectData(currentProject);
             setMainImage(currentProject.mainImage);
@@ -40,12 +48,12 @@ const ProjectDetail = () => {
           }
 
           // Lọc ra các dự án liên quan (Khác ID hiện tại, lấy tối đa 4-8 cái)
-          const related = projData.projects.filter(p => p._id !== id).slice(0, 8);
+          const related = projData.projects.filter(p => p._id !== realId).slice(0, 8);
           setRelatedProjects(related);
         }
 
         // 2. Fetch bài viết chi tiết (Content) của dự án này
-        const contentRes = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/content/${id}`);
+        const contentRes = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/content/${realId}`);
         const contentData = await contentRes.json();
 
         if (contentData.success && contentData.content) {
@@ -61,7 +69,7 @@ const ProjectDetail = () => {
       }
     };
 
-    if (id) {
+    if (realId) {
       fetchProjectDetails();
       // Scroll lên đầu trang khi chuyển đổi giữa các dự án
       window.scrollTo(0, 0); 
@@ -150,6 +158,12 @@ const ProjectDetail = () => {
 
   return (
     <>
+      <Helmet>
+        <title>{projectData.title} | Trường Thành Phát</title>
+        <meta name="description" content={`Dự án: ${projectData.title} tại ${projectData.info?.location || 'đang cập nhật'}. Khám phá thiết kế và quá trình thi công chi tiết.`} />
+        <meta property="og:title" content={projectData.title} />
+        {mainImage && <meta property="og:image" content={mainImage} />}
+      </Helmet>
       <section className="pt-32 pb-16 bg-gray-50 min-h-screen relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
@@ -332,7 +346,7 @@ const ProjectDetail = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {relatedProjects.map((item) => (
                   <Link 
-                    to={`/hang-muc/cong-trinh-chi-tiet/${item._id}`} // Dùng item._id của MongoDB
+                    to={`/hang-muc/cong-trinh-chi-tiet/${generateSlug(item.title)}-${item._id}`} // Dùng slug + _id để SEO
                     key={item._id}
                     className="group block rounded-sm overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
                   >

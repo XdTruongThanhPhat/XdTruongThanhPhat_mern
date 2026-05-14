@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import { generateSlug } from '../utils/slugify';
 
 const CategoryProject = () => {
   // 1. CHUẨN HÓA BẢN ĐỒ ÁNH XẠ ĐÚNG 5 MỤC
   const categoryMap = [
     { name: "Tất cả", slug: "" },
     { name: "Nội thất", slug: "noi-that" },
-    { name: "Biệt thự", slug: "biet-thu" }, // Đã thay Nhà ở thành Biệt thự
+    { name: "Biệt thự", slug: "biet-thu" },
     { name: "Căn hộ", slug: "can-ho" },
     { name: "Nhà phố", slug: "nha-pho" },
     { name: "Công trình thực tế", slug: "cong-trinh-thuc-te" }
@@ -68,23 +69,6 @@ const CategoryProject = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage, activeTab]);
 
-  // HÀM TẠO SLUG CHO URL (Chuẩn như ở ProjectDetail)
-  const generateSlug = (text) => {
-    if (!text) return '';
-    return text.toString().toLowerCase()
-      .replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ặ|ẵ|â|ấ|ầ|ẩ|ậ|ẫ/g, "a")
-      .replace(/é|è|ẻ|ẹ|ẽ|ê|ế|ề|ể|ệ|ễ/g, "e")
-      .replace(/i|í|ì|ỉ|ị|ĩ/g, "i")
-      .replace(/ó|ò|ỏ|ọ|õ|ô|ố|ồ|ổ|ộ|ỗ|ơ|ớ|ờ|ở|ợ|ỡ/g, "o")
-      .replace(/ú|ù|ủ|ụ|ũ|ư|ứ|ừ|ử|ự|ữ/g, "u")
-      .replace(/ý|ỳ|ỷ|ỵ|ỹ/g, "y")
-      .replace(/đ/g, "d")
-      .replace(/([^0-9a-z-\s])/g, '')
-      .replace(/(\s+)/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-+|-+$/g, '');
-  };
-
   return (
     <section className="pt-24 md:pt-32 pb-10 md:pb-16 bg-white min-h-screen">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
@@ -117,7 +101,7 @@ const CategoryProject = () => {
             ) : (
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 relative z-0">
                 {currentProjects.map((project) => (
-                    // Áp dụng Slug lai ID cho đường dẫn
+                    // CẬP NHẬT LẠI URL BAO GỒM SLUG VÀ ID ĐỂ TỐI ƯU SEO
                     <Link 
                       to={`/hang-muc/cong-trinh-chi-tiet/${generateSlug(project.title)}-${project._id}`} 
                       key={project._id}

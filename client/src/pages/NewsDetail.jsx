@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import toast from 'react-hot-toast'; 
+import toast from 'react-hot-toast';
 
 const NewsDetail = () => {
   const { id } = useParams();
   const [blog, setBlog] = useState(null);
   const [recentBlogs, setRecentBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   // STATE: TOC VÀ NỘI DUNG ĐÃ GẮN ID VĨNH VIỄN
   const [toc, setToc] = useState([]);
   const [showToc, setShowToc] = useState(true);
@@ -28,16 +28,16 @@ const NewsDetail = () => {
     const fetchBlogData = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/blogs`); 
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/blogs`);
         const data = await res.json();
-        
+
         if (data.success) {
           const current = data.blogs.find(b => b._id === id);
           if (current) {
             current.date = new Date(current.createdAt).toLocaleDateString('vi-VN');
             setBlog(current);
           }
-          
+
           const recents = data.blogs
             .filter(b => b._id !== id)
             .slice(0, 5)
@@ -47,13 +47,13 @@ const NewsDetail = () => {
             }));
           setRecentBlogs(recents);
         }
-      } catch (error) { console.error("Lỗi:", error); } 
+      } catch (error) { console.error("Lỗi:", error); }
       finally { setLoading(false); }
     };
 
     if (id) {
       fetchBlogData();
-      window.scrollTo(0, 0); 
+      window.scrollTo(0, 0);
     }
   }, [id]);
 
@@ -65,11 +65,11 @@ const NewsDetail = () => {
 
       const newContent = blog.content.replace(/<(h[23])(.*?)>(.*?)<\/\1>/gi, (match, tag, attributes, innerText) => {
         const id = `heading-${headingIndex++}`;
-        
+
         const cleanText = innerText
-            .replace(/<[^>]*>?/gm, '')
-            .replace(/&nbsp;/gi, ' ')
-            .trim();
+          .replace(/<[^>]*>?/gm, '')
+          .replace(/&nbsp;/gi, ' ')
+          .trim();
 
         tocItems.push({
           id: id,
@@ -89,7 +89,7 @@ const NewsDetail = () => {
   const scrollToHeading = (headingId) => {
     const element = document.getElementById(headingId);
     if (element) {
-      const yOffset = -100; 
+      const yOffset = -100;
       const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
       window.scrollTo({ top: y, behavior: "smooth" });
     }
@@ -120,12 +120,12 @@ const NewsDetail = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      
+
       const data = await res.json();
 
       if (data.success) {
-        toast.success("Gửi thành công! TTP Architect sẽ liên hệ lại sớm nhất.", { id: toastId });
-        setFormData({ name: '', phone: '', email: '', content: '' }); 
+        toast.success("Gửi thành công!Cảm ơn bạn đã quan tâm đến sản phẩm và dịch vụ của TTP Architect. Chúng tôi sẽ liên hệ lại sớm nhất.", { id: toastId });
+        setFormData({ name: '', phone: '', email: '', content: '' });
       } else {
         toast.error("Có lỗi xảy ra, vui lòng thử lại sau.", { id: toastId });
       }
@@ -144,7 +144,7 @@ const NewsDetail = () => {
     <section className="pt-24 md:pt-32 pb-10 md:pb-20 bg-gray-50 min-h-screen relative">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-6 md:gap-10">
-          
+
           {/* CỘT TRÁI: NỘI DUNG */}
           <div className="w-full lg:w-2/3 xl:w-3/4 min-w-0 bg-white p-4 md:p-10 rounded-lg md:rounded-xl shadow-sm border border-gray-100">
             {/* Header bài viết */}
@@ -156,9 +156,9 @@ const NewsDetail = () => {
                 {blog.title}
               </h1>
               <div className="flex flex-wrap items-center text-xs md:text-sm text-gray-500 font-medium">
-                <span className="flex items-center gap-1"><svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg> {blog.date}</span>
+                <span className="flex items-center gap-1"><svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> {blog.date}</span>
                 <span className="mx-2 md:mx-3">•</span>
-                <span className="flex items-center gap-1"><svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg> {blog.author}</span>
+                <span className="flex items-center gap-1"><svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg> {blog.author}</span>
               </div>
             </div>
 
@@ -172,7 +172,7 @@ const NewsDetail = () => {
               <div className="mb-8 bg-gray-50 border border-gray-200 rounded-lg p-5">
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="font-bold text-lg text-black uppercase">Nội dung chính</h3>
-                  <button 
+                  <button
                     onClick={() => setShowToc(!showToc)}
                     className="text-sm font-bold text-green-600 hover:text-green-800"
                   >
@@ -182,9 +182,9 @@ const NewsDetail = () => {
                 {showToc && (
                   <ul className="space-y-2 text-gray-700">
                     {toc.map((item) => (
-                      <li 
-                        key={item.id} 
-                        className={`cursor-pointer hover:text-green-600 transition-colors flex items-start gap-2 ${item.level === 'h3' ? 'ml-6 text-sm' : 'font-medium mt-3 text-base'}`} 
+                      <li
+                        key={item.id}
+                        className={`cursor-pointer hover:text-green-600 transition-colors flex items-start gap-2 ${item.level === 'h3' ? 'ml-6 text-sm' : 'font-medium mt-3 text-base'}`}
                         onClick={() => scrollToHeading(item.id)}
                       >
                         {item.level === 'h2' && <span className="text-green-500 mt-1">▪</span>}
@@ -198,13 +198,13 @@ const NewsDetail = () => {
             )}
 
             {/* NỘI DUNG CHI TIẾT HTML */}
-            <div 
+            <div
               className="blog-content text-gray-700 text-sm md:text-lg leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: blogContentWithIds || blog?.content }} 
+              dangerouslySetInnerHTML={{ __html: blogContentWithIds || blog?.content }}
             />
-            
+
             <div className="mt-8 md:mt-10 pt-4 md:pt-6 border-t border-gray-100 flex items-center justify-between">
-               <span className="font-bold text-black text-sm md:text-base">Chia sẻ bài viết:</span>
+              <span className="font-bold text-black text-sm md:text-base">Chia sẻ bài viết:</span>
             </div>
 
             {/* ==========================================
@@ -221,10 +221,10 @@ const NewsDetail = () => {
               </div>
               <form onSubmit={handleContactSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <input required type="text" placeholder="Họ và tên *" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-md outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all text-sm"/>
-                  <input required type="tel" placeholder="Số điện thoại *" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-md outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all text-sm"/>
+                  <input required type="text" placeholder="Họ và tên *" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-md outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all text-sm" />
+                  <input required type="tel" placeholder="Số điện thoại *" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-md outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all text-sm" />
                 </div>
-                <textarea required rows="3" placeholder="Ghi chú yêu cầu của bạn (Diện tích, phong cách, số tầng...)" value={formData.content} onChange={(e) => setFormData({...formData, content: e.target.value})} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-md outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all text-sm resize-none"></textarea>
+                <textarea required rows="3" placeholder="Ghi chú yêu cầu của bạn (Diện tích, phong cách, số tầng...)" value={formData.content} onChange={(e) => setFormData({ ...formData, content: e.target.value })} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-md outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all text-sm resize-none"></textarea>
                 <button type="submit" disabled={isSubmitting} className={`w-full text-white font-bold uppercase tracking-widest py-3 rounded-md shadow-md transition-colors duration-300 text-sm ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-black'}`}>
                   {isSubmitting ? 'Đang gửi yêu cầu...' : 'Gửi yêu cầu tư vấn ngay'}
                 </button>
@@ -239,7 +239,7 @@ const NewsDetail = () => {
               <div className="bg-[#1A1A1A] text-center py-3 md:py-4 border-b-2 border-green-500">
                 <h3 className="text-white text-sm md:text-lg font-bold uppercase tracking-wider">Bài viết mới nhất</h3>
               </div>
-              
+
               <div className="p-3 md:p-5 flex flex-col gap-4 md:gap-6">
                 {recentBlogs.length === 0 ? (
                   <p className="text-xs md:text-sm text-gray-500 italic text-center">Chưa có bài viết khác.</p>
@@ -261,11 +261,12 @@ const NewsDetail = () => {
               </div>
             </div>
           </div>
-          
+
         </div>
       </div>
-      
-      <style dangerouslySetInnerHTML={{__html: `
+
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .blog-content { word-break: break-word; overflow-wrap: break-word; }
         
         .blog-content h1 { font-size: 2rem; font-weight: bold; margin-top: 2rem; margin-bottom: 1rem; color: #111827; line-height: 1.2; }

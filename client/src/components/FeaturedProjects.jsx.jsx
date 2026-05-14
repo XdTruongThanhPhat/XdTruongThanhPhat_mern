@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { generateSlug } from '../utils/slugify';
 
 const FeaturedProjects = () => {
   const [projects, setProjects] = useState([]);
@@ -96,7 +97,7 @@ const FeaturedProjects = () => {
                   {/* TỐI ƯU: Nút Khám phá thu nhỏ trên mobile */}
                   <div className="mt-3 md:mt-5 pt-2 md:pt-4 border-t border-gray-100 flex items-center justify-between shrink-0">
                     <Link 
-                      to={`/hang-muc/cong-trinh-chi-tiet/${project.id}`} 
+                      to={`/hang-muc/cong-trinh-chi-tiet/${generateSlug(project.title)}-${project.id}`} 
                       className="text-[10px] md:text-sm font-semibold text-gray-500 group-hover:text-green-500 flex items-center gap-1 md:gap-2 transition-colors uppercase tracking-wide"
                     >
                       Khám phá

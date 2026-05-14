@@ -17,12 +17,12 @@ const PORT = process.env.PORT || 5000;
 
 // CORS - cho phép domain từ biến môi trường
 const allowedOrigins = [
-  process.env.CLIENT_URL,              // https://hoangitk.io.vn
-  process.env.ADMIN_URL,               // https://admin.hoangitk.io.vn
-  "http://hoangitk.io.vn",            // HTTP fallback
-  "http://www.hoangitk.io.vn",
-  "https://www.hoangitk.io.vn",
-  "http://admin.hoangitk.io.vn",
+  process.env.CLIENT_URL,              // https://truongthanhphatdn.vn
+  process.env.ADMIN_URL,               // https://admin.truongthanhphatdn.vn
+  "http://truongthanhphatdn.vn",            // HTTP fallback
+  "http://www.truongthanhphatdn.vn",
+  "https://www.truongthanhphatdn.vn",
+  "http://admin.truongthanhphatdn.vn",
   "http://localhost:3000",
   "http://localhost:3001",
 ].filter(Boolean); // loại bỏ giá trị undefined

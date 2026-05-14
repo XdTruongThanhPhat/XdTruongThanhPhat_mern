@@ -6,11 +6,11 @@ const Footer = () => {
     // TỐI ƯU: Giảm padding top/bottom trên mobile (pt-10, pb-6)
     <footer className="bg-black text-white pt-10 md:pt-16 pb-6 md:pb-8 border-t-4 border-green-500 mt-5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* GRID LAYOUT - 4 CỘT TRÊN PC */}
         {/* TỐI ƯU: Giảm gap và margin bottom trên mobile */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 mb-8 md:mb-12">
-          
+
           {/* CỘT 1: GIỚI THIỆU */}
           <div className="space-y-3 md:space-y-4">
             {/* TỐI ƯU: Thu nhỏ text tiêu đề trên mobile (text-base) */}
@@ -26,9 +26,9 @@ const Footer = () => {
             <div className="flex space-x-3 md:space-x-4 pt-2">
               {/* Facebook */}
               {/* TỐI ƯU: Thu nhỏ nút tròn (w-8 h-8) và icon (w-4 h-4) */}
-              <a 
-                href="https://www.facebook.com/XDTRUONGTHANHPHAT" 
-                target="_blank" 
+              <a
+                href="https://www.facebook.com/XDTRUONGTHANHPHAT"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-green-500 hover:text-white transition-colors duration-300"
               >
@@ -38,9 +38,9 @@ const Footer = () => {
               </a>
 
               {/* Zalo */}
-              <a 
-                href="https://zalo.me/0912877908" 
-                target="_blank" 
+              <a
+                href="https://zalo.me/0912877908"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-green-500 hover:text-white transition-colors duration-300"
               >
@@ -85,7 +85,7 @@ const Footer = () => {
                 <svg className="w-4 h-4 md:w-5 md:h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <span>Email: Xdtruongthanhphat@gmail.com</span>
+                <span>Email: xdtruongthanhphat@gmail.com</span>
               </li>
             </ul>
           </div>
@@ -96,13 +96,13 @@ const Footer = () => {
             <div className="w-6 md:w-8 h-1 bg-green-500 mb-4 md:mb-6"></div>
             {/* TỐI ƯU: Giảm chiều cao bản đồ trên mobile (h-40) */}
             <div className="w-full h-40 md:h-56 rounded-md overflow-hidden border border-gray-800 shadow-sm relative group">
-              <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d338.9732422958237!2d108.22584900910367!3d16.01120131272239!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31421b1469409ea3%3A0xa0dc072d6c67fbdf!2zQ8O0bmcgVHkgS2nhur9uIFRyw7pjIC0gWMOieSBE4buxbmcgLSBO4buZaSBUaOG6pXQgVHLGsOG7nW5nIFRow6BuaCBQaMOhdA!5e0!3m2!1svi!2s!4v1776498577228!5m2!1svi!2s" 
-                width="100%" 
-                height="100%" 
-                style={{ border: 0 }} 
-                allowFullScreen="" 
-                loading="lazy" 
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d338.9732422958237!2d108.22584900910367!3d16.01120131272239!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31421b1469409ea3%3A0xa0dc072d6c67fbdf!2zQ8O0bmcgVHkgS2nhur9uIFRyw7pjIC0gWMOieSBE4buxbmcgLSBO4buZaSBUaOG6pXQgVHLGsOG7nW5nIFRow6BuaCBQaMOhdA!5e0!3m2!1svi!2s!4v1776498577228!5m2!1svi!2s"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen=""
+                loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 className="grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
               ></iframe>

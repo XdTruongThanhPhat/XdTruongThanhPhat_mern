@@ -1,6 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+// HÀM TẠO URL CHUẨN SEO
+const generateSlug = (text) => {
+  if (!text) return '';
+  return text.toString().toLowerCase()
+    .replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ặ|ẵ|â|ấ|ầ|ẩ|ậ|ẫ/g, "a")
+    .replace(/é|è|ẻ|ẹ|ẽ|ê|ế|ề|ể|ệ|ễ/g, "e")
+    .replace(/i|í|ì|ỉ|ị|ĩ/g, "i")
+    .replace(/ó|ò|ỏ|ọ|õ|ô|ố|ồ|ổ|ộ|ỗ|ơ|ớ|ờ|ở|ợ|ỡ/g, "o")
+    .replace(/ú|ù|ủ|ụ|ũ|ư|ứ|ừ|ử|ự|ữ/g, "u")
+    .replace(/ý|ỳ|ỷ|ỵ|ỹ/g, "y")
+    .replace(/đ/g, "d")
+    .replace(/([^0-9a-z-\s])/g, '')
+    .replace(/(\s+)/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+};
+
+// HÀM LÀM SẠCH MÃ HTML TỪ DATABASE THÀNH TEXT THƯỜNG
+const stripHtml = (html) => {
+  if (!html) return '';
+  return html
+    .replace(/<[^>]*>?/gm, '') // Xóa tất cả các thẻ HTML (<p>, <img>, <strong>...)
+    .replace(/&nbsp;/gi, ' ')  // Biến &nbsp; thành khoảng trắng bình thường
+    .replace(/&amp;/gi, '&')
+    .replace(/&quot;/gi, '"')
+    .trim();
+};
+
 const News = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,8 +61,8 @@ const News = () => {
   }, []);
 
   // Lọc bài viết
-  const filteredBlogs = activeCategory === "Tất cả" 
-    ? blogs 
+  const filteredBlogs = activeCategory === "Tất cả"
+    ? blogs
     : blogs.filter(b => b.category === activeCategory);
 
   if (loading) {
@@ -45,7 +73,7 @@ const News = () => {
     // TỐI ƯU: Giảm padding Top/Bottom trên mobile (pt-24 pb-10)
     <section className="pt-24 md:pt-32 pb-10 md:pb-20 bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        
+
         {/* TIÊU ĐỀ */}
         <div className="text-center mb-8 md:mb-12">
           {/* TỐI ƯU: Thu nhỏ text tiêu đề */}
@@ -62,11 +90,10 @@ const News = () => {
               key={idx}
               onClick={() => setActiveCategory(cat)}
               // TỐI ƯU: Nút bộ lọc nhỏ hơn trên mobile
-              className={`px-3 py-1.5 md:px-5 md:py-2 text-[10px] md:text-sm font-bold uppercase tracking-widest transition-all duration-300 border rounded-full ${
-                activeCategory === cat 
-                ? 'bg-black text-white border-black shadow-lg' 
-                : 'bg-white text-gray-500 border-gray-200 hover:border-black hover:text-black'
-              }`}
+              className={`px-3 py-1.5 md:px-5 md:py-2 text-[10px] md:text-sm font-bold uppercase tracking-widest transition-all duration-300 border rounded-full ${activeCategory === cat
+                  ? 'bg-black text-white border-black shadow-lg'
+                  : 'bg-white text-gray-500 border-gray-200 hover:border-black hover:text-black'
+                }`}
             >
               {cat}
             </button>
@@ -80,7 +107,11 @@ const News = () => {
           // TỐI ƯU: Ép 2 cột trên mobile (grid-cols-2), 3 cột trên PC (lg:grid-cols-3)
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8">
             {filteredBlogs.map(blog => (
-              <Link to={`/tin-tuc/${blog._id}`} key={blog._id} className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full border border-gray-100">
+              <Link
+                to={`/tin-tuc/${generateSlug(blog.title)}-${blog._id}`}
+                key={blog._id}
+                className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full border border-gray-100"
+              >
                 <div className="relative aspect-[16/10] overflow-hidden shrink-0">
                   <img src={blog.imageUrl} alt={blog.title} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
                   {/* TỐI ƯU: Tag danh mục nhỏ hơn */}
@@ -88,7 +119,7 @@ const News = () => {
                     {blog.category}
                   </div>
                 </div>
-                
+
                 {/* TỐI ƯU: Giảm padding bên trong box bài viết (p-3 thay vì p-6) */}
                 <div className="p-3 md:p-6 flex-1 flex flex-col justify-between">
                   <div>
@@ -100,16 +131,17 @@ const News = () => {
                     <h3 className="text-xs md:text-lg font-bold text-gray-900 group-hover:text-green-600 transition-colors line-clamp-2 md:line-clamp-2 leading-snug mb-1.5 md:mb-3">
                       {blog.title}
                     </h3>
-                    {/* TỐI ƯU: Thu nhỏ Nội dung tóm tắt, giảm xuống 2 dòng trên mobile */}
+
+                    {/* ĐÃ FIX: Sử dụng hàm stripHtml để hiển thị văn bản thường, loại bỏ mã code HTML */}
                     <p className="text-gray-600 text-[10px] md:text-sm line-clamp-2 md:line-clamp-3 leading-relaxed">
-                      {blog.content}
+                      {blog.content ? stripHtml(blog.content) : ""}
                     </p>
                   </div>
-                  
+
                   {/* TỐI ƯU: Thu nhỏ nút Đọc tiếp */}
                   <div className="mt-3 md:mt-5 pt-2 md:pt-4 border-t border-gray-50 shrink-0">
                     <span className="text-[10px] md:text-sm font-bold text-black uppercase tracking-wider group-hover:text-green-500 transition-colors flex items-center gap-1 md:gap-2">
-                      Đọc tiếp <svg className="w-3 h-3 md:w-4 md:h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                      Đọc tiếp <svg className="w-3 h-3 md:w-4 md:h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                     </span>
                   </div>
                 </div>

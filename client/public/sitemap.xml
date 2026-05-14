@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Trang chủ -->
+  <url>
+    <loc>https://truongthanhphatdn.vn/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- Trang Hạng mục công trình -->
+  <url>
+    <loc>https://truongthanhphatdn.vn/hang-muc-cong-trinh</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Trang Báo giá -->
+  <url>
+    <loc>https://truongthanhphatdn.vn/bao-gia</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Trang Liên hệ -->
+  <url>
+    <loc>https://truongthanhphatdn.vn/lien-he</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Trang Về TTP -->
+  <url>
+    <loc>https://truongthanhphatdn.vn/ve-ttp</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Trang Đội ngũ nhân sự -->
+  <url>
+    <loc>https://truongthanhphatdn.vn/ve-ttp/doi-ngu-nhan-su</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Trang Tin tức -->
+  <url>
+    <loc>https://truongthanhphatdn.vn/tin-tuc</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>
