@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://truongthanhphatdn.vn/sitemap.xml
+Sitemap: https://truongthanhphatdn.vn/api/sitemap.xml

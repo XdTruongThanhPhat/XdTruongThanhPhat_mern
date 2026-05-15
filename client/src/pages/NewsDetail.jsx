@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
 
 // HÀM TẠO URL CHUẨN SEO
@@ -162,6 +163,11 @@ const NewsDetail = () => {
 
   return (
     <section className="pt-24 md:pt-32 pb-10 md:pb-20 bg-gray-50 min-h-screen relative">
+      <Helmet>
+        <title>{blog.title} | Trường Thành Phát</title>
+        <meta name="description" content={blog.title + " - Cập nhật kiến thức và xu hướng mới nhất từ Trường Thành Phát."} />
+        {blog.imageUrl && <meta property="og:image" content={blog.imageUrl} />}
+      </Helmet>
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-6 md:gap-10">
 

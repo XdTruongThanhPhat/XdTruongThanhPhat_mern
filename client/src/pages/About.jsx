@@ -1,10 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 const About = () => {
   return (
     // TỐI ƯU: Giảm padding Top/Bottom trên mobile (pt-24 pb-10)
     <section className="pt-24 md:pt-32 pb-10 md:pb-16 bg-white min-h-screen">
+      <Helmet>
+        <title>Về Trường Thành Phát | Kiến Trúc &amp; Xây Dựng</title>
+        <meta name="description" content="Tìm hiểu về Trường Thành Phát - đơn vị thiết kế kiến trúc và xây dựng uy tín chuyên nghiệp tại Đà Nẵng" />
+        <link rel="canonical" href="https://truongthanhphatdn.vn/ve-ttp" />
+      </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* BANNER ẢNH TẬP THỂ */}

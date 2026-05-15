@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast'; // Bổ sung thư viện thông báo
+import { Helmet } from 'react-helmet-async';
 
 const Contact = () => {
   // ==========================================
@@ -54,6 +55,11 @@ const Contact = () => {
 
   return (
     <section className="min-h-screen bg-white">
+      <Helmet>
+        <title>Liên Hệ | Trường Thành Phát</title>
+        <meta name="description" content="Liên hệ Trường Thành Phát để được tư vấn thiết kế và thi công xây dựng chuyên nghiệp tại Đà Nẵng" />
+        <link rel="canonical" href="https://truongthanhphatdn.vn/lien-he" />
+      </Helmet>
       
       {/* ==========================================
           PHẦN 1: HERO BANNER (ĐÃ TỐI ƯU MOBILE)

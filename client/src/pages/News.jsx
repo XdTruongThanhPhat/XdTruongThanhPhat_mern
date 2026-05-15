@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 // HÀM TẠO URL CHUẨN SEO
 const generateSlug = (text) => {
@@ -72,6 +73,11 @@ const News = () => {
   return (
     // TỐI ƯU: Giảm padding Top/Bottom trên mobile (pt-24 pb-10)
     <section className="pt-24 md:pt-32 pb-10 md:pb-20 bg-gray-50 min-h-screen">
+      <Helmet>
+        <title>Tin Tức &amp; Kiến Thức Xây Dựng | Trường Thành Phát</title>
+        <meta name="description" content="Cập nhật xu hướng kiến trúc, kiến thức xây dựng và phong thủy nhà ở từ các chuyên gia của Trường Thành Phát" />
+        <link rel="canonical" href="https://truongthanhphatdn.vn/tin-tuc" />
+      </Helmet>
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
 
         {/* TIÊU ĐỀ */}

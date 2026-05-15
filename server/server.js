@@ -9,6 +9,7 @@ import blogRouter from "./routes/blogRoutes.js";
 import bannerRouter from "./routes/bannerRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import contactRoutes from './routes/contactRoutes.js';
+import sitemapRoute from './routes/sitemapRoute.js';
 import { setServers } from "dns";
 setServers(["8.8.8.8", "8.8.4.4"]);
 
@@ -52,6 +53,7 @@ app.use("/api/blogs", blogRouter);
 app.use("/api/banners", bannerRouter);
 app.use("/api/auth", authRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api', sitemapRoute); // Sử dụng route sitemap
 
 app.get("/", (req, res) => res.send("Server is running"));
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 
 const Team = () => {
   // Thay dữ liệu cứng bằng State rỗng chờ API
@@ -32,6 +33,11 @@ const Team = () => {
   return (
     // TỐI ƯU: Giảm padding trên và dưới cho mobile
     <section className="pt-24 md:pt-32 pb-10 md:pb-20 bg-white min-h-screen">
+      <Helmet>
+        <title>Đội Ngũ Nhân Sự | Trường Thành Phát</title>
+        <meta name="description" content="Đội ngũ kiến trúc sư và kỹ sư xây dựng chuyên nghiệp tại Trường Thành Phát" />
+        <link rel="canonical" href="https://truongthanhphatdn.vn/ve-ttp/doi-ngu-nhan-su" />
+      </Helmet>
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         
         {/* PHẦN 1: BANNER TẬP THỂ */}

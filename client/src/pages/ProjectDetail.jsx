@@ -182,16 +182,16 @@ const ProjectDetail = () => {
               {/* 1. GALLERY HÌNH ẢNH */}
               <div className="bg-white p-4 rounded-md shadow-sm border border-gray-100">
                 <div 
-                  className="w-full aspect-video rounded-md overflow-hidden mb-4 relative group cursor-pointer"
+                  className="w-full rounded-md overflow-hidden mb-4 relative group cursor-pointer bg-gray-100 flex items-center justify-center"
                   onClick={() => openLightbox(allImages.indexOf(mainImage))}
                 >
                   <img 
                     src={mainImage} 
                     alt="Main Project" 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    style={{ maxWidth: '100%', maxHeight: '70vh', width: 'auto', height: 'auto', display: 'block', margin: '0 auto' }}
                   />
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
+                  <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <svg className="w-10 h-10 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
                   </div>
                 </div>
                 

@@ -16,8 +16,8 @@ const Navbar = () => {
 
   const navLinks = [
     { name: 'Trang chủ', path: '/' },
-    { 
-      name: 'Hạng mục công trình', 
+    {
+      name: 'Hạng mục công trình',
       path: '/hang-muc-cong-trinh',
       submenu: [
         { name: 'Nội thất', path: '/hang-muc-cong-trinh/noi-that' },
@@ -28,8 +28,8 @@ const Navbar = () => {
       ]
     },
     { name: 'Báo giá', path: '/bao-gia' },
-     { 
-      name: 'Về TTP', 
+    {
+      name: 'Về TTP',
       path: '/ve-ttp',
       submenu: [
         { name: 'Giới thiệu', path: '/ve-ttp' },
@@ -42,19 +42,18 @@ const Navbar = () => {
 
   return (
     // Nền chuyển sang màu Đen (bg-black)
-    <nav className={`fixed w-full z-50 top-0 transition-all duration-300 bg-[#6dc3de] ${
-      scrolled ? 'py-1 shadow-2xl border-b border-gray-800' : 'py-3'
-    }`}>
+    <nav className={`fixed w-full z-50 top-0 transition-all duration-300 bg-white ${scrolled ? 'py-1 shadow-xl border-b border-gray-200' : 'py-3 shadow-md'
+      }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
-          
+
           {/* LOGO */}
           <div className="flex-shrink-0">
             <Link to="/">
-              <img 
-                className="h-12 md:h-24 w-auto transition-transform duration-300 hover:scale-105" 
-                src={assets.TTP} 
-                alt="Trường Thành Phát" 
+              <img
+                className="h-12 md:h-24 w-auto transition-transform duration-300 hover:scale-105"
+                src={assets.TTP}
+                alt="Trường Thành Phát"
               />
             </Link>
           </div>
@@ -66,8 +65,7 @@ const Navbar = () => {
                 <NavLink
                   to={link.path}
                   className={({ isActive }) =>
-                    `relative text-[14px] lg:text-[15px] font-bold uppercase tracking-widest transition-all duration-300 flex items-center gap-1.5 py-1 text-white after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-green-500 after:transition-all after:duration-300 ${
-                      isActive ? 'after:w-full' : 'after:w-0 hover:after:w-full'
+                    `relative text-[14px] lg:text-[15px] font-bold uppercase tracking-widest transition-all duration-300 flex items-center gap-1.5 py-1 text-black after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-green-500 after:transition-all after:duration-300 ${isActive ? 'after:w-full' : 'after:w-0 hover:after:w-full'
                     }`
                   }
                 >
@@ -117,18 +115,16 @@ const Navbar = () => {
       </div>
 
       {/* MOBILE MENU DROPDOWN */}
-      <div className={`md:hidden bg-black border-t border-gray-800 overflow-hidden transition-all duration-500 ease-in-out ${
-        isMobileOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
-      }`}>
+      <div className={`md:hidden bg-black border-t border-gray-800 overflow-hidden transition-all duration-500 ease-in-out ${isMobileOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
+        }`}>
         <div className="px-6 py-8 space-y-6">
           {navLinks.map((link, index) => (
             <div key={index} className="space-y-4">
               <NavLink
                 to={link.path}
                 onClick={() => !link.submenu && setIsMobileOpen(false)}
-                className={({ isActive }) => 
-                  `relative inline-block text-base font-bold uppercase tracking-widest text-white pb-1 after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-green-500 after:transition-all after:duration-300 ${
-                    isActive ? 'after:w-full' : 'after:w-0'
+                className={({ isActive }) =>
+                  `relative inline-block text-base font-bold uppercase tracking-widest text-white pb-1 after:absolute after:left-0 after:bottom-0 after:h-[2px] after:bg-green-500 after:transition-all after:duration-300 ${isActive ? 'after:w-full' : 'after:w-0'
                   }`
                 }
               >

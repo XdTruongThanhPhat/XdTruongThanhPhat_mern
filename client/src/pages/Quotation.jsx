@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 const Quotation = () => {
   // Quản lý Tab đang hiển thị
@@ -65,6 +66,11 @@ const Quotation = () => {
   return (
     // TỐI ƯU: Giảm padding Top/Bottom trên mobile
     <section className="pt-24 md:pt-32 pb-10 md:pb-16 bg-gray-50 min-h-screen">
+      <Helmet>
+        <title>Báo Giá Xây Dựng | Trường Thành Phát</title>
+        <meta name="description" content="Nhận báo giá thiết kế và thi công xây dựng nhà phố, biệt thự chi tiết, chính xác từ Trường Thành Phát" />
+        <link rel="canonical" href="https://truongthanhphatdn.vn/bao-gia" />
+      </Helmet>
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         
         {/* TIÊU ĐỀ TRANG */}

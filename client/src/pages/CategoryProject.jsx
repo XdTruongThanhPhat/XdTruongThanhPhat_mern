@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { generateSlug } from '../utils/slugify';
 
 const CategoryProject = () => {
@@ -71,6 +72,11 @@ const CategoryProject = () => {
 
   return (
     <section className="pt-24 md:pt-32 pb-10 md:pb-16 bg-white min-h-screen">
+      <Helmet>
+        <title>Hạng Mục Công Trình | Trường Thành Phát</title>
+        <meta name="description" content="Danh sách các dự án thiết kế và thi công xây dựng tiêu biểu của Trường Thành Phát tại Đà Nẵng" />
+        <link rel="canonical" href="https://truongthanhphatdn.vn/hang-muc-cong-trinh" />
+      </Helmet>
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         
         {/* THANH CHỌN HẠNG MỤC */}
