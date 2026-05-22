@@ -11,7 +11,7 @@ const FloatingContact = () => {
       </a>
 
       {/* Nút Zalo */}
-      <a href="https://zalo.me/0912877908" target="_blank" rel="noreferrer" className="relative group flex items-center justify-center w-12 h-12 bg-blue-600 rounded-full shadow-lg hover:scale-110 transition-transform">
+      <a href="https://zalo.me/0387176793" target="_blank" rel="noreferrer" className="relative group flex items-center justify-center w-12 h-12 bg-blue-600 rounded-full shadow-lg hover:scale-110 transition-transform">
         <span className="text-white font-bold text-xl">Z</span>
         <span className="absolute right-14 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Zalo Chat</span>
       </a>
@@ -20,10 +20,10 @@ const FloatingContact = () => {
       <div className="relative">
         {/* Vòng sóng âm tỏa ra */}
         <div className="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-75"></div>
-        <a href="tel:0912877908" className="relative group flex items-center justify-center w-14 h-14 bg-green-500 rounded-full shadow-xl hover:bg-green-600 transition-colors animate-bounce">
+        <a href="tel:0387176793" className="relative group flex items-center justify-center w-14 h-14 bg-green-500 rounded-full shadow-xl hover:bg-green-600 transition-colors animate-bounce">
           <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
           <span className="absolute right-16 bg-green-600 text-white font-bold text-sm px-3 py-1.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-md">
-            0912877908
+            0387176793
           </span>
         </a>
       </div>

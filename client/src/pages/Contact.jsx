@@ -6,7 +6,7 @@ const Contact = () => {
   // ==========================================
   // URL ẢNH NỀN TỪ CLOUDINARY
   // ==========================================
-  const heroBgUrl = "https://res.cloudinary.com/dia0hytop/image/upload/v1776675604/z7731184451078_e2096bacf215f8b507086b7a6712faa3_bjzvxz.png"; 
+  const heroBgUrl = "https://res.cloudinary.com/dia0hytop/image/upload/v1776675604/z7731184451078_e2096bacf215f8b507086b7a6712faa3_bjzvxz.png";
 
   const [formData, setFormData] = useState({
     name: '',
@@ -14,7 +14,7 @@ const Contact = () => {
     email: '',
     content: ''
   });
-  
+
   // Trạng thái chờ để hiển thị hiệu ứng trên nút Submit
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -35,13 +35,13 @@ const Contact = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
-      
+
       const data = await res.json();
 
       if (data.success) {
         toast.success("Gửi thành công! TTP Architect sẽ liên hệ lại sớm nhất.", { id: toastId });
         // Xóa trắng form sau khi gửi thành công
-        setFormData({ name: '', phone: '', email: '', content: '' }); 
+        setFormData({ name: '', phone: '', email: '', content: '' });
       } else {
         toast.error("Có lỗi xảy ra, vui lòng thử lại sau.", { id: toastId });
       }
@@ -60,17 +60,17 @@ const Contact = () => {
         <meta name="description" content="Liên hệ Trường Thành Phát để được tư vấn thiết kế và thi công xây dựng chuyên nghiệp tại Đà Nẵng" />
         <link rel="canonical" href="https://truongthanhphatdn.vn/lien-he" />
       </Helmet>
-      
+
       {/* ==========================================
           PHẦN 1: HERO BANNER (ĐÃ TỐI ƯU MOBILE)
       ========================================== */}
-      <div 
+      <div
         className="relative w-full h-[40vh] md:h-[60vh] lg:h-[70vh] flex items-center justify-center bg-cover bg-center bg-no-repeat mt-16 md:mt-0"
         style={{ backgroundImage: `url('${heroBgUrl}')` }}
       >
         {/* Lớp phủ đen mờ */}
-        <div className="absolute inset-0 bg-black/60"></div> 
-        
+        <div className="absolute inset-0 bg-black/60"></div>
+
         {/* Nội dung Tiêu đề */}
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-8 md:pt-16">
           <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold uppercase tracking-widest text-white drop-shadow-md">
@@ -78,7 +78,7 @@ const Contact = () => {
           </h1>
           <div className="w-16 md:w-24 h-1 bg-green-500 mx-auto mt-4 mb-4 md:mt-6 md:mb-6"></div>
           <p className="text-gray-100 max-w-2xl mx-auto text-xs sm:text-sm md:text-base leading-relaxed drop-shadow-sm px-2">
-            Hãy để Trường Thành Phát biến ý tưởng không gian sống của bạn thành hiện thực. 
+            Hãy để Trường Thành Phát biến ý tưởng không gian sống của bạn thành hiện thực.
             Liên hệ ngay để nhận tư vấn và báo giá chi tiết.
           </p>
         </div>
@@ -89,13 +89,13 @@ const Contact = () => {
       ========================================== */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 lg:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-start">
-          
+
           {/* CỘT TRÁI: THÔNG TIN CÔNG TY */}
           <div>
             <h2 className="text-lg md:text-xl font-bold text-black uppercase tracking-widest mb-5 md:mb-6 border-l-4 border-green-500 pl-3 md:pl-4">
               Công Ty TNHH Tư Vấn Kiến Trúc & Xây Dựng TRƯỜNG THÀNH PHÁT
             </h2>
-            
+
             <ul className="space-y-5 md:space-y-6 text-gray-600 mt-6 md:mt-8">
               {/* Địa chỉ */}
               <li className="flex items-start gap-3 md:gap-4 hover:text-green-500 transition-colors">
@@ -115,7 +115,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <p className="font-bold text-black uppercase tracking-wider text-xs md:text-sm mb-0.5 md:mb-1">Hotline / Zalo tư vấn</p>
-                  <p className="text-xs md:text-sm font-medium">0912877908</p>
+                  <p className="text-xs md:text-sm font-medium">0387176793</p>
                 </div>
               </li>
 
@@ -138,10 +138,10 @@ const Contact = () => {
                 <div className="flex flex-col gap-2 md:gap-3 w-full mt-0.5 md:mt-1">
                   <p className="font-bold text-black uppercase tracking-wider text-xs md:text-sm mb-0.5 md:mb-1">Kết nối trực tuyến</p>
                   <a href="https://www.facebook.com/XDTRUONGTHANHPHAT" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-xs md:text-sm text-gray-600 hover:text-green-500 transition-colors">
-                    <svg className="w-4 h-4 md:w-5 md:h-5 text-blue-600 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+                    <svg className="w-4 h-4 md:w-5 md:h-5 text-blue-600 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" /></svg>
                     Trường Thành Phát Architect
                   </a>
-                  <a href="https://zalo.me/0912877908" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-xs md:text-sm text-gray-600 hover:text-green-500 transition-colors">
+                  <a href="https://zalo.me/0387176793" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-xs md:text-sm text-gray-600 hover:text-green-500 transition-colors">
                     <span className="w-4 h-4 md:w-5 md:h-5 bg-blue-500 text-white font-bold text-[8px] md:text-[10px] flex items-center justify-center rounded-sm shrink-0">Zalo</span>
                     Tư Vấn Trường Thành Phát
                   </a>
@@ -159,27 +159,27 @@ const Contact = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
                 <div>
                   <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 md:mb-2">Họ và tên *</label>
-                  <input required type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-gray-50 border border-transparent rounded-sm outline-none focus:border-green-500 focus:bg-white transition-all text-xs md:text-sm"/>
+                  <input required type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-gray-50 border border-transparent rounded-sm outline-none focus:border-green-500 focus:bg-white transition-all text-xs md:text-sm" />
                 </div>
                 <div>
                   <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 md:mb-2">Số điện thoại *</label>
-                  <input required type="tel" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-gray-50 border border-transparent rounded-sm outline-none focus:border-green-500 focus:bg-white transition-all text-xs md:text-sm"/>
+                  <input required type="tel" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-gray-50 border border-transparent rounded-sm outline-none focus:border-green-500 focus:bg-white transition-all text-xs md:text-sm" />
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 md:mb-2">Email</label>
-                <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-gray-50 border border-transparent rounded-sm outline-none focus:border-green-500 focus:bg-white transition-all text-xs md:text-sm"/>
+                <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-gray-50 border border-transparent rounded-sm outline-none focus:border-green-500 focus:bg-white transition-all text-xs md:text-sm" />
               </div>
 
               <div>
                 <label className="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5 md:mb-2">Nội dung yêu cầu *</label>
-                <textarea required rows="4" value={formData.content} onChange={(e) => setFormData({...formData, content: e.target.value})} className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-gray-50 border border-transparent rounded-sm outline-none focus:border-green-500 focus:bg-white transition-all text-xs md:text-sm resize-none" placeholder="Bạn cần chúng tôi tư vấn về thiết kế, thi công nhà phố hay biệt thự?"></textarea>
+                <textarea required rows="4" value={formData.content} onChange={(e) => setFormData({ ...formData, content: e.target.value })} className="w-full px-3 py-2.5 md:px-4 md:py-3 bg-gray-50 border border-transparent rounded-sm outline-none focus:border-green-500 focus:bg-white transition-all text-xs md:text-sm resize-none" placeholder="Bạn cần chúng tôi tư vấn về thiết kế, thi công nhà phố hay biệt thự?"></textarea>
               </div>
 
               <div className="pt-2 md:pt-4">
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={isSubmitting}
                   className={`w-full text-white font-bold uppercase tracking-widest py-3 md:py-4 rounded-sm shadow-md transition-colors duration-300 text-xs md:text-sm ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-black hover:bg-green-500'}`}
                 >
@@ -197,13 +197,13 @@ const Contact = () => {
         <div className="mt-16 md:mt-24">
           <h3 className="text-lg md:text-xl font-bold text-black uppercase tracking-widest mb-6 md:mb-8 border-l-4 border-green-500 pl-3 md:pl-4">Văn phòng</h3>
           <div className="w-full h-[300px] md:h-[450px] rounded-lg md:rounded-xl overflow-hidden shadow-sm border border-gray-200">
-            <iframe 
+            <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d338.9732422958237!2d108.22584900910367!3d16.01120131272239!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31421b1469409ea3%3A0xa0dc072d6c67fbdf!2zQ8O0bmcgVHkgS2nhur9uIFRyw7pjIC0gWMOieSBE4buxbmcgLSBO4buZaSBUaOG6pXQgVHLGsOG7nW5nIFRow6BuaCBQaMOhdA!5e0!3m2!1svi!2s!4v1776498577228!5m2!1svi!2s"
-              width="100%" 
-              height="100%" 
-              style={{ border: 0 }} 
-              allowFullScreen="" 
-              loading="lazy" 
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen=""
+              loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             ></iframe>
           </div>
