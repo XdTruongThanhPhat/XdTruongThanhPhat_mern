@@ -61,3 +61,32 @@ export const uploadBlogImage = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+
+export const updateBlog = async (req, res) => {
+    try {
+        const { title, category, content } = req.body;
+        const blog = await Blog.findById(req.params.id);
+        
+        if (!blog) return res.status(404).json({ success: false, message: "Không tìm thấy bài viết" });
+
+        let imageUrl = blog.imageUrl;
+
+        if (req.file) {
+            const b64 = Buffer.from(req.file.buffer).toString("base64");
+            const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+            const uploadResult = await cloudinary.uploader.upload(dataURI, { folder: 'TTP_Blogs' });
+            imageUrl = uploadResult.secure_url;
+        }
+
+        blog.title = title || blog.title;
+        blog.category = category || blog.category;
+        blog.content = content || blog.content;
+        blog.imageUrl = imageUrl;
+
+        await blog.save();
+
+        res.status(200).json({ success: true, blog });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};

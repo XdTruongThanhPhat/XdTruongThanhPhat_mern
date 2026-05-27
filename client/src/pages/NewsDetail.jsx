@@ -312,7 +312,20 @@ const NewsDetail = () => {
         .blog-content u { text-decoration: underline; }
         .blog-content s { text-decoration: line-through; }
         
-        .blog-content img { max-width: 100%; height: auto; border-radius: 0.5rem; margin: 1.5rem auto 0px auto !important; display: block; }
+        .blog-content img { max-width: 100%; height: auto; border-radius: 0.5rem; margin-top: 1.5rem; margin-bottom: 0px; }
+        
+        /* Custom Image Wrapper - hỗ trợ căn lề trái/giữa/phải */
+        .blog-content .ql-image-wrapper { display: block; clear: both; margin: 1.5rem 0 0 0; }
+        .blog-content .ql-image-wrapper[data-align="center"] { text-align: center; }
+        .blog-content .ql-image-wrapper[data-align="center"] img { display: block; margin-left: auto; margin-right: auto; }
+        .blog-content .ql-image-wrapper[data-align="left"] { text-align: left; }
+        .blog-content .ql-image-wrapper[data-align="left"] img { display: block; margin-left: 0; margin-right: auto; }
+        .blog-content .ql-image-wrapper[data-align="right"] { text-align: right; }
+        .blog-content .ql-image-wrapper[data-align="right"] img { display: block; margin-left: auto; margin-right: 0; }
+        
+        /* Legacy: ảnh trong thẻ p (bài viết cũ không có wrapper) */
+        .blog-content p > img { display: block; margin-left: auto; margin-right: auto; }
+
         .blog-content iframe.ql-video { width: 100%; aspect-ratio: 16/9; border-radius: 0.5rem; margin: 1.5rem 0 0px 0 !important; border: none; }
         
         .blog-content p:has(img) { margin-bottom: 0px !important; }
@@ -321,6 +334,7 @@ const NewsDetail = () => {
         .blog-content .ql-align-center { text-align: center !important; }
         .blog-content .ql-align-right { text-align: right !important; }
         .blog-content .ql-align-justify { text-align: justify !important; }
+
 
         .blog-content [style*="font-size: 12px"] { font-size: 12px !important; }
         .blog-content [style*="font-size: 14px"] { font-size: 14px !important; }
