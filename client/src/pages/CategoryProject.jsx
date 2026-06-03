@@ -20,6 +20,42 @@ const CategoryProject = () => {
   const currentCategory = categoryMap.find(cat => cat.slug === categorySlug) || categoryMap[0];
   const activeTab = currentCategory.name;
 
+  // SEO: Map tiêu đề và mô tả cho từng danh mục
+  const categorySEO = {
+    "": {
+      title: "Hạng Mục Công Trình | Trường Thành Phát – Thiết Kế & Xây Dựng Đà Nẵng",
+      description: "Khám phá danh mục công trình tiêu biểu của Trường Thành Phát: nhà phố, biệt thự, căn hộ, nội thất và công trình thực tế tại Đà Nẵng.",
+      canonical: "https://truongthanhphatdn.vn/hang-muc-cong-trinh"
+    },
+    "noi-that": {
+      title: "Thiết Kế Nội Thất Đà Nẵng | Trường Thành Phát",
+      description: "Các dự án thiết kế nội thất chuyên nghiệp của Trường Thành Phát tại Đà Nẵng. Giải pháp nội thất tối ưu, thẩm mỹ cao, phù hợp mọi ngân sách.",
+      canonical: "https://truongthanhphatdn.vn/hang-muc-cong-trinh/noi-that"
+    },
+    "biet-thu": {
+      title: "Thiết Kế & Thi Công Biệt Thự Đà Nẵng | Trường Thành Phát",
+      description: "Danh mục biệt thự thiết kế và thi công bởi Trường Thành Phát tại Đà Nẵng. Phong cách hiện đại, kiến trúc sang trọng, chất lượng cao.",
+      canonical: "https://truongthanhphatdn.vn/hang-muc-cong-trinh/biet-thu"
+    },
+    "can-ho": {
+      title: "Thiết Kế & Cải Tạo Căn Hộ Đà Nẵng | Trường Thành Phát",
+      description: "Các dự án thiết kế và cải tạo căn hộ tiêu biểu của Trường Thành Phát. Tối ưu không gian sống, hiện đại và tiện nghi tại Đà Nẵng.",
+      canonical: "https://truongthanhphatdn.vn/hang-muc-cong-trinh/can-ho"
+    },
+    "nha-pho": {
+      title: "Xây Nhà Phố Trọn Gói Đà Nẵng | Trường Thành Phát",
+      description: "Thiết kế và thi công nhà phố trọn gói tại Đà Nẵng. Trường Thành Phát cam kết chất lượng, đúng tiến độ, tối ưu chi phí.",
+      canonical: "https://truongthanhphatdn.vn/hang-muc-cong-trinh/nha-pho"
+    },
+    "cong-trinh-thuc-te": {
+      title: "Công Trình Thực Tế Đã Thi Công | Trường Thành Phát Đà Nẵng",
+      description: "Hình ảnh thực tế các công trình đã hoàn thành bởi Trường Thành Phát. Chứng minh năng lực thi công xây dựng uy tín tại Đà Nẵng.",
+      canonical: "https://truongthanhphatdn.vn/hang-muc-cong-trinh/cong-trinh-thuc-te"
+    }
+  };
+
+  const seo = categorySEO[categorySlug || ""] || categorySEO[""];
+
   const [allProjects, setAllProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -73,9 +109,13 @@ const CategoryProject = () => {
   return (
     <section className="pt-24 md:pt-32 pb-10 md:pb-16 bg-white min-h-screen">
       <Helmet>
-        <title>Hạng Mục Công Trình | Trường Thành Phát</title>
-        <meta name="description" content="Danh sách các dự án thiết kế và thi công xây dựng tiêu biểu của Trường Thành Phát tại Đà Nẵng" />
-        <link rel="canonical" href="https://truongthanhphatdn.vn/hang-muc-cong-trinh" />
+        <title>{seo.title}</title>
+        <meta name="description" content={seo.description} />
+        <link rel="canonical" href={seo.canonical} />
+        <meta property="og:title" content={seo.title} />
+        <meta property="og:description" content={seo.description} />
+        <meta property="og:url" content={seo.canonical} />
+        <meta property="og:type" content="website" />
       </Helmet>
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         

@@ -284,7 +284,13 @@ const ManageBlog = () => {
     const data = new FormData();
     data.append('title', formData.title);
     data.append('category', formData.category);
-    data.append('content', formData.content); 
+    // Clean zero-width space characters, soft hyphens, and non-breaking spaces before saving to database
+    const cleanedContent = formData.content
+      .replace(/&nbsp;/g, ' ')
+      .replace(/\u00a0/g, ' ')
+      .replace(/[\u200b\u200c\u200d\ufeff]/g, '')
+      .replace(/&shy;|\u00ad/g, '');
+    data.append('content', cleanedContent); 
     if (formData.file) {
         data.append('image', formData.file);
     }
@@ -332,6 +338,34 @@ const ManageBlog = () => {
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border max-w-6xl">
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        .ql-editor { word-break: keep-all !important; overflow-wrap: break-word !important; word-wrap: break-word !important; }
+        .ql-editor * { word-break: keep-all !important; overflow-wrap: break-word !important; word-wrap: break-word !important; }
+        
+        .ql-editor h1 { font-size: 2rem !important; font-weight: bold !important; margin-top: 2rem !important; margin-bottom: 1rem !important; color: #111827 !important; line-height: 1.2 !important; }
+        .ql-editor h2 { font-size: 1.5rem !important; font-weight: bold !important; margin-top: 2rem !important; margin-bottom: 1rem !important; color: #111827 !important; line-height: 1.3 !important; }
+        .ql-editor h3 { font-size: 1.25rem !important; font-weight: bold !important; margin-top: 1.5rem !important; margin-bottom: 0.75rem !important; color: #1f2937 !important; line-height: 1.4 !important; }
+        .ql-editor h4 { font-size: 1.125rem !important; font-weight: bold !important; margin-top: 1.5rem !important; margin-bottom: 0.75rem !important; color: #374151 !important; }
+        .ql-editor h5, .ql-editor h6 { font-size: 1rem !important; font-weight: bold !important; margin-top: 1rem !important; margin-bottom: 0.5rem !important; color: #4b5563 !important; }
+        
+        .ql-editor p {
+          text-align: justify !important;
+          font-size: 1rem !important;
+          margin-bottom: 1.5rem !important;
+          color: #4b5563 !important;
+          white-space: pre-line !important;
+          line-height: 1.625 !important;
+        }
+        .ql-editor ul { list-style-type: disc !important; margin-left: 1.5rem !important; margin-bottom: 1rem !important; }
+        .ql-editor ol { list-style-type: decimal !important; margin-left: 1.5rem !important; margin-bottom: 1rem !important; }
+        .ql-editor li { margin-bottom: 0.5rem !important; }
+        
+        .ql-editor a { color: #16a34a !important; text-decoration: underline !important; }
+        
+        .ql-editor img { max-width: 100% !important; height: auto !important; border-radius: 0.5rem !important; margin-top: 1.5rem !important; margin-bottom: 0px !important; }
+        `
+      }} />
       <h2 className="text-2xl font-bold mb-6">Quản lý Tin Tức & Kiến Thức (SEO)</h2>
       <form onSubmit={handleSubmit} className="mb-10 bg-gray-50 p-6 rounded-lg border border-gray-200">
         <div className="grid grid-cols-2 gap-4 mb-4">

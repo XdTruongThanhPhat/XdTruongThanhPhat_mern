@@ -3,56 +3,96 @@
   <!-- Trang chủ -->
   <url>
     <loc>https://truongthanhphatdn.vn/</loc>
-    <lastmod>2026-05-14T00:00:00+00:00</lastmod>
+    <lastmod>2026-06-02T00:00:00+07:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-  
-  <!-- Trang Hạng mục công trình -->
+
+  <!-- Trang Hạng mục công trình (Tất cả) -->
   <url>
     <loc>https://truongthanhphatdn.vn/hang-muc-cong-trinh</loc>
-    <lastmod>2026-05-14T00:00:00+00:00</lastmod>
+    <lastmod>2026-06-02T00:00:00+07:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Hạng mục: Nội thất -->
+  <url>
+    <loc>https://truongthanhphatdn.vn/hang-muc-cong-trinh/noi-that</loc>
+    <lastmod>2026-06-02T00:00:00+07:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
-  
+
+  <!-- Hạng mục: Biệt thự -->
+  <url>
+    <loc>https://truongthanhphatdn.vn/hang-muc-cong-trinh/biet-thu</loc>
+    <lastmod>2026-06-02T00:00:00+07:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Hạng mục: Căn hộ -->
+  <url>
+    <loc>https://truongthanhphatdn.vn/hang-muc-cong-trinh/can-ho</loc>
+    <lastmod>2026-06-02T00:00:00+07:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Hạng mục: Nhà phố -->
+  <url>
+    <loc>https://truongthanhphatdn.vn/hang-muc-cong-trinh/nha-pho</loc>
+    <lastmod>2026-06-02T00:00:00+07:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Hạng mục: Công trình thực tế -->
+  <url>
+    <loc>https://truongthanhphatdn.vn/hang-muc-cong-trinh/cong-trinh-thuc-te</loc>
+    <lastmod>2026-06-02T00:00:00+07:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- Trang Báo giá -->
   <url>
     <loc>https://truongthanhphatdn.vn/bao-gia</loc>
-    <lastmod>2026-05-14T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-06-02T00:00:00+07:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-  
-  <!-- Trang Liên hệ -->
-  <url>
-    <loc>https://truongthanhphatdn.vn/lien-he</loc>
-    <lastmod>2026-05-14T00:00:00+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  
-  <!-- Trang Về TTP -->
-  <url>
-    <loc>https://truongthanhphatdn.vn/ve-ttp</loc>
-    <lastmod>2026-05-14T00:00:00+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  
-  <!-- Trang Đội ngũ nhân sự -->
-  <url>
-    <loc>https://truongthanhphatdn.vn/ve-ttp/doi-ngu-nhan-su</loc>
-    <lastmod>2026-05-14T00:00:00+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
+
   <!-- Trang Tin tức -->
   <url>
     <loc>https://truongthanhphatdn.vn/tin-tuc</loc>
-    <lastmod>2026-05-14T00:00:00+00:00</lastmod>
+    <lastmod>2026-06-02T00:00:00+07:00</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Trang Về TTP -->
+  <url>
+    <loc>https://truongthanhphatdn.vn/ve-ttp</loc>
+    <lastmod>2026-06-02T00:00:00+07:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Trang Đội ngũ nhân sự -->
+  <url>
+    <loc>https://truongthanhphatdn.vn/ve-ttp/doi-ngu-nhan-su</loc>
+    <lastmod>2026-06-02T00:00:00+07:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Trang Liên hệ -->
+  <url>
+    <loc>https://truongthanhphatdn.vn/lien-he</loc>
+    <lastmod>2026-06-02T00:00:00+07:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>

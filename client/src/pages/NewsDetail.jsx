@@ -20,6 +20,22 @@ const generateSlug = (text) => {
     .replace(/^-+|-+$/g, '');
 };
 
+// HÀM GIẢI MÃ CÁC KÝ TỰ HTML ENTITIES
+const decodeHTMLEntities = (text) => {
+  if (!text) return '';
+  return text
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&ldquo;/g, '“')
+    .replace(/&rdquo;/g, '”')
+    .replace(/&lsquo;/g, '‘')
+    .replace(/&rsquo;/g, '’')
+    .replace(/&nbsp;/g, ' ');
+};
+
 const NewsDetail = () => {
   const { id: slug } = useParams();
   const [blog, setBlog] = useState(null);
@@ -56,6 +72,13 @@ const NewsDetail = () => {
           const current = data.blogs.find(b => b._id === slug || slug.endsWith(b._id));
           if (current) {
             current.date = new Date(current.createdAt).toLocaleDateString('vi-VN');
+            if (current.content) {
+              current.content = current.content
+                .replace(/&nbsp;/g, ' ')
+                .replace(/\u00a0/g, ' ')
+                .replace(/[\u200b\u200c\u200d\ufeff]/g, '')
+                .replace(/&shy;|\u00ad/g, '');
+            }
             setBlog(current);
           }
 
@@ -83,14 +106,21 @@ const NewsDetail = () => {
     if (blog && blog.content) {
       let headingIndex = 0;
       const tocItems = [];
+      const cleanedBlogContent = blog.content
+        .replace(/&nbsp;/g, ' ')
+        .replace(/\u00a0/g, ' ')
+        .replace(/[\u200b\u200c\u200d\ufeff]/g, '')
+        .replace(/&shy;|\u00ad/g, '');
 
-      const newContent = blog.content.replace(/<(h[23])(.*?)>(.*?)<\/\1>/gi, (match, tag, attributes, innerText) => {
+      const newContent = cleanedBlogContent.replace(/<(h[23])(.*?)>(.*?)<\/\1>/gi, (match, tag, attributes, innerText) => {
         const id = `heading-${headingIndex++}`;
 
-        const cleanText = innerText
-          .replace(/<[^>]*>?/gm, '')
-          .replace(/&nbsp;/gi, ' ')
-          .trim();
+        const cleanText = decodeHTMLEntities(
+          innerText
+            .replace(/<[^>]*>?/gm, '')
+            .replace(/&nbsp;/gi, ' ')
+            .trim()
+        );
 
         tocItems.push({
           id: id,
@@ -166,6 +196,10 @@ const NewsDetail = () => {
       <Helmet>
         <title>{blog.title} | Trường Thành Phát</title>
         <meta name="description" content={blog.title + " - Cập nhật kiến thức và xu hướng mới nhất từ Trường Thành Phát."} />
+        <link rel="canonical" href={`https://truongthanhphatdn.vn/tin-tuc/${slug}`} />
+        <meta property="og:title" content={blog.title} />
+        <meta property="og:description" content={blog.title + " - Cập nhật kiến thức và xu hướng mới nhất từ Trường Thành Phát."} />
+        <meta property="og:url" content={`https://truongthanhphatdn.vn/tin-tuc/${slug}`} />
         {blog.imageUrl && <meta property="og:image" content={blog.imageUrl} />}
       </Helmet>
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
@@ -293,7 +327,8 @@ const NewsDetail = () => {
 
       <style dangerouslySetInnerHTML={{
         __html: `
-        .blog-content { word-break: break-word; overflow-wrap: break-word; }
+        .blog-content { word-break: keep-all !important; overflow-wrap: break-word !important; word-wrap: break-word !important; }
+        .blog-content * { word-break: keep-all !important; overflow-wrap: break-word !important; word-wrap: break-word !important; }
         
         .blog-content h1 { font-size: 2rem; font-weight: bold; margin-top: 2rem; margin-bottom: 1rem; color: #111827; line-height: 1.2; }
         .blog-content h2 { font-size: 1.5rem; font-weight: bold; margin-top: 2rem; margin-bottom: 1rem; color: #111827; line-height: 1.3; scroll-margin-top: 100px; }
@@ -301,7 +336,14 @@ const NewsDetail = () => {
         .blog-content h4 { font-size: 1.125rem; font-weight: bold; margin-top: 1.5rem; margin-bottom: 0.75rem; color: #374151; }
         .blog-content h5, .blog-content h6 { font-size: 1rem; font-weight: bold; margin-top: 1rem; margin-bottom: 0.5rem; color: #4b5563; }
         
-        .blog-content p { margin-bottom: 1rem; }
+        .blog-content p {
+          text-align: justify !important;
+          font-size: 1rem !important;
+          margin-bottom: 1.5rem !important;
+          color: #4b5563 !important;
+          white-space: pre-line !important;
+          line-height: 1.625 !important;
+        }
         .blog-content ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
         .blog-content ol { list-style-type: decimal; margin-left: 1.5rem; margin-bottom: 1rem; }
         .blog-content li { margin-bottom: 0.5rem; }

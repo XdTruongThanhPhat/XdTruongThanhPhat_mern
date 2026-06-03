@@ -1,4 +1,10 @@
+# Trường Thành Phát - robots.txt
 User-agent: *
 Allow: /
 
+# Chặn các đường dẫn không cần index
+Disallow: /api/
+Disallow: /*.json$
+
+# Sitemap động (tự động cập nhật từ database)
 Sitemap: https://truongthanhphatdn.vn/api/sitemap.xml

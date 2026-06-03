@@ -28,54 +28,119 @@ router.get('/sitemap.xml', async (req, res) => {
     const blogs = await Blog.find({}).select('title updatedAt _id').sort({ createdAt: -1 });
     
     const baseUrl = 'https://truongthanhphatdn.vn';
+    const today = new Date().toISOString().split('T')[0];
+
+    // Lấy lastmod động: ngày cập nhật mới nhất của dự án/bài viết
+    const latestProjectDate = projects.length > 0 && projects[0].updatedAt
+      ? new Date(projects[0].updatedAt).toISOString().split('T')[0] : today;
+    const latestBlogDate = blogs.length > 0 && blogs[0].updatedAt
+      ? new Date(blogs[0].updatedAt).toISOString().split('T')[0] : today;
 
     // 2. Khởi tạo cấu trúc XML và thêm các trang tĩnh
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Trang tĩnh -->
+  <!-- Trang chủ -->
   <url>
     <loc>${baseUrl}/</loc>
+    <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+
+  <!-- Trang Hạng mục công trình (Tất cả) -->
   <url>
     <loc>${baseUrl}/hang-muc-cong-trinh</loc>
+    <lastmod>${latestProjectDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Hạng mục: Nội thất -->
+  <url>
+    <loc>${baseUrl}/hang-muc-cong-trinh/noi-that</loc>
+    <lastmod>${latestProjectDate}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
+  <!-- Hạng mục: Biệt thự -->
+  <url>
+    <loc>${baseUrl}/hang-muc-cong-trinh/biet-thu</loc>
+    <lastmod>${latestProjectDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Hạng mục: Căn hộ -->
+  <url>
+    <loc>${baseUrl}/hang-muc-cong-trinh/can-ho</loc>
+    <lastmod>${latestProjectDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Hạng mục: Nhà phố -->
+  <url>
+    <loc>${baseUrl}/hang-muc-cong-trinh/nha-pho</loc>
+    <lastmod>${latestProjectDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Hạng mục: Công trình thực tế -->
+  <url>
+    <loc>${baseUrl}/hang-muc-cong-trinh/cong-trinh-thuc-te</loc>
+    <lastmod>${latestProjectDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Trang Báo giá -->
   <url>
     <loc>${baseUrl}/bao-gia</loc>
-    <changefreq>weekly</changefreq>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+
+  <!-- Trang Tin tức -->
   <url>
-    <loc>${baseUrl}/lien-he</loc>
+    <loc>${baseUrl}/tin-tuc</loc>
+    <lastmod>${latestBlogDate}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Trang Về TTP -->
+  <url>
+    <loc>${baseUrl}/ve-ttp</loc>
+    <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-  <url>
-    <loc>${baseUrl}/ve-ttp</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
+
+  <!-- Trang Đội ngũ nhân sự -->
   <url>
     <loc>${baseUrl}/ve-ttp/doi-ngu-nhan-su</loc>
+    <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
+
+  <!-- Trang Liên hệ -->
   <url>
-    <loc>${baseUrl}/tin-tuc</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
+    <loc>${baseUrl}/lien-he</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>`;
 
     // 3. Thêm các URL Dự án (Dynamic)
     if (projects && projects.length > 0) {
-      xml += `\n  <!-- Dự án -->`;
+      xml += `\n\n  <!-- Dự án chi tiết -->`;
       projects.forEach((p) => {
         const slug = generateSlug(p.title);
-        // Lấy ngày cập nhật (nếu không có thì lấy ngày hiện tại)
-        const lastmod = p.updatedAt ? new Date(p.updatedAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+        const lastmod = p.updatedAt ? new Date(p.updatedAt).toISOString().split('T')[0] : today;
         
         xml += `
   <url>
@@ -89,10 +154,10 @@ router.get('/sitemap.xml', async (req, res) => {
 
     // 4. Thêm các URL Bài viết (Dynamic)
     if (blogs && blogs.length > 0) {
-      xml += `\n  <!-- Bài viết Tin tức -->`;
+      xml += `\n\n  <!-- Bài viết Tin tức -->`;
       blogs.forEach((b) => {
         const slug = generateSlug(b.title);
-        const lastmod = b.updatedAt ? new Date(b.updatedAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+        const lastmod = b.updatedAt ? new Date(b.updatedAt).toISOString().split('T')[0] : today;
         
         xml += `
   <url>
@@ -107,8 +172,9 @@ router.get('/sitemap.xml', async (req, res) => {
     // 5. Đóng thẻ XML
     xml += '\n</urlset>';
 
-    // 6. Trả về đúng định dạng XML
+    // 6. Trả về đúng định dạng XML với cache 1 giờ
     res.set('Content-Type', 'application/xml');
+    res.set('Cache-Control', 'public, max-age=3600');
     res.send(xml);
 
   } catch (error) {

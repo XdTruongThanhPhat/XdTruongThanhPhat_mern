@@ -94,7 +94,7 @@ const About = () => {
           {/* Nút điều hướng */}
           {/* TỐI ƯU: Đổi sang flex-col trên mobile nhỏ để 2 nút không bị bóp nghẹt, từ màn hình sm mới xếp ngang */}
           <div className="pt-6 md:pt-10 flex flex-col sm:flex-row justify-center gap-3 md:gap-4">
-            <Link to="/ve-TRƯỜNG THÀNH PHÁT/doi-ngu-nhan-su" className="bg-black hover:bg-green-500 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-sm font-bold uppercase tracking-widest text-xs md:text-sm transition-colors shadow-md text-center">
+            <Link to="/ve-ttp/doi-ngu-nhan-su" className="bg-black hover:bg-green-500 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-sm font-bold uppercase tracking-widest text-xs md:text-sm transition-colors shadow-md text-center">
               Xem Đội Ngũ TRƯỜNG THÀNH PHÁT
             </Link>
             <Link to="/lien-he" className="border-2 border-green-500 text-green-500 hover:bg-green-500 hover:text-white px-6 md:px-8 py-2.5 md:py-3 rounded-sm font-bold uppercase tracking-widest text-xs md:text-sm transition-colors shadow-md text-center">

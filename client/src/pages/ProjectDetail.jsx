@@ -20,6 +20,10 @@ const ProjectDetail = () => {
   const [projectContent, setProjectContent] = useState([]);
   const [relatedProjects, setRelatedProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // STATE: MỤC LỤC TỰ ĐỘNG (TOC)
+  const [toc, setToc] = useState([]);
+  const [showToc, setShowToc] = useState(true);
   
   const [mainImage, setMainImage] = useState(null);
   const [allImages, setAllImages] = useState([]); // Gộp ảnh bìa và album ảnh lại
@@ -75,6 +79,35 @@ const ProjectDetail = () => {
       window.scrollTo(0, 0); 
     }
   }, [id]);
+
+  // LOGIC: BÓC TÁCH MỤC LỤC TỰ ĐỘNG TỪ SECTIONS
+  useEffect(() => {
+    if (projectContent && projectContent.length > 0) {
+      const tocItems = [];
+      projectContent.forEach((section, index) => {
+        if (section.heading) {
+          tocItems.push({
+            id: `heading-${index}`,
+            text: section.heading,
+            level: 'h2'
+          });
+        }
+      });
+      setToc(tocItems);
+    } else {
+      setToc([]);
+    }
+  }, [projectContent]);
+
+  // HÀM CLICK CUỘN TỚI MỤC LỤC
+  const scrollToHeading = (headingId) => {
+    const element = document.getElementById(headingId);
+    if (element) {
+      const yOffset = -100;
+      const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  };
 
   // Logic xử lý Gallery (Dùng biến allImages lấy từ Database)
   const maxThumbnails = 5;
@@ -161,7 +194,10 @@ const ProjectDetail = () => {
       <Helmet>
         <title>{projectData.title} | Trường Thành Phát</title>
         <meta name="description" content={`Dự án: ${projectData.title} tại ${projectData.info?.location || 'đang cập nhật'}. Khám phá thiết kế và quá trình thi công chi tiết.`} />
+        <link rel="canonical" href={`https://truongthanhphatdn.vn/hang-muc/cong-trinh-chi-tiet/${id}`} />
         <meta property="og:title" content={projectData.title} />
+        <meta property="og:description" content={`Dự án: ${projectData.title} tại ${projectData.info?.location || 'đang cập nhật'}. Khám phá thiết kế và quá trình thi công chi tiết.`} />
+        <meta property="og:url" content={`https://truongthanhphatdn.vn/hang-muc/cong-trinh-chi-tiet/${id}`} />
         {mainImage && <meta property="og:image" content={mainImage} />}
       </Helmet>
       <section className="pt-32 pb-16 bg-gray-50 min-h-screen relative">
@@ -256,12 +292,42 @@ const ProjectDetail = () => {
 
               {/* 3. NỘI DUNG BÀI VIẾT (Render theo mảng sections từ DB) */}
               <div className="bg-white p-6 md:p-8 rounded-md shadow-sm border border-gray-100 text-gray-700 leading-relaxed">
+
+                {/* MỤC LỤC BÀI VIẾT */}
+                {toc.length > 0 && (
+                  <div className="mb-8 bg-gray-50 border border-gray-200 rounded-lg p-5">
+                    <div className="flex justify-between items-center mb-3">
+                      <h3 className="font-bold text-lg text-black uppercase">Nội dung chính</h3>
+                      <button
+                        onClick={() => setShowToc(!showToc)}
+                        className="text-sm font-bold text-green-600 hover:text-green-800"
+                      >
+                        [{showToc ? 'Ẩn' : 'Hiện'}]
+                      </button>
+                    </div>
+                    {showToc && (
+                      <ul className="space-y-2 text-gray-700">
+                        {toc.map((item) => (
+                          <li
+                            key={item.id}
+                            className="cursor-pointer hover:text-green-600 transition-colors flex items-start gap-2 font-medium mt-3 text-base"
+                            onClick={() => scrollToHeading(item.id)}
+                          >
+                            <span className="text-green-500 mt-1">▪</span>
+                            <span className="flex-1 leading-snug">{item.text}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+
                 {projectContent.length > 0 ? (
                   projectContent.map((section, index) => (
                     <div key={index}>
                       {/* Render Heading nếu có */}
                       {section.heading && (
-                        <h2 className="text-xl md:text-2xl font-bold text-black mt-8 mb-4 first:mt-0">
+                        <h2 id={`heading-${index}`} className="text-xl md:text-2xl font-bold text-black mt-8 mb-4 first:mt-0" style={{ scrollMarginTop: '100px' }}>
                           {section.heading}
                         </h2>
                       )}

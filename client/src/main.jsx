@@ -11,3 +11,7 @@ createRoot(document.getElementById('root')).render(
     </HelmetProvider>
   </StrictMode>,
 )
+
+// Báo hiệu cho vite-plugin-prerender biết React đã render xong
+// Chỉ chạy trong môi trường prerender (build), không ảnh hưởng production runtime
+document.dispatchEvent(new Event('render-event'))

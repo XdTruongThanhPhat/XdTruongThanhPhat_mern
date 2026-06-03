@@ -160,7 +160,7 @@ const ManageProject = () => {
               projects.map(proj => (
                 <React.Fragment key={proj._id}>
                   {editingId === proj._id ? (
-                    // ================= KHU VỰC ĐANG CHỈNH SỬA =================
+                    // ================= KHU VỰC ĐANG CHỈNH SỰA =================
                     <tr className="bg-green-50/30">
                       <td colSpan="6" className="p-6 border-2 border-green-400 rounded-lg">
                         <div className="space-y-6">
@@ -186,6 +186,18 @@ const ManageProject = () => {
                             <div>
                                 <label className="text-sm font-medium text-gray-700">Vị trí</label>
                                 <input type="text" value={editForm.info?.location || ''} onChange={(e) => setEditForm({...editForm, info: {...editForm.info, location: e.target.value}})} className="border rounded p-2 w-full text-sm outline-none focus:border-green-500 mt-1 bg-white" />
+                            </div>
+                            <div>
+                                <label className="text-sm font-medium text-gray-700">Chi phí XD</label>
+                                <input type="text" value={editForm.info?.cost || ''} onChange={(e) => setEditForm({...editForm, info: {...editForm.info, cost: e.target.value}})} className="border rounded p-2 w-full text-sm outline-none focus:border-green-500 mt-1 bg-white" />
+                            </div>
+                            <div>
+                                <label className="text-sm font-medium text-gray-700">Số tầng</label>
+                                <input type="text" value={editForm.info?.floors || ''} onChange={(e) => setEditForm({...editForm, info: {...editForm.info, floors: e.target.value}})} className="border rounded p-2 w-full text-sm outline-none focus:border-green-500 mt-1 bg-white" />
+                            </div>
+                            <div>
+                                <label className="text-sm font-medium text-gray-700">Diện tích xây dựng</label>
+                                <input type="text" value={editForm.info?.buildArea || ''} onChange={(e) => setEditForm({...editForm, info: {...editForm.info, buildArea: e.target.value}})} className="border rounded p-2 w-full text-sm outline-none focus:border-green-500 mt-1 bg-white" />
                             </div>
                           </div>
 
