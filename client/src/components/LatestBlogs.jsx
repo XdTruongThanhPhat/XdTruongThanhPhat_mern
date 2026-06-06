@@ -1,22 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
-// HÀM TẠO URL CHUẨN SEO (giống News.jsx)
-const generateSlug = (text) => {
-  if (!text) return '';
-  return text.toString().toLowerCase()
-    .replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ặ|ẵ|â|ấ|ầ|ẩ|ậ|ẫ/g, "a")
-    .replace(/é|è|ẻ|ẹ|ẽ|ê|ế|ề|ể|ệ|ễ/g, "e")
-    .replace(/i|í|ì|ỉ|ị|ĩ/g, "i")
-    .replace(/ó|ò|ỏ|ọ|õ|ô|ố|ồ|ổ|ộ|ỗ|ơ|ớ|ờ|ở|ợ|ỡ/g, "o")
-    .replace(/ú|ù|ủ|ụ|ũ|ư|ứ|ừ|ử|ự|ữ/g, "u")
-    .replace(/ý|ỳ|ỷ|ỵ|ỹ/g, "y")
-    .replace(/đ/g, "d")
-    .replace(/([^0-9a-z-\s])/g, '')
-    .replace(/(\s+)/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-+|-+$/g, '');
-};
+import { generateSlug } from '../utils/slugify';
+import { optimizeCloudinaryUrl } from '../utils/cloudinary';
 
 // HÀM LÀM SẠCH MÃ HTML TỪ DATABASE THÀNH TEXT THƯỜNG
 const stripHtml = (html) => {
@@ -101,7 +86,7 @@ const LatestBlogs = () => {
                   {/* PHẦN ẢNH */}
                   <Link to={`/tin-tuc/${generateSlug(featuredBlog.title)}-${featuredBlog._id}`} className="block relative aspect-[4/3] md:aspect-[16/10] overflow-hidden shrink-0">
                     <img
-                      src={featuredBlog.imageUrl}
+                      src={optimizeCloudinaryUrl(featuredBlog.imageUrl, 800)}
                       alt={featuredBlog.title}
                       className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-in-out"
                     />
@@ -165,7 +150,7 @@ const LatestBlogs = () => {
                         {/* Ảnh thu nhỏ */}
                         <div className="w-full sm:w-2/5 aspect-[4/3] rounded overflow-hidden shrink-0 relative">
                           <img
-                            src={blog.imageUrl}
+                            src={optimizeCloudinaryUrl(blog.imageUrl, 400)}
                             alt={blog.title}
                             className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                           />

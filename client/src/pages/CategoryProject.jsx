@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { generateSlug } from '../utils/slugify';
+import Breadcrumb from '../components/Breadcrumb';
+import { optimizeCloudinaryUrl } from '../utils/cloudinary';
 
 const CategoryProject = () => {
   // 1. CHUẨN HÓA BẢN ĐỒ ÁNH XẠ ĐÚNG 5 MỤC
@@ -118,6 +120,12 @@ const CategoryProject = () => {
         <meta property="og:type" content="website" />
       </Helmet>
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        {/* Breadcrumb SEO */}
+        <Breadcrumb items={
+          categorySlug
+            ? [{ label: 'Hạng mục công trình', link: '/hang-muc-cong-trinh' }, { label: currentCategory.name }]
+            : [{ label: 'Hạng mục công trình' }]
+        } />
         
         {/* THANH CHỌN HẠNG MỤC */}
         <div className="flex flex-wrap justify-center items-center gap-2 md:gap-6 mb-8 md:mb-16 relative z-10">
@@ -155,8 +163,9 @@ const CategoryProject = () => {
                     >
                     <div className="relative aspect-[4/3] overflow-hidden shrink-0">
                         <img
-                        src={project.mainImage} 
-                        alt={project.title}
+                        src={optimizeCloudinaryUrl(project.mainImage, 600)} 
+                        alt={project.title || "Ảnh dự án Trường Thành Phát"}
+                        loading="lazy"
                         className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
                         />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">

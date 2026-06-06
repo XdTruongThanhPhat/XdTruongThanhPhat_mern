@@ -2,22 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
+import { generateSlug } from '../utils/slugify';
+import Breadcrumb from '../components/Breadcrumb';
+import { optimizeCloudinaryUrl } from '../utils/cloudinary';
 
-// HÀM TẠO URL CHUẨN SEO
-const generateSlug = (text) => {
-  if (!text) return '';
-  return text.toString().toLowerCase()
-    .replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ặ|ẵ|â|ấ|ầ|ẩ|ậ|ẫ/g, "a")
-    .replace(/é|è|ẻ|ẹ|ẽ|ê|ế|ề|ể|ệ|ễ/g, "e")
-    .replace(/i|í|ì|ỉ|ị|ĩ/g, "i")
-    .replace(/ó|ò|ỏ|ọ|õ|ô|ố|ồ|ổ|ộ|ỗ|ơ|ớ|ờ|ở|ợ|ỡ/g, "o")
-    .replace(/ú|ù|ủ|ụ|ũ|ư|ứ|ừ|ử|ự|ữ/g, "u")
-    .replace(/ý|ỳ|ỷ|ỵ|ỹ/g, "y")
-    .replace(/đ/g, "d")
-    .replace(/([^0-9a-z-\s])/g, '')
-    .replace(/(\s+)/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-+|-+$/g, '');
+// HÀM LOẠI BỎ THẺ HTML VÀ LẤY MÔ TẢ TÓM TẮT CHUẨN SEO
+const extractDescription = (htmlContent, maxLength = 155) => {
+  if (!htmlContent) return '';
+  const cleanText = htmlContent
+    .replace(/<[^>]*>?/gm, '') // Xóa các thẻ HTML
+    .replace(/&nbsp;/gi, ' ')  // Thay khoảng trắng
+    .replace(/\s+/g, ' ')      // Xóa khoảng trắng thừa
+    .trim();
+  return cleanText.substring(0, maxLength) + (cleanText.length > maxLength ? '...' : '');
 };
 
 // HÀM GIẢI MÃ CÁC KÝ TỰ HTML ENTITIES
@@ -131,7 +128,19 @@ const NewsDetail = () => {
         return `<${tag} id="${id}"${attributes}>${innerText}</${tag}>`;
       });
 
-      setBlogContentWithIds(newContent);
+      // Tự động thêm alt và loading="lazy" cho tất cả hình ảnh trong nội dung bài viết để tối ưu Image SEO
+      let modifiedContent = newContent.replace(/<img(.*?)src="(.*?)"(.*?)>/gi, (match, before, src, after) => {
+        let newImg = match;
+        if (!/alt=/i.test(match)) {
+          newImg = `<img${before}src="${src}"${after} alt="${blog.title}" />`;
+        }
+        if (!/loading=/i.test(match)) {
+          newImg = newImg.replace('<img', '<img loading="lazy"');
+        }
+        return newImg;
+      });
+
+      setBlogContentWithIds(modifiedContent);
       setToc(tocItems);
     }
   }, [blog]);
@@ -195,14 +204,54 @@ const NewsDetail = () => {
     <section className="pt-24 md:pt-32 pb-10 md:pb-20 bg-gray-50 min-h-screen relative">
       <Helmet>
         <title>{blog.title} | Trường Thành Phát</title>
-        <meta name="description" content={blog.title + " - Cập nhật kiến thức và xu hướng mới nhất từ Trường Thành Phát."} />
-        <link rel="canonical" href={`https://truongthanhphatdn.vn/tin-tuc/${slug}`} />
+        <meta name="description" content={blog.metaDescription || extractDescription(blog.content)} />
+        <link rel="canonical" href={`https://truongthanhphatdn.vn/tin-tuc/${generateSlug(blog.title)}-${blog._id}`} />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="article" />
         <meta property="og:title" content={blog.title} />
-        <meta property="og:description" content={blog.title + " - Cập nhật kiến thức và xu hướng mới nhất từ Trường Thành Phát."} />
-        <meta property="og:url" content={`https://truongthanhphatdn.vn/tin-tuc/${slug}`} />
+        <meta property="og:description" content={extractDescription(blog.content)} />
+        <meta property="og:url" content={`https://truongthanhphatdn.vn/tin-tuc/${generateSlug(blog.title)}-${blog._id}`} />
         {blog.imageUrl && <meta property="og:image" content={blog.imageUrl} />}
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={blog.title} />
+        <meta name="twitter:description" content={extractDescription(blog.content)} />
+        {blog.imageUrl && <meta name="twitter:image" content={blog.imageUrl} />}
+
+        {/* Dữ liệu cấu trúc Schema JSON-LD */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": blog.title,
+            "image": [blog.imageUrl],
+            "datePublished": blog.createdAt,
+            "dateModified": blog.updatedAt,
+            "author": [{
+              "@type": "Person",
+              "name": blog.author || "TTP Architect",
+              "url": "https://truongthanhphatdn.vn"
+            }],
+            "publisher": {
+              "@type": "Organization",
+              "name": "Trường Thành Phát",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://res.cloudinary.com/dia0hytop/image/upload/v1776675604/z7731184451078_e2096bacf215f8b507086b7a6712faa3_bjzvxz.png"
+              }
+            },
+            "description": extractDescription(blog.content)
+          })}
+        </script>
       </Helmet>
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        {/* Breadcrumb SEO */}
+        <Breadcrumb items={[
+          { label: 'Tin tức', link: '/tin-tuc' },
+          { label: blog.title }
+        ]} />
         <div className="flex flex-col lg:flex-row gap-6 md:gap-10">
 
           {/* CỘT TRÁI: NỘI DUNG */}

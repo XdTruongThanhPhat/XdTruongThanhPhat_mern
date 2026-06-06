@@ -3,12 +3,9 @@ import toast from 'react-hot-toast';
 
 const AddProject = () => {
   const [loading, setLoading] = useState(false);
-  
-  // SỬA LỖI 1: Khởi tạo giá trị mặc định khớp với lựa chọn đầu tiên trong thẻ select
   const [formData, setFormData] = useState({
-    title: '', category: 'Nội thất', location: '', floors: '', landArea: '', buildArea: '', cost: ''
+    title: '', category: 'Nội thất', location: '', floors: '', landArea: '', buildArea: '', cost: '', createdAt: ''
   });
-  
   const [images, setImages] = useState([]);
 
   const handleImageChange = (e) => {
@@ -33,6 +30,9 @@ const AddProject = () => {
         data.append('info', JSON.stringify({
             location: formData.location, floors: formData.floors, landArea: formData.landArea, buildArea: formData.buildArea, cost: formData.cost
         }));
+        if (formData.createdAt) {
+            data.append('createdAt', formData.createdAt);
+        }
 
         data.append('mainImage', images[0]);
         
@@ -50,8 +50,7 @@ const AddProject = () => {
 
         if (result.success) {
             toast.success("Thêm dự án thành công!");
-            // SỬA LỖI 2: Khi reset form sau khi gửi thành công, cũng phải set về 'Nội thất'
-            setFormData({ title: '', category: 'Nội thất', location: '', floors: '', landArea: '', buildArea: '', cost: '' });
+            setFormData({ title: '', category: 'Nội thất', location: '', floors: '', landArea: '', buildArea: '', cost: '', createdAt: '' });
             setImages([]);
         } else {
             toast.error(result.message);
@@ -94,6 +93,7 @@ const AddProject = () => {
             <div><label className="block text-sm font-medium text-gray-700 mb-1">Chi phí XD</label><input type="text" value={formData.cost} onChange={e => setFormData({...formData, cost: e.target.value})} className="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:border-green-500" /></div>
             <div><label className="block text-sm font-medium text-gray-700 mb-1">Số tầng</label><input type="text" value={formData.floors} onChange={e => setFormData({...formData, floors: e.target.value})} className="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:border-green-500" /></div>
             <div><label className="block text-sm font-medium text-gray-700 mb-1">Diện tích xây dựng</label><input type="text" value={formData.buildArea} onChange={e => setFormData({...formData, buildArea: e.target.value})} className="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:border-green-500" /></div>
+            <div><label className="block text-sm font-medium text-gray-700 mb-1">Ngày đăng bài</label><input type="date" value={formData.createdAt} onChange={e => setFormData({...formData, createdAt: e.target.value})} className="w-full border border-gray-300 rounded-lg p-2.5 outline-none focus:border-green-500 bg-white" /></div>
           </div>
         </div>
 

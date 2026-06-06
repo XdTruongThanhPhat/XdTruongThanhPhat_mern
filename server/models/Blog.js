@@ -7,6 +7,8 @@ const blogSchema = new mongoose.Schema({
     imageUrl: { type: String, required: true },
     author: { type: String, default: "TTP Architect" },
     isFeatured: { type: Boolean, default: false },
+    focusKeyword: { type: String, default: "" },
+    metaDescription: { type: String, default: "" },
 }, { timestamps: true });
 
 export default mongoose.models.Blog || mongoose.model("Blog", blogSchema);

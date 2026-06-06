@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import toast from 'react-hot-toast';
 import ReactQuill, { Quill } from 'react-quill-new';
+import SeoScorePanel from '../components/SeoScorePanel';
 import 'react-quill-new/dist/quill.snow.css';
 
 // ĐĂNG KÝ SIZE CHỮ THEO SỐ PIXEL
@@ -108,7 +109,7 @@ Quill.register(ImageBlot, true);
 
 const ManageBlog = () => {
   const [blogs, setBlogs] = useState([]);
-  const [formData, setFormData] = useState({ title: '', category: 'Kinh nghiệm xây nhà', content: '', file: null });
+  const [formData, setFormData] = useState({ title: '', category: 'Kinh nghiệm xây nhà', content: '', file: null, focusKeyword: '', metaDescription: '', createdAt: '' });
   const [editingId, setEditingId] = useState(null);
   const quillRef = useRef(null);
 
@@ -290,7 +291,12 @@ const ManageBlog = () => {
       .replace(/\u00a0/g, ' ')
       .replace(/[\u200b\u200c\u200d\ufeff]/g, '')
       .replace(/&shy;|\u00ad/g, '');
-    data.append('content', cleanedContent); 
+    data.append('content', cleanedContent);
+    data.append('focusKeyword', formData.focusKeyword);
+    data.append('metaDescription', formData.metaDescription);
+    if (formData.createdAt) {
+        data.append('createdAt', formData.createdAt);
+    }
     if (formData.file) {
         data.append('image', formData.file);
     }
@@ -302,7 +308,7 @@ const ManageBlog = () => {
       const result = await res.json();
       if (result.success) {
         toast.success(editingId ? "Cập nhật thành công!" : "Đăng bài thành công!", { id: toastId });
-        setFormData({ title: '', category: 'Kinh nghiệm xây nhà', content: '', file: null });
+        setFormData({ title: '', category: 'Kinh nghiệm xây nhà', content: '', file: null, focusKeyword: '', metaDescription: '', createdAt: '' });
         setEditingId(null);
         document.getElementById('cover-image-input').value = '';
         fetchBlogs();
@@ -317,14 +323,17 @@ const ManageBlog = () => {
         title: blog.title,
         category: blog.category,
         content: blog.content,
-        file: null
+        file: null,
+        focusKeyword: blog.focusKeyword || '',
+        metaDescription: blog.metaDescription || '',
+        createdAt: blog.createdAt ? new Date(blog.createdAt).toISOString().split('T')[0] : ''
     });
     setEditingId(blog._id);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleCancelEdit = () => {
-    setFormData({ title: '', category: 'Kinh nghiệm xây nhà', content: '', file: null });
+    setFormData({ title: '', category: 'Kinh nghiệm xây nhà', content: '', file: null, focusKeyword: '', metaDescription: '', createdAt: '' });
     setEditingId(null);
     document.getElementById('cover-image-input').value = '';
   };
@@ -386,6 +395,21 @@ const ManageBlog = () => {
             <label className="block text-sm font-bold mb-1">Ảnh bìa bài viết {editingId && <span className="text-gray-500 font-normal">(Bỏ trống nếu không muốn đổi ảnh)</span>}</label>
             <input id="cover-image-input" type="file" accept="image/*" onChange={e => setFormData({...formData, file: e.target.files[0]})} className="w-full border p-1.5 rounded bg-white" />
         </div>
+        {/* SEO FIELDS */}
+        <div className="grid grid-cols-3 gap-4 mb-4">
+            <div>
+                <label className="block text-sm font-bold mb-1">Từ khóa SEO chính <span className="text-gray-400 font-normal">(Tùy chọn)</span></label>
+                <input type="text" value={formData.focusKeyword} onChange={e => setFormData({...formData, focusKeyword: e.target.value})} placeholder="VD: thiết kế nhà phố Đà Nẵng" className="w-full border p-2 rounded" />
+            </div>
+            <div>
+                <label className="block text-sm font-bold mb-1">Mô tả SEO <span className="text-gray-400 font-normal">(Tùy chọn, 120-155 ký tự)</span></label>
+                <input type="text" value={formData.metaDescription} onChange={e => setFormData({...formData, metaDescription: e.target.value})} placeholder="Mô tả ngắn gọn cho Google hiển thị" className="w-full border p-2 rounded" maxLength={160} />
+            </div>
+            <div>
+                <label className="block text-sm font-bold mb-1">Ngày đăng bài</label>
+                <input type="date" value={formData.createdAt} onChange={e => setFormData({...formData, createdAt: e.target.value})} className="w-full border p-2 rounded bg-white" />
+            </div>
+        </div>
         <div className="mb-6">
             <label className="block text-sm font-bold mb-1">Nội dung chi tiết (Có thể chèn ảnh, tạo tiêu đề)</label>
             <div className="bg-white rounded border">
@@ -399,6 +423,17 @@ const ManageBlog = () => {
                   className="h-96 mb-12" 
                 />
             </div>
+        </div>
+        {/* SEO SCORE PANEL */}
+        <div className="mb-6">
+          <SeoScorePanel
+            title={formData.title}
+            content={formData.content}
+            focusKeyword={formData.focusKeyword}
+            metaDescription={formData.metaDescription}
+            hasImage={!!(formData.file || editingId)}
+            type="blog"
+          />
         </div>
         <div className="flex gap-4">
             <button type="submit" className="bg-green-600 text-white font-bold px-8 py-2 rounded hover:bg-green-700">

@@ -47,6 +47,7 @@ const Navbar = () => {
         ? 'bg-emerald-900/95 backdrop-blur-md py-1 shadow-lg border-b border-emerald-800' 
         : 'bg-emerald-800 py-3 shadow-md'
       }`}
+      aria-label="Điều hướng chính"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
@@ -111,7 +112,7 @@ const Navbar = () => {
           {/* MOBILE BUTTON */}
           <div className="md:hidden flex items-center">
             {/* THAY ĐỔI: Icon menu màu Trắng, Hover sang Đỏ */}
-            <button onClick={() => setIsMobileOpen(!isMobileOpen)} className="p-2 text-white hover:text-red-400 transition-colors outline-none">
+            <button onClick={() => setIsMobileOpen(!isMobileOpen)} className="p-2 text-white hover:text-red-400 transition-colors outline-none" aria-label={isMobileOpen ? 'Đóng menu' : 'Mở menu'} aria-expanded={isMobileOpen}>
               {isMobileOpen ? (
                 <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

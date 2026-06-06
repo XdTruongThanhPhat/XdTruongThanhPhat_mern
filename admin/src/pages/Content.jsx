@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import toast from 'react-hot-toast';
+import SeoScorePanel from '../components/SeoScorePanel';
 
 const Content = () => {
   const [projects, setProjects] = useState([]);
@@ -203,6 +204,18 @@ const Content = () => {
           >
             + THÊM ĐOẠN NỘI DUNG MỚI
           </button>
+
+          {/* SEO SCORE PANEL cho Dự án */}
+          <div className="mt-6">
+            <SeoScorePanel
+              title={selectedProject?.title || ''}
+              content={sections.map(s => `${s.heading ? `<h2>${s.heading}</h2>` : ''}${s.paragraph || ''}`).join('')}
+              focusKeyword=""
+              metaDescription=""
+              hasImage={sections.some(s => s.file || s.imageUrl)}
+              type="project"
+            />
+          </div>
         </div>
       </div>
     );

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import toast from 'react-hot-toast'; // Bổ sung thư viện thông báo
+import toast from 'react-hot-toast';
 import { Helmet } from 'react-helmet-async';
+import Breadcrumb from '../components/Breadcrumb';
 
 const Contact = () => {
   // ==========================================
@@ -56,9 +57,40 @@ const Contact = () => {
   return (
     <section className="min-h-screen bg-white">
       <Helmet>
-        <title>Liên Hệ | Trường Thành Phát</title>
-        <meta name="description" content="Liên hệ Trường Thành Phát để được tư vấn thiết kế và thi công xây dựng chuyên nghiệp tại Đà Nẵng" />
+        <title>Liên Hệ | Trường Thành Phát – Thiết Kế &amp; Xây Dựng</title>
+        <meta name="description" content="Liên hệ Trường Thành Phát để được tư vấn thiết kế và thi công xây dựng chuyên nghiệp tại Đà Nẵng. Hotline: 0387176793, địa chỉ: 256 Diên Hồng, Hòa Xuân, Đà Nẵng." />
         <link rel="canonical" href="https://truongthanhphatdn.vn/lien-he" />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Liên Hệ | Trường Thành Phát" />
+        <meta property="og:description" content="Liên hệ Trường Thành Phát để được tư vấn thiết kế và thi công xây dựng chuyên nghiệp tại Đà Nẵng. Hotline: 0387176793, địa chỉ: 256 Diên Hồng, Hòa Xuân, Đà Nẵng." />
+        <meta property="og:url" content="https://truongthanhphatdn.vn/lien-he" />
+        <meta property="og:image" content="https://res.cloudinary.com/dia0hytop/image/upload/v1776675604/z7731184451078_e2096bacf215f8b507086b7a6712faa3_bjzvxz.png" />
+
+        {/* Dữ liệu cấu trúc Schema JSON-LD */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ContactPage",
+            "name": "Liên hệ Trường Thành Phát",
+            "description": "Liên hệ Trường Thành Phát để được tư vấn thiết kế và thi công xây dựng chuyên nghiệp tại Đà Nẵng",
+            "mainEntity": {
+              "@type": "LocalBusiness",
+              "name": "Trường Thành Phát",
+              "image": "https://res.cloudinary.com/dia0hytop/image/upload/v1776675604/z7731184451078_e2096bacf215f8b507086b7a6712faa3_bjzvxz.png",
+              "telephone": "0387176793",
+              "email": "Xdtruongthanhphat@gmail.com",
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "256 Diên Hồng, Hòa Xuân",
+                "addressLocality": "Hòa Xuân, Cẩm Lệ",
+                "addressRegion": "Đà Nẵng",
+                "addressCountry": "VN"
+              }
+            }
+          })}
+        </script>
       </Helmet>
 
       {/* ==========================================
@@ -88,6 +120,8 @@ const Contact = () => {
           PHẦN 2: THÔNG TIN VÀ FORM LIÊN HỆ
       ========================================== */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 lg:py-20">
+        {/* Breadcrumb SEO */}
+        <Breadcrumb items={[{ label: 'Liên hệ' }]} />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-start">
 
           {/* CỘT TRÁI: THÔNG TIN CÔNG TY */}

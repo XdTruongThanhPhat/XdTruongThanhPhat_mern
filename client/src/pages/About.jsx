@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import Breadcrumb from '../components/Breadcrumb';
 
 const About = () => {
   return (
@@ -10,8 +11,41 @@ const About = () => {
         <title>Về Trường Thành Phát | Kiến Trúc &amp; Xây Dựng</title>
         <meta name="description" content="Tìm hiểu về Trường Thành Phát - đơn vị thiết kế kiến trúc và xây dựng uy tín chuyên nghiệp tại Đà Nẵng" />
         <link rel="canonical" href="https://truongthanhphatdn.vn/ve-ttp" />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Về Trường Thành Phát | Kiến Trúc &amp; Xây Dựng" />
+        <meta property="og:description" content="Tìm hiểu về Trường Thành Phát - đơn vị thiết kế kiến trúc và xây dựng uy tín chuyên nghiệp tại Đà Nẵng" />
+        <meta property="og:url" content="https://truongthanhphatdn.vn/ve-ttp" />
+        <meta property="og:image" content="https://res.cloudinary.com/dia0hytop/image/upload/v1776675604/z7731184451078_e2096bacf215f8b507086b7a6712faa3_bjzvxz.png" />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Về Trường Thành Phát | Kiến Trúc &amp; Xây Dựng" />
+        <meta name="twitter:description" content="Tìm hiểu về Trường Thành Phát - đơn vị thiết kế kiến trúc và xây dựng uy tín chuyên nghiệp tại Đà Nẵng" />
+        <meta name="twitter:image" content="https://res.cloudinary.com/dia0hytop/image/upload/v1776675604/z7731184451078_e2096bacf215f8b507086b7a6712faa3_bjzvxz.png" />
+
+        {/* Dữ liệu cấu trúc Schema JSON-LD */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "AboutPage",
+            "name": "Giới thiệu về Trường Thành Phát",
+            "description": "Tìm hiểu về Trường Thành Phát - đơn vị thiết kế kiến trúc và xây dựng uy tín chuyên nghiệp tại Đà Nẵng",
+            "publisher": {
+              "@type": "Organization",
+              "name": "Trường Thành Phát",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://res.cloudinary.com/dia0hytop/image/upload/v1776675604/z7731184451078_e2096bacf215f8b507086b7a6712faa3_bjzvxz.png"
+              }
+            }
+          })}
+        </script>
       </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Breadcrumb SEO */}
+        <Breadcrumb items={[{ label: 'Về Trường Thành Phát' }]} />
 
         {/* BANNER ẢNH TẬP THỂ */}
         {/* TỐI ƯU: Giảm margin-bottom trên mobile (mb-8) */}

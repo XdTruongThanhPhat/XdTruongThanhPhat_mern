@@ -38,11 +38,16 @@ function App() {
 
       <div className="flex flex-col min-h-screen bg-white">
         
+        {/* Skip to content – Accessibility: screen reader có thể bỏ qua Navbar */}
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-0 focus:left-0 focus:z-[9999] focus:bg-green-600 focus:text-white focus:px-4 focus:py-2 focus:text-sm focus:font-bold">
+          Bỏ qua điều hướng
+        </a>
+
         {/* NAVBAR - Luôn cố định ở trên */}
         <Navbar />
         
         {/* MAIN CONTENT - Thay đổi theo Route */}
-        <main className="flex-grow">
+        <main id="main-content" className="flex-grow">
           <Routes>
             {/* 1. Trang chủ */}
             <Route path="/" element={<Home />} />

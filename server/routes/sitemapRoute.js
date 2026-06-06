@@ -24,8 +24,8 @@ const generateSlug = (text) => {
 router.get('/sitemap.xml', async (req, res) => {
   try {
     // 1. Lấy tất cả Dự án và Bài viết từ Database
-    const projects = await Project.find({}).select('title updatedAt _id').sort({ createdAt: -1 });
-    const blogs = await Blog.find({}).select('title updatedAt _id').sort({ createdAt: -1 });
+    const projects = await Project.find({}).select('title updatedAt _id mainImage').sort({ createdAt: -1 });
+    const blogs = await Blog.find({}).select('title updatedAt _id imageUrl').sort({ createdAt: -1 });
     
     const baseUrl = 'https://truongthanhphatdn.vn';
     const today = new Date().toISOString().split('T')[0];
@@ -38,7 +38,8 @@ router.get('/sitemap.xml', async (req, res) => {
 
     // 2. Khởi tạo cấu trúc XML và thêm các trang tĩnh
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <!-- Trang chủ -->
   <url>
     <loc>${baseUrl}/</loc>
@@ -147,7 +148,11 @@ router.get('/sitemap.xml', async (req, res) => {
     <loc>${baseUrl}/hang-muc/cong-trinh-chi-tiet/${slug}-${p._id}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.7</priority>${p.mainImage ? `
+    <image:image>
+      <image:loc>${p.mainImage}</image:loc>
+      <image:title>${p.title}</image:title>
+    </image:image>` : ''}
   </url>`;
       });
     }
@@ -164,7 +169,11 @@ router.get('/sitemap.xml', async (req, res) => {
     <loc>${baseUrl}/tin-tuc/${slug}-${b._id}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.7</priority>${b.imageUrl ? `
+    <image:image>
+      <image:loc>${b.imageUrl}</image:loc>
+      <image:title>${b.title}</image:title>
+    </image:image>` : ''}
   </url>`;
       });
     }

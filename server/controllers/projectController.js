@@ -11,7 +11,7 @@ const uploadToCloudinary = async (file) => {
 // [POST] Thêm Project mới
 export const addProject = async (req, res) => {
     try {
-        const { title, category } = req.body;
+        const { title, category, createdAt } = req.body;
         const info = req.body.info ? JSON.parse(req.body.info) : {};
 
         let mainImageUrl = "";
@@ -28,10 +28,18 @@ export const addProject = async (req, res) => {
         }
 
         const newProject = new Project({
-            title, category, mainImage: mainImageUrl, projectImages: projectImageUrls, info
+            title, category, mainImage: mainImageUrl, projectImages: projectImageUrls, info,
+            ...(createdAt ? { createdAt: new Date(createdAt) } : {})
         });
 
         await newProject.save();
+        if (createdAt) {
+            await Project.collection.updateOne(
+                { _id: newProject._id },
+                { $set: { createdAt: new Date(createdAt) } }
+            );
+            newProject.createdAt = new Date(createdAt);
+        }
         res.status(201).json({ success: true, message: "Tạo dự án thành công", project: newProject });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -59,11 +67,10 @@ export const deleteProject = async (req, res) => {
     }
 };
 
-// [PUT] Cập nhật thông tin cơ bản của dự án
 export const updateProject = async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, category } = req.body;
+        const { title, category, createdAt } = req.body;
         const info = req.body.info ? JSON.parse(req.body.info) : {};
         
         // Lấy danh sách ảnh cũ mà Admin muốn GIỮ LẠI (Gửi dưới dạng mảng URL từ Frontend)
@@ -83,11 +90,24 @@ export const updateProject = async (req, res) => {
             }
         }
 
+        const updateData = { title, category, info, mainImage, projectImages };
+        if (createdAt) {
+            updateData.createdAt = new Date(createdAt);
+        }
+
         const updatedProject = await Project.findByIdAndUpdate(
             id,
-            { title, category, info, mainImage, projectImages },
+            updateData,
             { new: true }
         );
+
+        if (createdAt && updatedProject) {
+            await Project.collection.updateOne(
+                { _id: updatedProject._id },
+                { $set: { createdAt: new Date(createdAt) } }
+            );
+            updatedProject.createdAt = new Date(createdAt);
+        }
 
         res.status(200).json({ success: true, message: "Cập nhật dự án thành công", project: updatedProject });
     } catch (error) {

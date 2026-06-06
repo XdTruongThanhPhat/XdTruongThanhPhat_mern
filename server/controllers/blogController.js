@@ -10,14 +10,29 @@ export const getBlogs = async (req, res) => {
 
 export const addBlog = async (req, res) => {
     try {
-        const { title, category, content } = req.body;
+        const { title, category, content, focusKeyword, metaDescription, createdAt } = req.body;
         if (!req.file) return res.status(400).json({ success: false, message: "Cần chọn ảnh bìa!" });
         
         const b64 = Buffer.from(req.file.buffer).toString("base64");
         const dataURI = `data:${req.file.mimetype};base64,${b64}`;
         const uploadResult = await cloudinary.uploader.upload(dataURI, { folder: 'TTP_Blogs' });
         
-        const newBlog = await Blog.create({ title, category, content, imageUrl: uploadResult.secure_url });
+        const newBlog = await Blog.create({ 
+            title, 
+            category, 
+            content, 
+            imageUrl: uploadResult.secure_url, 
+            focusKeyword: focusKeyword || '', 
+            metaDescription: metaDescription || '',
+            ...(createdAt ? { createdAt: new Date(createdAt) } : {})
+        });
+        if (createdAt) {
+            await Blog.collection.updateOne(
+                { _id: newBlog._id },
+                { $set: { createdAt: new Date(createdAt) } }
+            );
+            newBlog.createdAt = new Date(createdAt);
+        }
         res.status(201).json({ success: true, blog: newBlog });
     } catch (error) { res.status(500).json({ success: false, message: error.message }); }
 };
@@ -64,7 +79,7 @@ export const uploadBlogImage = async (req, res) => {
 
 export const updateBlog = async (req, res) => {
     try {
-        const { title, category, content } = req.body;
+        const { title, category, content, focusKeyword, metaDescription, createdAt } = req.body;
         const blog = await Blog.findById(req.params.id);
         
         if (!blog) return res.status(404).json({ success: false, message: "Không tìm thấy bài viết" });
@@ -82,8 +97,18 @@ export const updateBlog = async (req, res) => {
         blog.category = category || blog.category;
         blog.content = content || blog.content;
         blog.imageUrl = imageUrl;
+        blog.focusKeyword = focusKeyword !== undefined ? focusKeyword : blog.focusKeyword;
+        blog.metaDescription = metaDescription !== undefined ? metaDescription : blog.metaDescription;
 
         await blog.save();
+
+        if (createdAt) {
+            await Blog.collection.updateOne(
+                { _id: blog._id },
+                { $set: { createdAt: new Date(createdAt) } }
+            );
+            blog.createdAt = new Date(createdAt);
+        }
 
         res.status(200).json({ success: true, blog });
     } catch (error) {

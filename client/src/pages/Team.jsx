@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import Breadcrumb from '../components/Breadcrumb';
 
 const Team = () => {
   // Thay dữ liệu cứng bằng State rỗng chờ API
@@ -37,8 +38,22 @@ const Team = () => {
         <title>Đội Ngũ Nhân Sự | Trường Thành Phát</title>
         <meta name="description" content="Đội ngũ kiến trúc sư và kỹ sư xây dựng chuyên nghiệp tại Trường Thành Phát" />
         <link rel="canonical" href="https://truongthanhphatdn.vn/ve-ttp/doi-ngu-nhan-su" />
+        {/* OG Tags */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Đội Ngũ Nhân Sự | Trường Thành Phát" />
+        <meta property="og:description" content="Đội ngũ kiến trúc sư và kỹ sư xây dựng chuyên nghiệp tại Trường Thành Phát" />
+        <meta property="og:url" content="https://truongthanhphatdn.vn/ve-ttp/doi-ngu-nhan-su" />
+        <meta property="og:image" content="https://truongthanhphatdn.vn/Logo.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Đội Ngũ Nhân Sự | Trường Thành Phát" />
+        <meta name="twitter:description" content="Đội ngũ kiến trúc sư và kỹ sư xây dựng chuyên nghiệp tại Trường Thành Phát" />
       </Helmet>
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        {/* Breadcrumb SEO */}
+        <Breadcrumb items={[
+          { label: 'Về TTP', link: '/ve-ttp' },
+          { label: 'Đội ngũ nhân sự' }
+        ]} />
         
         {/* PHẦN 1: BANNER TẬP THỂ */}
         {teamData.bannerUrl && (

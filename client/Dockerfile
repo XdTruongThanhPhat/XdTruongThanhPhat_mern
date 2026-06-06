@@ -1,5 +1,18 @@
-# Build stage
 FROM node:20-alpine AS build
+
+# Cài đặt Chromium và các thư viện cần thiết cho Puppeteer trên Alpine
+RUN apk add --no-cache \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont
+
+# Bỏ qua download chromium mặc định và định nghĩa đường dẫn chạy Chromium hệ thống
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
 WORKDIR /app
 COPY package*.json ./
 RUN npm install

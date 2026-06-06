@@ -1,23 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-
-// HÀM TẠO URL CHUẨN SEO
-const generateSlug = (text) => {
-  if (!text) return '';
-  return text.toString().toLowerCase()
-    .replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ặ|ẵ|â|ấ|ầ|ẩ|ậ|ẫ/g, "a")
-    .replace(/é|è|ẻ|ẹ|ẽ|ê|ế|ề|ể|ệ|ễ/g, "e")
-    .replace(/i|í|ì|ỉ|ị|ĩ/g, "i")
-    .replace(/ó|ò|ỏ|ọ|õ|ô|ố|ồ|ổ|ộ|ỗ|ơ|ớ|ờ|ở|ợ|ỡ/g, "o")
-    .replace(/ú|ù|ủ|ụ|ũ|ư|ứ|ừ|ử|ự|ữ/g, "u")
-    .replace(/ý|ỳ|ỷ|ỵ|ỹ/g, "y")
-    .replace(/đ/g, "d")
-    .replace(/([^0-9a-z-\s])/g, '')
-    .replace(/(\s+)/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-+|-+$/g, '');
-};
+import { generateSlug } from '../utils/slugify';
+import Breadcrumb from '../components/Breadcrumb';
+import { optimizeCloudinaryUrl } from '../utils/cloudinary';
 
 // HÀM LÀM SẠCH MÃ HTML TỪ DATABASE THÀNH TEXT THƯỜNG
 const stripHtml = (html) => {
@@ -74,11 +60,22 @@ const News = () => {
     // TỐI ƯU: Giảm padding Top/Bottom trên mobile (pt-24 pb-10)
     <section className="pt-24 md:pt-32 pb-10 md:pb-20 bg-gray-50 min-h-screen">
       <Helmet>
-        <title>Tin Tức &amp; Kiến Thức Xây Dựng | Trường Thành Phát</title>
+        <title>Tin Tức & Kiến Thức Xây Dựng | Trường Thành Phát</title>
         <meta name="description" content="Cập nhật xu hướng kiến trúc, kiến thức xây dựng và phong thủy nhà ở từ các chuyên gia của Trường Thành Phát" />
         <link rel="canonical" href="https://truongthanhphatdn.vn/tin-tuc" />
+        {/* OG Tags */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Tin Tức & Kiến Thức Xây Dựng | Trường Thành Phát" />
+        <meta property="og:description" content="Cập nhật xu hướng kiến trúc, kiến thức xây dựng và phong thủy nhà ở" />
+        <meta property="og:url" content="https://truongthanhphatdn.vn/tin-tuc" />
+        <meta property="og:image" content="https://truongthanhphatdn.vn/Logo.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Tin Tức & Kiến Thức Xây Dựng | Trường Thành Phát" />
+        <meta name="twitter:description" content="Cập nhật xu hướng kiến trúc, kiến thức xây dựng và phong thủy" />
       </Helmet>
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        {/* Breadcrumb SEO */}
+        <Breadcrumb items={[{ label: 'Tin tức' }]} />
 
         {/* TIÊU ĐỀ */}
         <div className="text-center mb-8 md:mb-12">
@@ -119,7 +116,7 @@ const News = () => {
                 className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full border border-gray-100"
               >
                 <div className="relative aspect-[16/10] overflow-hidden shrink-0">
-                  <img src={blog.imageUrl} alt={blog.title} className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
+                  <img src={optimizeCloudinaryUrl(blog.imageUrl, 400)} alt={blog.title || "Tin tức Trường Thành Phát"} loading="lazy" className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
                   {/* TỐI ƯU: Tag danh mục nhỏ hơn */}
                   <div className="absolute top-2 left-2 md:top-4 md:left-4 bg-green-500 text-white text-[8px] md:text-[10px] font-bold uppercase px-2 py-0.5 md:px-3 md:py-1 rounded-sm shadow-md">
                     {blog.category}

@@ -14,9 +14,9 @@ const Footer = () => {
           {/* CỘT 1: GIỚI THIỆU */}
           <div className="space-y-3 md:space-y-4">
             {/* TỐI ƯU: Thu nhỏ text tiêu đề trên mobile (text-base) */}
-            <h3 className="text-red-400 text-base md:text-lg font-bold uppercase tracking-widest mb-2 md:mb-4">
+            <p className="text-red-400 text-base md:text-lg font-bold uppercase tracking-widest mb-2 md:mb-4">
               Trường Thành Phát
-            </h3>
+            </p>
             <div className="w-10 md:w-12 h-1 bg-green-500 mb-3 md:mb-4"></div>
             {/* TỐI ƯU: Thu nhỏ text nội dung (text-xs) */}
             <p className="text-gray-400 text-xs md:text-sm leading-relaxed">
@@ -51,7 +51,7 @@ const Footer = () => {
 
           {/* CỘT 2: LIÊN KẾT NHANH */}
           <div>
-            <h4 className="text-base md:text-lg font-bold uppercase tracking-widest mb-2 md:mb-4">Liên Kết Nhanh</h4>
+            <p className="text-base md:text-lg font-bold uppercase tracking-widest mb-2 md:mb-4">Liên Kết Nhanh</p>
             <div className="w-6 md:w-8 h-1 bg-green-500 mb-4 md:mb-6"></div>
             {/* TỐI ƯU: Giảm khoảng cách dòng (space-y-2) và text-xs trên mobile */}
             <ul className="space-y-2 md:space-y-3 text-xs md:text-sm text-gray-400">
@@ -65,7 +65,7 @@ const Footer = () => {
 
           {/* CỘT 3: THÔNG TIN LIÊN HỆ */}
           <div>
-            <h4 className="text-base md:text-lg font-bold uppercase tracking-widest mb-2 md:mb-4">Thông Tin Liên Hệ</h4>
+            <p className="text-base md:text-lg font-bold uppercase tracking-widest mb-2 md:mb-4">Thông Tin Liên Hệ</p>
             <div className="w-6 md:w-8 h-1 bg-green-500 mb-4 md:mb-6"></div>
             <ul className="space-y-3 md:space-y-4 text-xs md:text-sm text-gray-400">
               <li className="flex items-start gap-2 md:gap-3">
@@ -92,7 +92,7 @@ const Footer = () => {
 
           {/* CỘT 4: BẢN ĐỒ GOOGLE MAP */}
           <div className="h-full">
-            <h4 className="text-base md:text-lg font-bold uppercase tracking-widest mb-2 md:mb-4">Trụ sở văn phòng</h4>
+            <p className="text-base md:text-lg font-bold uppercase tracking-widest mb-2 md:mb-4">Trụ sở văn phòng</p>
             <div className="w-6 md:w-8 h-1 bg-green-500 mb-4 md:mb-6"></div>
             {/* TỐI ƯU: Giảm chiều cao bản đồ trên mobile (h-40) */}
             <div className="w-full h-40 md:h-56 rounded-md overflow-hidden border border-gray-800 shadow-sm relative group">

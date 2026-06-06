@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import toast from 'react-hot-toast'; // Bổ sung thư viện thông báo
+import toast from 'react-hot-toast';
 import { Helmet } from 'react-helmet-async';
 import { generateSlug } from '../utils/slugify';
+import Breadcrumb from '../components/Breadcrumb';
+import { optimizeCloudinaryUrl } from '../utils/cloudinary';
 
 const ProjectDetail = () => {
   const { id } = useParams(); // Lấy ID công trình từ URL
@@ -51,8 +53,10 @@ const ProjectDetail = () => {
             setAllImages(imagesArray);
           }
 
-          // Lọc ra các dự án liên quan (Khác ID hiện tại, lấy tối đa 4-8 cái)
-          const related = projData.projects.filter(p => p._id !== realId).slice(0, 8);
+          // Lọc ra các dự án liên quan: Ưu tiên cùng category, nếu không đủ thì lấy ngẫu nhiên
+          const sameCategory = projData.projects.filter(p => p._id !== realId && p.category === currentProject?.category);
+          const otherProjects = projData.projects.filter(p => p._id !== realId && p.category !== currentProject?.category);
+          const related = [...sameCategory, ...otherProjects].slice(0, 8);
           setRelatedProjects(related);
         }
 
@@ -189,20 +193,58 @@ const ProjectDetail = () => {
     );
   }
 
+  const projectDesc = projectData.description 
+    ? projectData.description 
+    : `Dự án ${projectData.title} tại ${projectData.info?.location || 'Đà Nẵng'}. Quy mô thiết kế gồm ${projectData.info?.floors || '-'} tầng, diện tích xây dựng ${projectData.info?.buildArea || '-'}, chi phí ${projectData.info?.cost || 'Liên hệ'}. Khám phá thiết kế và quá trình thi công chi tiết.`;
+
+  const canonicalUrl = `https://truongthanhphatdn.vn/hang-muc/cong-trinh-chi-tiet/${generateSlug(projectData.title)}-${projectData._id}`;
+
+  const schemaMarkup = {
+    "@context": "https://schema.org",
+    "@type": "SingleFamilyResidence",
+    "name": projectData.title,
+    "image": [mainImage],
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": projectData.info?.location || "Đà Nẵng",
+      "addressCountry": "VN"
+    },
+    "description": projectDesc
+  };
+
   return (
     <>
       <Helmet>
         <title>{projectData.title} | Trường Thành Phát</title>
-        <meta name="description" content={`Dự án: ${projectData.title} tại ${projectData.info?.location || 'đang cập nhật'}. Khám phá thiết kế và quá trình thi công chi tiết.`} />
-        <link rel="canonical" href={`https://truongthanhphatdn.vn/hang-muc/cong-trinh-chi-tiet/${id}`} />
+        <meta name="description" content={projectDesc} />
+        <link rel="canonical" href={canonicalUrl} />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
         <meta property="og:title" content={projectData.title} />
-        <meta property="og:description" content={`Dự án: ${projectData.title} tại ${projectData.info?.location || 'đang cập nhật'}. Khám phá thiết kế và quá trình thi công chi tiết.`} />
-        <meta property="og:url" content={`https://truongthanhphatdn.vn/hang-muc/cong-trinh-chi-tiet/${id}`} />
+        <meta property="og:description" content={projectDesc} />
+        <meta property="og:url" content={canonicalUrl} />
         {mainImage && <meta property="og:image" content={mainImage} />}
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={projectData.title} />
+        <meta name="twitter:description" content={projectDesc} />
+        {mainImage && <meta name="twitter:image" content={mainImage} />}
+
+        {/* Dữ liệu cấu trúc Schema JSON-LD */}
+        <script type="application/ld+json">
+          {JSON.stringify(schemaMarkup)}
+        </script>
       </Helmet>
       <section className="pt-32 pb-16 bg-gray-50 min-h-screen relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        {/* Breadcrumb SEO */}
+        <Breadcrumb items={[
+          { label: 'Hạng mục công trình', link: '/hang-muc-cong-trinh' },
+          { label: projectData.title }
+        ]} />
+
           {/* TIÊU ĐỀ TRANG CHI TIẾT */}
           <div className="mb-8 border-b border-gray-200 pb-4">
             <h1 className="text-2xl md:text-3xl font-bold uppercase tracking-wide text-black">
@@ -222,9 +264,10 @@ const ProjectDetail = () => {
                   onClick={() => openLightbox(allImages.indexOf(mainImage))}
                 >
                   <img 
-                    src={mainImage} 
-                    alt="Main Project" 
+                    src={optimizeCloudinaryUrl(mainImage, 1200)} 
+                    alt={`${projectData.title} - Ảnh chính công trình`} 
                     style={{ maxWidth: '100%', maxHeight: '70vh', width: 'auto', height: 'auto', display: 'block', margin: '0 auto' }}
+                    fetchpriority="high"
                   />
                   <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <svg className="w-10 h-10 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
@@ -249,7 +292,7 @@ const ProjectDetail = () => {
                             mainImage === img && (!isLast || !hasMore) ? 'border-green-500 opacity-100' : 'border-transparent opacity-70 hover:opacity-100'
                           }`}
                         >
-                          <img src={img} alt={`Thumb ${idx}`} className="w-full h-full object-cover" />
+                          <img src={img} alt={`Ảnh dự án ${projectData.title} - Hình ${idx + 1}`} loading="lazy" className="w-full h-full object-cover" />
                           
                           {isLast && hasMore && (
                             <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white text-lg font-bold hover:bg-black/80 transition-colors">
@@ -342,7 +385,7 @@ const ProjectDetail = () => {
                       {/* Render Image & Caption nếu có */}
                       {section.imageUrl && (
                         <div className="my-8">
-                          <img src={section.imageUrl} alt="Project content" className="w-full rounded-sm object-cover" />
+                           <img src={section.imageUrl} alt={section.caption || `${projectData.title} - Ảnh chi tiết ${index + 1}`} loading="lazy" className="w-full rounded-sm object-cover" />
                           {section.caption && (
                             <div className="bg-gray-100 text-gray-500 text-center py-2 text-sm italic font-medium mt-1">
                               {section.caption}

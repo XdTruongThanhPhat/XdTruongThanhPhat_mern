@@ -4,7 +4,7 @@ Allow: /
 
 # Chặn các đường dẫn không cần index
 Disallow: /api/
-Disallow: /*.json$
+Disallow: /*.json
 
 # Sitemap động (tự động cập nhật từ database)
-Sitemap: https://truongthanhphatdn.vn/api/sitemap.xml
+Sitemap: https://truongthanhphatdn.vn/sitemap.xml

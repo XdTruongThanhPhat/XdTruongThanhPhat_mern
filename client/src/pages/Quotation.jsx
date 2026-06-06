@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import Breadcrumb from '../components/Breadcrumb';
 
 const Quotation = () => {
   // Quản lý Tab đang hiển thị
@@ -70,8 +71,19 @@ const Quotation = () => {
         <title>Báo Giá Xây Dựng | Trường Thành Phát</title>
         <meta name="description" content="Nhận báo giá thiết kế và thi công xây dựng nhà phố, biệt thự chi tiết, chính xác từ Trường Thành Phát" />
         <link rel="canonical" href="https://truongthanhphatdn.vn/bao-gia" />
+        {/* OG Tags */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Báo Giá Xây Dựng | Trường Thành Phát" />
+        <meta property="og:description" content="Nhận báo giá thiết kế và thi công xây dựng nhà phố, biệt thự chi tiết, chính xác từ Trường Thành Phát" />
+        <meta property="og:url" content="https://truongthanhphatdn.vn/bao-gia" />
+        <meta property="og:image" content="https://truongthanhphatdn.vn/Logo.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Báo Giá Xây Dựng | Trường Thành Phát" />
+        <meta name="twitter:description" content="Nhận báo giá thiết kế và thi công xây dựng nhà phố, biệt thự" />
       </Helmet>
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        {/* Breadcrumb SEO */}
+        <Breadcrumb items={[{ label: 'Báo giá thi công' }]} />
         
         {/* TIÊU ĐỀ TRANG */}
         <div className="text-center mb-8 md:mb-14">

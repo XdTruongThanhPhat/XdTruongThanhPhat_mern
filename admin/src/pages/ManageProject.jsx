@@ -10,7 +10,8 @@ const ManageProject = () => {
   const [editForm, setEditForm] = useState({
     title: '', category: '', info: {}, 
     existingMainImage: '', existingImages: [],
-    newMainFile: null, newImageFiles: []
+    newMainFile: null, newImageFiles: [],
+    createdAt: ''
   });
 
   const fetchProjects = async () => {
@@ -57,7 +58,8 @@ const ManageProject = () => {
       existingMainImage: project.mainImage,
       existingImages: project.projectImages || [],
       newMainFile: null,
-      newImageFiles: []
+      newImageFiles: [],
+      createdAt: project.createdAt ? new Date(project.createdAt).toISOString().split('T')[0] : ''
     });
   };
 
@@ -92,6 +94,10 @@ const ManageProject = () => {
       
       formData.append('existingMainImage', editForm.existingMainImage);
       formData.append('existingImages', JSON.stringify(editForm.existingImages));
+
+      if (editForm.createdAt) {
+        formData.append('createdAt', editForm.createdAt);
+      }
 
       if (editForm.newMainFile) {
         formData.append('mainImage', editForm.newMainFile);
@@ -198,6 +204,10 @@ const ManageProject = () => {
                             <div>
                                 <label className="text-sm font-medium text-gray-700">Diện tích xây dựng</label>
                                 <input type="text" value={editForm.info?.buildArea || ''} onChange={(e) => setEditForm({...editForm, info: {...editForm.info, buildArea: e.target.value}})} className="border rounded p-2 w-full text-sm outline-none focus:border-green-500 mt-1 bg-white" />
+                            </div>
+                            <div>
+                                <label className="text-sm font-medium text-gray-700">Ngày đăng bài</label>
+                                <input type="date" value={editForm.createdAt} onChange={(e) => setEditForm({...editForm, createdAt: e.target.value})} className="border rounded p-2 w-full text-sm outline-none focus:border-green-500 mt-1 bg-white" />
                             </div>
                           </div>
 

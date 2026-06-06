@@ -48,8 +48,8 @@ export default defineConfig({
         // Đợi React render xong (tín hiệu từ main.jsx)
         renderAfterDocumentEvent: 'render-event',
         headless: true,
-        // Dùng Chrome có sẵn trên hệ thống
-        executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+        // Dùng Chrome tùy theo môi trường (Docker Linux hoặc Local Windows)
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
       }),
     }),

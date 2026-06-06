@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { assets } from '../assets/assets';
+import { optimizeCloudinaryUrl } from '../utils/cloudinary';
 
 const Hero = () => {
   // Dữ liệu mặc định đề phòng Backend chưa có data
@@ -69,7 +70,7 @@ const Hero = () => {
 
   return (
     // TỐI ƯU: Đổi h-[85vh] thành h-[60vh] trên mobile, màn hình to giữ nguyên h-screen
-    <div className="relative w-full h-[60vh] sm:h-[75vh] md:h-screen group bg-black">
+    <div className="relative w-full h-[60vh] sm:h-[75vh] md:h-screen group bg-black" role="region" aria-label="Banner quảng cáo">
       
       {/* KHU VỰC HIỂN THỊ ẢNH */}
       <div className="w-full h-full relative overflow-hidden">
@@ -79,23 +80,27 @@ const Hero = () => {
             className={`absolute top-0 left-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
               index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'
             }`}
+            aria-hidden={index !== currentIndex}
           >
-            {/* Ảnh nền */}
-            <div
-              className="w-full h-full bg-center bg-cover transition-transform duration-1000"
-              style={{ backgroundImage: `url(${slide.imageUrl})` }}
-            >
-              <div className="absolute inset-0 bg-black/60"></div>
-            </div>
+            {/* SEO FIX: Đổi background-image → thẻ <img> thật để Google index được */}
+            <img
+              src={optimizeCloudinaryUrl(slide.imageUrl, 1920)}
+              alt={slide.title || 'Trường Thành Phát - Banner'}
+              className="w-full h-full object-cover"
+              fetchpriority={index === 0 ? "high" : "auto"}
+              loading={index === 0 ? "eager" : "lazy"}
+            />
+            <div className="absolute inset-0 bg-black/60"></div>
 
             {/* Nội dung chữ */}
+            {/* SEO FIX: Đổi <h1> → <p> styled để tránh duplicate H1 với trang Home */}
             {/* TỐI ƯU: Thêm padding ngang px-4 sm:px-8 để chữ không sát lề điện thoại */}
             <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4 sm:px-8 pt-[60px] md:pt-[104px]">
               
               {/* TỐI ƯU TITLE: Giảm text xuống text-2xl cho mobile, thêm leading-snug để khoảng cách dòng đẹp hơn */}
-              <h1 className={`text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-3 md:mb-4 uppercase tracking-wide drop-shadow-lg leading-snug md:leading-tight ${index === currentIndex ? 'animate-fade-in-up' : 'opacity-0'}`}>
+              <p className={`text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-3 md:mb-4 uppercase tracking-wide drop-shadow-lg leading-snug md:leading-tight ${index === currentIndex ? 'animate-fade-in-up' : 'opacity-0'}`}>
                 {slide.title}
-              </h1>
+              </p>
               
               {/* TỐI ƯU SUBTITLE: Giảm text xuống text-sm cho mobile, giới hạn chiều rộng max-w-[95%] */}
               <p className={`text-sm sm:text-base md:text-xl text-gray-200 mb-6 md:mb-8 max-w-[95%] md:max-w-2xl drop-shadow-md ${index === currentIndex ? 'animate-fade-in-up [animation-delay:300ms]' : 'opacity-0'}`}>
@@ -110,8 +115,8 @@ const Hero = () => {
       {/* MŨI TÊN TRÁI */}
       {/* TỐI ƯU: Ép sát lề left-2 trên mobile, thu nhỏ icon w-5 h-5 */}
       <div className="hidden group-hover:block absolute top-1/2 -translate-y-1/2 left-2 md:left-5 text-xl md:text-2xl rounded-full p-1.5 md:p-2 bg-black/30 text-white cursor-pointer hover:bg-black/70 transition-all z-20">
-        <button onClick={prevSlide} className="outline-none flex items-center justify-center">
-          <svg className="w-5 h-5 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button onClick={prevSlide} className="outline-none flex items-center justify-center" aria-label="Slide trước">
+          <svg className="w-5 h-5 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
@@ -120,8 +125,8 @@ const Hero = () => {
       {/* MŨI TÊN PHẢI */}
       {/* TỐI ƯU: Ép sát lề right-2 trên mobile, thu nhỏ icon w-5 h-5 */}
       <div className="hidden group-hover:block absolute top-1/2 -translate-y-1/2 right-2 md:right-5 text-xl md:text-2xl rounded-full p-1.5 md:p-2 bg-black/30 text-white cursor-pointer hover:bg-black/70 transition-all z-20">
-        <button onClick={nextSlide} className="outline-none flex items-center justify-center">
-          <svg className="w-5 h-5 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button onClick={nextSlide} className="outline-none flex items-center justify-center" aria-label="Slide tiếp theo">
+          <svg className="w-5 h-5 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
           </svg>
         </button>
@@ -129,11 +134,14 @@ const Hero = () => {
 
       {/* DẤU CHẤM ĐIỀU HƯỚNG */}
       {/* TỐI ƯU: Thu nhỏ kích thước chấm w-2 h-2 trên mobile để tinh tế hơn */}
-      <div className="absolute bottom-4 md:bottom-6 left-0 right-0 flex justify-center py-2 z-20 gap-2 md:gap-3">
+      <div className="absolute bottom-4 md:bottom-6 left-0 right-0 flex justify-center py-2 z-20 gap-2 md:gap-3" role="tablist" aria-label="Chọn slide">
         {slides.map((_, slideIndex) => (
           <div
             key={slideIndex}
             onClick={() => goToSlide(slideIndex)}
+            role="tab"
+            aria-selected={slideIndex === currentIndex}
+            aria-label={`Slide ${slideIndex + 1}`}
             className={`cursor-pointer h-2 md:h-3 rounded-full transition-all duration-300 shadow-md ${
               slideIndex === currentIndex ? 'bg-green-500 w-6 md:w-8' : 'bg-white/50 hover:bg-white w-2 md:w-3'
             }`}
