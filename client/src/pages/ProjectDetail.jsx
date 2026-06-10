@@ -131,6 +131,62 @@ const ProjectDetail = () => {
   const nextImage = () => setLightboxIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
   const prevImage = () => setLightboxIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
 
+  // Tải trước (preload) ảnh tiếp theo và ảnh trước đó để tăng độ mượt
+  useEffect(() => {
+    if (isLightboxOpen && allImages.length > 0) {
+      // Tải trước định dạng/chất lượng tối ưu mà không thay đổi kích thước gốc của ảnh chính
+      const nextIdx = (lightboxIndex + 1) % allImages.length;
+      const nextImg = new Image();
+      nextImg.src = optimizeCloudinaryUrl(allImages[nextIdx]);
+
+      const prevIdx = (lightboxIndex - 1 + allImages.length) % allImages.length;
+      const prevImg = new Image();
+      prevImg.src = optimizeCloudinaryUrl(allImages[prevIdx]);
+    }
+  }, [lightboxIndex, isLightboxOpen, allImages]);
+
+  // Điều hướng bằng bàn phím (Phím mũi tên & Esc)
+  useEffect(() => {
+    if (!isLightboxOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowRight') {
+        nextImage();
+      } else if (e.key === 'ArrowLeft') {
+        prevImage();
+      } else if (e.key === 'Escape') {
+        closeLightbox();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isLightboxOpen, allImages.length]);
+
+  // Vuốt chạm chuyển ảnh trên Mobile
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+
+  const handleTouchStart = (e) => {
+    setTouchStart(e.targetTouches[0].clientX);
+    setTouchEnd(null);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;  // Vuốt sang trái -> Xem ảnh tiếp theo
+    const isRightSwipe = distance < -50; // Vuốt sang phải -> Xem ảnh trước đó
+
+    if (isLeftSwipe) {
+      nextImage();
+    } else if (isRightSwipe) {
+      prevImage();
+    }
+  };
+
   // ==========================================
   // STATE VÀ LOGIC GỬI FORM TƯ VẤN (BÁO GIÁ)
   // ==========================================
@@ -292,7 +348,7 @@ const ProjectDetail = () => {
                             mainImage === img && (!isLast || !hasMore) ? 'border-green-500 opacity-100' : 'border-transparent opacity-70 hover:opacity-100'
                           }`}
                         >
-                          <img src={img} alt={`Ảnh dự án ${projectData.title} - Hình ${idx + 1}`} loading="lazy" className="w-full h-full object-cover" />
+                          <img src={optimizeCloudinaryUrl(img, 300)} alt={`Ảnh dự án ${projectData.title} - Hình ${idx + 1}`} loading="lazy" className="w-full h-full object-cover" />
                           
                           {isLast && hasMore && (
                             <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white text-lg font-bold hover:bg-black/80 transition-colors">
@@ -385,7 +441,7 @@ const ProjectDetail = () => {
                       {/* Render Image & Caption nếu có */}
                       {section.imageUrl && (
                         <div className="my-8">
-                           <img src={section.imageUrl} alt={section.caption || `${projectData.title} - Ảnh chi tiết ${index + 1}`} loading="lazy" className="w-full rounded-sm object-cover" />
+                           <img src={optimizeCloudinaryUrl(section.imageUrl, 1000)} alt={section.caption || `${projectData.title} - Ảnh chi tiết ${index + 1}`} loading="lazy" className="w-full rounded-sm object-cover" />
                           {section.caption && (
                             <div className="bg-gray-100 text-gray-500 text-center py-2 text-sm italic font-medium mt-1">
                               {section.caption}
@@ -461,12 +517,20 @@ const ProjectDetail = () => {
                   >
                     <div className="aspect-4/3 w-full overflow-hidden relative">
                       <img 
-                        src={item.mainImage} // Ảnh bìa của công trình
+                        src={optimizeCloudinaryUrl(item.mainImage, 600)} // Sử dụng ảnh đã tối ưu định dạng và kích thước (600px)
                         alt={item.title} 
                         className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                        loading="lazy"
                       />
-                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                         <span className="text-white border border-white px-3 py-1 text-[10px] uppercase tracking-widest font-bold bg-black/20 backdrop-blur-sm">
+                      {/* Lớp phủ mờ (glassmorphism) hiển thị tên công trình */}
+                      <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm p-3 text-center transition-all duration-300 border-t border-gray-100/50">
+                        <h3 className="text-xs sm:text-sm font-bold text-gray-800 line-clamp-2 uppercase group-hover:text-green-600 transition-colors duration-300">
+                          {item.title}
+                        </h3>
+                      </div>
+                      {/* Lớp phủ nút Xem chi tiết nằm lệch lên trên, không che mất phần chữ mờ */}
+                      <div className="absolute inset-x-0 top-0 bottom-12 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                         <span className="text-white border border-white px-3 py-1 text-[10px] uppercase tracking-widest font-bold bg-black/30 backdrop-blur-sm rounded-sm">
                            Xem chi tiết
                          </span>
                       </div>
@@ -484,7 +548,12 @@ const ProjectDetail = () => {
           LIGHTBOX MODAL (Toàn màn hình) - Giữ nguyên logic
       ========================================= */}
       {isLightboxOpen && allImages.length > 0 && (
-        <div className="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center select-none backdrop-blur-sm">
+        <div 
+          className="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center select-none backdrop-blur-sm"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <button onClick={closeLightbox} className="absolute top-5 right-5 text-gray-400 hover:text-green-500 z-50 p-2 transition-colors">
             <svg className="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
@@ -499,7 +568,7 @@ const ProjectDetail = () => {
 
           <div className="w-full max-w-6xl px-4 md:px-20 flex items-center justify-center h-[70vh]">
             <img 
-              src={allImages[lightboxIndex]} 
+              src={optimizeCloudinaryUrl(allImages[lightboxIndex])} // Tải định dạng tự động tốt nhất (AVIF/WebP) để load nhanh mà giữ nguyên kích thước & chất lượng gốc
               alt={`Gallery ${lightboxIndex}`} 
               className="max-w-full max-h-full object-contain shadow-2xl"
             />
@@ -513,7 +582,7 @@ const ProjectDetail = () => {
              {allImages.map((img, idx) => (
                 <img 
                   key={idx}
-                  src={img}
+                  src={optimizeCloudinaryUrl(img, 150)} // Tối ưu kích thước nhỏ 150px cho thumbnails lightbox
                   alt={`Thumb ${idx}`}
                   onClick={() => setLightboxIndex(idx)}
                   className={`h-16 md:h-20 w-auto object-cover cursor-pointer border-2 transition-all rounded-sm ${lightboxIndex === idx ? 'border-green-500 opacity-100 scale-110' : 'border-transparent opacity-40 hover:opacity-100'}`}
