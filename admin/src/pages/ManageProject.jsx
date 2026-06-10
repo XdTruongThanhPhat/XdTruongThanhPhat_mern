@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { compressImageIfNeeded } from '../utils/compressImage';
 
 const ManageProject = () => {
   const [projects, setProjects] = useState([]);
@@ -63,9 +64,10 @@ const ManageProject = () => {
     });
   };
 
-  const handleChangeMainImage = (e) => {
+  const handleChangeMainImage = async (e) => {
     if (e.target.files && e.target.files[0]) {
-      setEditForm({ ...editForm, newMainFile: e.target.files[0] });
+      const compressed = await compressImageIfNeeded(e.target.files[0]);
+      setEditForm({ ...editForm, newMainFile: compressed });
     }
   };
 
@@ -74,9 +76,12 @@ const ManageProject = () => {
     setEditForm({ ...editForm, existingImages: updatedImages });
   };
 
-  const handleAddNewImages = (e) => {
+  const handleAddNewImages = async (e) => {
     const files = Array.from(e.target.files);
-    setEditForm({ ...editForm, newImageFiles: [...editForm.newImageFiles, ...files] });
+    const compressedFiles = await Promise.all(
+      files.map(file => compressImageIfNeeded(file))
+    );
+    setEditForm({ ...editForm, newImageFiles: [...editForm.newImageFiles, ...compressedFiles] });
     e.target.value = null; 
   };
 

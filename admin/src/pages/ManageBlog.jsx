@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import toast from 'react-hot-toast';
+import { compressImageIfNeeded } from '../utils/compressImage';
 import ReactQuill, { Quill } from 'react-quill-new';
 import SeoScorePanel from '../components/SeoScorePanel';
 import 'react-quill-new/dist/quill.snow.css';
@@ -216,8 +217,9 @@ const ManageBlog = () => {
       if (!file) return;
 
       const toastId = toast.loading("Đang tải ảnh lên...");
+      const compressedFile = await compressImageIfNeeded(file);
       const formDataUpload = new FormData();
-      formDataUpload.append('image', file);
+      formDataUpload.append('image', compressedFile);
 
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/api/blogs/upload-image`, {
@@ -393,7 +395,12 @@ const ManageBlog = () => {
         </div>
         <div className="mb-4">
             <label className="block text-sm font-bold mb-1">Ảnh bìa bài viết {editingId && <span className="text-gray-500 font-normal">(Bỏ trống nếu không muốn đổi ảnh)</span>}</label>
-            <input id="cover-image-input" type="file" accept="image/*" onChange={e => setFormData({...formData, file: e.target.files[0]})} className="w-full border p-1.5 rounded bg-white" />
+            <input id="cover-image-input" type="file" accept="image/*" onChange={async (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    const compressed = await compressImageIfNeeded(e.target.files[0]);
+                    setFormData({...formData, file: compressed});
+                }
+            }} className="w-full border p-1.5 rounded bg-white" />
         </div>
         {/* SEO FIELDS */}
         <div className="grid grid-cols-3 gap-4 mb-4">

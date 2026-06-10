@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import { compressImageIfNeeded } from '../utils/compressImage';
 
 const AddProject = () => {
   const [loading, setLoading] = useState(false);
@@ -8,9 +9,12 @@ const AddProject = () => {
   });
   const [images, setImages] = useState([]);
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const files = Array.from(e.target.files);
-    setImages((prev) => [...prev, ...files]);
+    const compressedFiles = await Promise.all(
+      files.map(file => compressImageIfNeeded(file))
+    );
+    setImages((prev) => [...prev, ...compressedFiles]);
     e.target.value = null; 
   };
 

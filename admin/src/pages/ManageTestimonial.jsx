@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { compressImageIfNeeded } from '../utils/compressImage';
 
 const ManageTestimonial = () => {
   const [testimonials, setTestimonials] = useState([]);
@@ -91,7 +92,12 @@ const ManageTestimonial = () => {
                 </div>
                 <div>
                     <label className="block text-sm font-bold text-gray-700 mb-1">Hình ảnh (Avatar)</label>
-                    <input type="file" accept="image/*" onChange={e => setFormData({...formData, file: e.target.files[0]})} className="w-full border p-1.5 rounded-lg bg-white" />
+                    <input type="file" accept="image/*" onChange={async (e) => {
+                        if (e.target.files && e.target.files[0]) {
+                            const compressed = await compressImageIfNeeded(e.target.files[0]);
+                            setFormData({...formData, file: compressed});
+                        }
+                    }} className="w-full border p-1.5 rounded-lg bg-white" />
                     {isEditing && formData.existingAvatar && !formData.file && (
                         <p className="text-xs text-gray-500 mt-1">Đang dùng ảnh cũ. Chọn file mới để thay đổi.</p>
                     )}

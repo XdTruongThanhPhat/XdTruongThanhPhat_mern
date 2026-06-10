@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { compressImageIfNeeded } from '../utils/compressImage';
 
 const ManageBanner = () => {
   const [banners, setBanners] = useState([]);
@@ -64,7 +65,12 @@ const ManageBanner = () => {
         </div>
         <div className="mb-4">
             <label className="block text-sm font-bold mb-1 text-gray-700">Hình ảnh Banner (Nên chọn ảnh tỷ lệ 16:9, độ nét cao)</label>
-            <input required type="file" accept="image/*" onChange={e => setFormData({...formData, file: e.target.files[0]})} className="w-full border p-2 rounded bg-white" />
+            <input required type="file" accept="image/*" onChange={async (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    const compressed = await compressImageIfNeeded(e.target.files[0]);
+                    setFormData({...formData, file: compressed});
+                }
+            }} className="w-full border p-2 rounded bg-white" />
         </div>
         <button type="submit" className="bg-green-600 text-white font-bold px-8 py-2.5 rounded hover:bg-green-700 transition">Tải Banner Lên</button>
       </form>

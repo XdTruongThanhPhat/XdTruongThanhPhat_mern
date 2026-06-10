@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import toast from 'react-hot-toast';
+import { compressImageIfNeeded } from '../utils/compressImage';
 import SeoScorePanel from '../components/SeoScorePanel';
 
 const Content = () => {
@@ -182,7 +183,12 @@ const Content = () => {
                         <input 
                             type="file" 
                             accept="image/*"
-                            onChange={e => handleSectionChange(sec.id, 'file', e.target.files[0])} 
+                            onChange={async (e) => {
+                                if (e.target.files && e.target.files[0]) {
+                                    const compressed = await compressImageIfNeeded(e.target.files[0]);
+                                    handleSectionChange(sec.id, 'file', compressed);
+                                }
+                            }} 
                             className="text-sm file:mr-4 file:py-1.5 file:px-4 file:rounded file:border-0 file:bg-green-100 file:text-green-700 hover:file:bg-green-200 cursor-pointer w-full" 
                         />
                     )}

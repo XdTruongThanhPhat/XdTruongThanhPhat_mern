@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { compressImageIfNeeded } from '../utils/compressImage';
 
 const ManageMember = () => {
   const [teamData, setTeamData] = useState({ bannerUrl: '', management: [], officeStaff: [] });
@@ -28,8 +29,9 @@ const ManageMember = () => {
     if (!file) return;
     const toastId = toast.loading("Đang tải banner lên...");
     try {
+      const compressed = await compressImageIfNeeded(file);
       const formData = new FormData();
-      formData.append('banner', file);
+      formData.append('banner', compressed);
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/team/banner`, { method: 'PUT', body: formData });
       const data = await res.json();
       if (data.success) {
@@ -68,8 +70,11 @@ const ManageMember = () => {
     const toastId = toast.loading("Đang tải ảnh nhân viên lên...");
     
     try {
+      const compressedFiles = await Promise.all(
+        files.map(file => compressImageIfNeeded(file))
+      );
       const formData = new FormData();
-      files.forEach(file => formData.append('images', file));
+      compressedFiles.forEach(file => formData.append('images', file));
 
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/team/staff`, { method: 'POST', body: formData });
       const data = await res.json();
@@ -124,7 +129,12 @@ const ManageMember = () => {
                 </div>
                 <div className="flex-1">
                     <label className="text-xs font-bold text-green-700">Ảnh chân dung</label>
-                    <input required type="file" accept="image/*" onChange={e => setManagerForm({...managerForm, file: e.target.files[0]})} className="w-full mt-1 p-1.5 border rounded bg-white text-sm" />
+                    <input required type="file" accept="image/*" onChange={async (e) => {
+                        if (e.target.files && e.target.files[0]) {
+                            const compressed = await compressImageIfNeeded(e.target.files[0]);
+                            setManagerForm({...managerForm, file: compressed});
+                        }
+                    }} className="w-full mt-1 p-1.5 border rounded bg-white text-sm" />
                 </div>
                 <button type="submit" className="bg-green-600 text-white px-6 py-2 rounded font-bold hover:bg-green-700 h-[42px]">Thêm</button>
             </form>
