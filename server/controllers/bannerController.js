@@ -17,7 +17,10 @@ export const addBanner = async (req, res) => {
         
         const b64 = Buffer.from(req.file.buffer).toString("base64");
         const dataURI = `data:${req.file.mimetype};base64,${b64}`;
-        const uploadResult = await cloudinary.uploader.upload(dataURI, { folder: 'TTP_Banners' });
+        const uploadResult = await cloudinary.uploader.upload(dataURI, {
+            folder: 'TTP_Banners',
+            transformation: [{ quality: 'auto:good', fetch_format: 'auto' }]
+        });
         
         const newBanner = await Banner.create({ title, subtitle, imageUrl: uploadResult.secure_url });
         res.status(201).json({ success: true, banner: newBanner });

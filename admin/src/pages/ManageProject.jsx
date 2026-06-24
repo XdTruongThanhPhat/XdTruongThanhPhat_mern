@@ -8,6 +8,7 @@ const ManageProject = () => {
   
   // State phục vụ Edit
   const [editingId, setEditingId] = useState(null);
+  const [loadingDetail, setLoadingDetail] = useState(false);
   const [editForm, setEditForm] = useState({
     title: '', category: '', info: {}, 
     existingMainImage: '', existingImages: [],
@@ -17,7 +18,7 @@ const ManageProject = () => {
 
   const fetchProjects = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/list`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/list?t=${Date.now()}`);
       const data = await res.json();
       if (data.success) {
         setProjects(data.projects);
@@ -50,30 +51,58 @@ const ManageProject = () => {
     }
   };
 
-  const handleEdit = (project) => {
+  const handleEdit = async (project) => {
+    setLoadingDetail(true);
     setEditingId(project._id);
+
+    // Mở form ngay với dữ liệu cơ bản từ list (chưa có ảnh album)
     setEditForm({
       title: project.title,
-      category: project.category, // Backend trả về sao thì hứng vậy
+      category: project.category,
       info: project.info || {},
       existingMainImage: project.mainImage,
-      existingImages: project.projectImages || [],
+      existingImages: [], // Sẽ được cập nhật sau khi fetch detail
       newMainFile: null,
       newImageFiles: [],
       createdAt: project.createdAt ? new Date(project.createdAt).toISOString().split('T')[0] : ''
     });
+
+    try {
+      // Fetch detail để lấy projectImages (API list đã loại bỏ để tối ưu)
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/detail/${project._id}?t=${Date.now()}`);
+      const data = await res.json();
+
+      if (data.success && data.project) {
+        const fullProject = data.project;
+        setEditForm(prev => ({
+          ...prev,
+          title: fullProject.title,
+          category: fullProject.category,
+          info: fullProject.info || {},
+          existingMainImage: fullProject.mainImage,
+          existingImages: fullProject.projectImages || [],
+          createdAt: fullProject.createdAt ? new Date(fullProject.createdAt).toISOString().split('T')[0] : ''
+        }));
+      } else {
+        toast.error("Không tải được chi tiết dự án");
+      }
+    } catch (error) {
+      console.error("Lỗi fetch detail:", error);
+      toast.error("Không tải được ảnh album. Kiểm tra kết nối mạng.");
+    } finally {
+      setLoadingDetail(false);
+    }
   };
 
   const handleChangeMainImage = async (e) => {
     if (e.target.files && e.target.files[0]) {
       const compressed = await compressImageIfNeeded(e.target.files[0]);
-      setEditForm({ ...editForm, newMainFile: compressed });
+      setEditForm(prev => ({ ...prev, newMainFile: compressed }));
     }
   };
 
   const handleRemoveExistingImage = (index) => {
-    const updatedImages = editForm.existingImages.filter((_, i) => i !== index);
-    setEditForm({ ...editForm, existingImages: updatedImages });
+    setEditForm(prev => ({ ...prev, existingImages: prev.existingImages.filter((_, i) => i !== index) }));
   };
 
   const handleAddNewImages = async (e) => {
@@ -81,16 +110,19 @@ const ManageProject = () => {
     const compressedFiles = await Promise.all(
       files.map(file => compressImageIfNeeded(file))
     );
-    setEditForm({ ...editForm, newImageFiles: [...editForm.newImageFiles, ...compressedFiles] });
+    setEditForm(prev => ({ ...prev, newImageFiles: [...prev.newImageFiles, ...compressedFiles] }));
     e.target.value = null; 
   };
 
   const handleRemoveNewImage = (index) => {
-    const updatedNewFiles = editForm.newImageFiles.filter((_, i) => i !== index);
-    setEditForm({ ...editForm, newImageFiles: updatedNewFiles });
+    setEditForm(prev => ({ ...prev, newImageFiles: prev.newImageFiles.filter((_, i) => i !== index) }));
   };
 
+  const [saving, setSaving] = useState(false);
+
   const handleSave = async (id) => {
+    if (saving) return;
+    setSaving(true);
     try {
       const formData = new FormData();
       formData.append('title', editForm.title);
@@ -115,6 +147,16 @@ const ManageProject = () => {
         method: 'PUT',
         body: formData 
       });
+
+      // Kiểm tra lỗi HTTP trước khi parse JSON (413, 500, etc. trả về HTML, không phải JSON)
+      if (!res.ok) {
+        if (res.status === 413) {
+          toast.error("Dung lượng file quá lớn! Hãy giảm số lượng hoặc kích thước ảnh.");
+        } else {
+          toast.error(`Lỗi server: ${res.status} ${res.statusText}`);
+        }
+        return;
+      }
       
       const data = await res.json();
       if(data.success) {
@@ -125,7 +167,10 @@ const ManageProject = () => {
           toast.error(data.message);
       }
     } catch (error) {
-      toast.error("Lỗi khi cập nhật");
+      console.error("Update error:", error);
+      toast.error("Lỗi khi cập nhật: " + error.message);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -242,6 +287,11 @@ const ManageProject = () => {
                                 </div>
                                 
                                 <div className="grid grid-cols-4 lg:grid-cols-5 gap-2 max-h-40 overflow-y-auto pr-1">
+                                    {loadingDetail && (
+                                        <div className="col-span-full text-center py-4 text-gray-500 text-sm">
+                                            <span className="animate-pulse">⏳ Đang tải ảnh album...</span>
+                                        </div>
+                                    )}
                                     {editForm.existingImages.map((imgUrl, index) => (
                                         <div key={`old-${index}`} className="relative group">
                                             <img src={imgUrl} alt="Old" className="w-full h-16 object-cover rounded border border-gray-300" />
@@ -261,7 +311,7 @@ const ManageProject = () => {
                           </div>
                           <div className="flex justify-end gap-3 pt-4">
                               <button onClick={() => setEditingId(null)} className="bg-gray-400 text-white px-6 py-2 rounded font-medium hover:bg-gray-500 transition">Hủy bỏ</button>
-                              <button onClick={() => handleSave(proj._id)} className="bg-green-600 text-white px-6 py-2 rounded font-medium hover:bg-green-700 transition shadow-lg">LƯU CẬP NHẬT</button>
+                              <button disabled={saving} onClick={() => handleSave(proj._id)} className={`${saving ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} text-white px-6 py-2 rounded font-medium transition shadow-lg`}>{saving ? 'ĐANG LƯU...' : 'LƯU CẬP NHẬT'}</button>
                           </div>
                         </div>
                       </td>

@@ -4,7 +4,10 @@ import cloudinary from "../config/cloudinary.js";
 const uploadToCloudinary = async (file) => {
     const b64 = Buffer.from(file.buffer).toString("base64");
     const dataURI = `data:${file.mimetype};base64,${b64}`;
-    const result = await cloudinary.uploader.upload(dataURI, { folder: 'TTP_Team' });
+    const result = await cloudinary.uploader.upload(dataURI, {
+        folder: 'TTP_Team',
+        transformation: [{ quality: 'auto:good', fetch_format: 'auto' }]
+    });
     return result.secure_url;
 };
 

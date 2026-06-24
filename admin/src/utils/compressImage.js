@@ -1,5 +1,5 @@
 export const compressImageIfNeeded = async (file) => {
-  const limitSize = 10 * 1024 * 1024; // 10MB
+  const limitSize = 2 * 1024 * 1024; // 2MB (giảm từ 10MB để đảm bảo ảnh luôn được nén trước khi upload)
   if (!file || !file.type.startsWith("image/") || file.size < limitSize) {
     return file;
   }
@@ -15,8 +15,8 @@ export const compressImageIfNeeded = async (file) => {
         let width = img.width;
         let height = img.height;
 
-        // Giới hạn kích thước tối đa 3840px (độ phân giải 4K cực kỳ sắc nét)
-        const maxDimension = 3840;
+        // Giới hạn kích thước tối đa 2560px (QHD - vẫn cực kỳ sắc nét cho web)
+        const maxDimension = 2560;
         if (width > maxDimension || height > maxDimension) {
           if (width > height) {
             height = Math.round((height * maxDimension) / width);
@@ -51,7 +51,7 @@ export const compressImageIfNeeded = async (file) => {
                 return;
               }
 
-              // Nếu ảnh nén xong vẫn >= 10MB, thực hiện giảm chất lượng đệ quy để đảm bảo dưới 10MB
+              // Nếu ảnh nén xong vẫn >= 2MB, thực hiện giảm chất lượng đệ quy để đảm bảo dưới 2MB
               if (blob.size >= limitSize && q > 0.3) {
                 tryCompress(q - 0.15);
               } else {

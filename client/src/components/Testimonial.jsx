@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { optimizeCloudinaryUrl } from '../utils/cloudinary';
 
 const Testimonial = () => {
   // 1. Dùng state rỗng thay cho dữ liệu mẫu
@@ -125,7 +126,7 @@ const Testimonial = () => {
               {/* TỐI ƯU: Thu nhỏ avatar và khoảng cách trên mobile */}
               <div className="flex items-center gap-3 md:gap-4 mt-6 md:mt-8 pl-3 md:pl-4 pointer-events-auto">
                 <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-gray-600 flex-shrink-0">
-                  <img src={item.avatar} alt={item.name} className="w-full h-full object-cover" draggable="false" />
+                  <img src={optimizeCloudinaryUrl(item.avatar, 100)} alt={item.name} className="w-full h-full object-cover" loading="lazy" draggable="false" />
                 </div>
                 <div>
                   <h4 className="text-green-500 font-bold text-xs md:text-sm">{item.name}</h4>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Breadcrumb from '../components/Breadcrumb';
+import { optimizeCloudinaryUrl } from '../utils/cloudinary';
 
 const About = () => {
   return (
@@ -53,9 +54,10 @@ const About = () => {
           {/* TỐI ƯU: Giảm chiều cao ảnh trên mobile (h-[25vh]) */}
           <div className="w-full h-[25vh] sm:h-[40vh] md:h-[60vh] bg-gray-100 rounded-lg overflow-hidden shadow-sm">
             <img
-              src="https://res.cloudinary.com/dia0hytop/image/upload/v1776675604/z7731184451078_e2096bacf215f8b507086b7a6712faa3_bjzvxz.png"
+              src={optimizeCloudinaryUrl("https://res.cloudinary.com/dia0hytop/image/upload/v1776675604/z7731184451078_e2096bacf215f8b507086b7a6712faa3_bjzvxz.png", 1920)}
               alt="Về Trường Thành Phát"
               className="w-full h-full object-cover"
+              fetchpriority="high"
             />
           </div>
         </div>

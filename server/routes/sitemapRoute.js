@@ -21,6 +21,21 @@ const generateSlug = (text) => {
     .replace(/^-+|-+$/g, '');
 };
 
+// Hàm escape các ký tự đặc biệt để sitemap XML hợp lệ
+const escapeXml = (unsafe) => {
+  if (!unsafe) return '';
+  return unsafe.replace(/[<>&'"]/g, (c) => {
+    switch (c) {
+      case '<': return '&lt;';
+      case '>': return '&gt;';
+      case '&': return '&amp;';
+      case '\'': return '&apos;';
+      case '"': return '&quot;';
+      default: return c;
+    }
+  });
+};
+
 router.get('/sitemap.xml', async (req, res) => {
   try {
     // 1. Lấy tất cả Dự án và Bài viết từ Database
@@ -150,8 +165,8 @@ router.get('/sitemap.xml', async (req, res) => {
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>${p.mainImage ? `
     <image:image>
-      <image:loc>${p.mainImage}</image:loc>
-      <image:title>${p.title}</image:title>
+      <image:loc>${escapeXml(p.mainImage)}</image:loc>
+      <image:title>${escapeXml(p.title)}</image:title>
     </image:image>` : ''}
   </url>`;
       });
@@ -171,8 +186,8 @@ router.get('/sitemap.xml', async (req, res) => {
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>${b.imageUrl ? `
     <image:image>
-      <image:loc>${b.imageUrl}</image:loc>
-      <image:title>${b.title}</image:title>
+      <image:loc>${escapeXml(b.imageUrl)}</image:loc>
+      <image:title>${escapeXml(b.title)}</image:title>
     </image:image>` : ''}
   </url>`;
       });

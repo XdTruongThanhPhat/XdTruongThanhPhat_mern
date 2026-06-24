@@ -39,8 +39,24 @@ app.use(cors({
   },
   credentials: true,
 }));
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 // LƯU Ý: Đã xóa app.use(multer().none()) để cho phép nhận file
+
+// Tối ưu: Cache GET API public 5 phút (không ảnh hưởng POST/PUT/DELETE)
+// KHÔNG CACHE các request từ admin panel để tránh dữ liệu bị cũ/stale khi quản trị
+app.use('/api', (req, res, next) => {
+  const referer = req.headers.referer || "";
+  const origin = req.headers.origin || "";
+  const isFromAdmin = referer.includes("admin") || referer.includes("localhost:3000") || origin.includes("admin") || origin.includes("localhost:3000");
+
+  if (req.method === 'GET' && !isFromAdmin) {
+    res.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=3600');
+  } else {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  }
+  next();
+});
 
 // Kết nối Database
 await connectDB();

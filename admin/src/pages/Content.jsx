@@ -11,6 +11,12 @@ const Content = () => {
   const [sections, setSections] = useState([]);
   const [saving, setSaving] = useState(false);
 
+  // State phục vụ cấu trúc SEO On-page
+  const [focusKeyword, setFocusKeyword] = useState('');
+  const [lsiKeywords, setLsiKeywords] = useState('');
+  const [seoTitle, setSeoTitle] = useState('');
+  const [metaDescription, setMetaDescription] = useState('');
+
   // 1. TẢI DANH SÁCH DỰ ÁN TỪ MONGODB
   useEffect(() => {
     const fetchProjects = async () => {
@@ -33,25 +39,39 @@ const Content = () => {
   const handleSelectProject = async (project) => {
     setSelectedProject(project);
     setSections([]); // Reset giao diện
+    setFocusKeyword('');
+    setLsiKeywords('');
+    setSeoTitle('');
+    setMetaDescription('');
     
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/content/${project._id}`);
       const data = await res.json();
       
-      if (data.success && data.content && data.content.sections) {
-        // Map dữ liệu cũ, thêm 1 cái ID tạm để React dễ render
-        const loadedSections = data.content.sections.map(sec => ({
-          id: Math.random().toString(36).substr(2, 9),
-          heading: sec.heading || '',
-          paragraph: sec.paragraph || '',
-          caption: sec.caption || '',
-          imageUrl: sec.imageUrl || '',
-          file: null // Để chứa file mới nếu user muốn thay ảnh
-        }));
-        setSections(loadedSections);
+      if (data.success && data.content) {
+        setFocusKeyword(data.content.focusKeyword || '');
+        setLsiKeywords(data.content.lsiKeywords || '');
+        setSeoTitle(data.content.seoTitle || '');
+        setMetaDescription(data.content.metaDescription || '');
+
+        if (data.content.sections && data.content.sections.length > 0) {
+          // Map dữ liệu cũ, thêm 1 cái ID tạm để React dễ render
+          const loadedSections = data.content.sections.map(sec => ({
+            id: Math.random().toString(36).substr(2, 9),
+            heading: sec.heading || '',
+            headingType: sec.headingType || 'h2',
+            paragraph: sec.paragraph || '',
+            caption: sec.caption || '',
+            imageUrl: sec.imageUrl || '',
+            file: null // Để chứa file mới nếu user muốn thay ảnh
+          }));
+          setSections(loadedSections);
+        } else {
+          setSections([{ id: Math.random().toString(36).substr(2, 9), heading: '', headingType: 'h2', paragraph: '', caption: '', imageUrl: '', file: null }]);
+        }
       } else {
         // Nếu dự án chưa có bài viết nào, tạo sẵn 1 khối trống
-        setSections([{ id: Math.random().toString(36).substr(2, 9), heading: '', paragraph: '', caption: '', imageUrl: '', file: null }]);
+        setSections([{ id: Math.random().toString(36).substr(2, 9), heading: '', headingType: 'h2', paragraph: '', caption: '', imageUrl: '', file: null }]);
       }
     } catch (error) {
       toast.error("Không thể tải nội dung bài viết cũ");
@@ -60,7 +80,7 @@ const Content = () => {
 
   // 3. CÁC HÀM XỬ LÝ KHỐI NỘI DUNG
   const handleAddSection = () => {
-    setSections([...sections, { id: Math.random().toString(36).substr(2, 9), heading: '', paragraph: '', caption: '', imageUrl: '', file: null }]);
+    setSections([...sections, { id: Math.random().toString(36).substr(2, 9), heading: '', headingType: 'h2', paragraph: '', caption: '', imageUrl: '', file: null }]);
   };
 
   const handleDeleteSection = (id) => {
@@ -82,12 +102,19 @@ const Content = () => {
       // Chuẩn bị dữ liệu JSON cho Backend
       const sectionsData = sections.map(sec => ({
         heading: sec.heading,
+        headingType: sec.headingType || 'h2',
         paragraph: sec.paragraph,
         caption: sec.caption,
         imageUrl: sec.imageUrl, // Nếu không có file mới, backend sẽ lấy link cũ này
         hasImage: !!sec.file // Cờ báo cho Backend biết có file ảnh mới đính kèm
       }));
       formData.append('sections', JSON.stringify(sectionsData));
+
+      // Đính kèm các thông tin SEO
+      formData.append('focusKeyword', focusKeyword);
+      formData.append('lsiKeywords', lsiKeywords);
+      formData.append('seoTitle', seoTitle);
+      formData.append('metaDescription', metaDescription);
 
       // Nhét các file ảnh mới vào FormData (theo đúng tên 'contentImages' backend yêu cầu)
       sections.forEach(sec => {
@@ -138,6 +165,63 @@ const Content = () => {
           </button>
         </div>
 
+        {/* PHẦN CẤU HÌNH SEO ON-PAGE */}
+        <div className="bg-green-50/30 p-5 rounded-lg border border-green-100 mb-6 space-y-4">
+          <h3 className="font-bold text-green-800 text-base border-b border-green-100 pb-2 flex items-center gap-2">
+            <span className="text-xl">🌐</span> Cấu hình SEO On-page cho bài viết
+          </h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Tiêu đề SEO (Title Tag - &lt; 65 ký tự)</label>
+              <input 
+                type="text" 
+                value={seoTitle} 
+                onChange={e => setSeoTitle(e.target.value.substring(0, 100))} 
+                placeholder="VD: Thiết kế biệt thự 3 tầng hiện đại Đà Nẵng" 
+                className="w-full border border-gray-300 rounded p-2 focus:border-green-500 outline-none bg-white text-sm" 
+              />
+              <span className={`text-xs block mt-1 text-right ${seoTitle.length > 65 ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
+                {seoTitle.length}/65 ký tự
+              </span>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Mô tả SEO (Meta Description - &lt; 160 ký tự)</label>
+              <textarea 
+                rows="2"
+                value={metaDescription} 
+                onChange={e => setMetaDescription(e.target.value.substring(0, 200))} 
+                placeholder="Mô tả ngắn gọn hiển thị trên kết quả tìm kiếm Google..." 
+                className="w-full border border-gray-300 rounded p-2 focus:border-green-500 outline-none bg-white text-sm resize-none" 
+              />
+              <span className={`text-xs block mt-1 text-right ${metaDescription.length > 160 ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
+                {metaDescription.length}/160 ký tự
+              </span>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Từ khóa chính (Target Keyword)</label>
+              <input 
+                type="text" 
+                value={focusKeyword} 
+                onChange={e => setFocusKeyword(e.target.value)} 
+                placeholder="VD: thiết kế biệt thự 3 tầng" 
+                className="w-full border border-gray-300 rounded p-2 focus:border-green-500 outline-none bg-white text-sm" 
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Từ khóa phụ (LSI Keywords - cách nhau bằng dấu phẩy)</label>
+              <input 
+                type="text" 
+                value={lsiKeywords} 
+                onChange={e => setLsiKeywords(e.target.value)} 
+                placeholder="VD: biệt thự đẹp, xây biệt thự trọn gói, thiết kế nội thất" 
+                className="w-full border border-gray-300 rounded p-2 focus:border-green-500 outline-none bg-white text-sm" 
+              />
+            </div>
+          </div>
+        </div>
+
         <div className="space-y-6">
           {sections.map((sec, index) => (
             <div key={sec.id} className="p-5 border border-gray-200 rounded-lg bg-gray-50/50 relative group transition hover:border-green-300">
@@ -153,7 +237,22 @@ const Content = () => {
               <div className="space-y-4">
                 {/* Heading & Paragraph */}
                 <div>
-                    <label className="text-xs font-semibold text-gray-500 uppercase">Tiêu đề đoạn (Không bắt buộc)</label>
+                    <div className="flex justify-between items-center mt-1.5">
+                        <label className="text-xs font-semibold text-gray-500 uppercase">Tiêu đề đoạn (Không bắt buộc)</label>
+                        <div className="flex items-center gap-1">
+                            <span className="text-[11px] text-gray-400 font-semibold uppercase">Heading:</span>
+                            <select 
+                                value={sec.headingType || 'h2'} 
+                                onChange={e => handleSectionChange(sec.id, 'headingType', e.target.value)}
+                                className="text-xs border border-gray-300 rounded px-1.5 py-0.5 bg-white focus:border-green-500 outline-none font-bold text-green-700 cursor-pointer"
+                            >
+                                <option value="h1">H1 (Tiêu đề 1)</option>
+                                <option value="h2">H2 (Tiêu đề 2)</option>
+                                <option value="h3">H3 (Tiêu đề 3)</option>
+                                <option value="h4">H4 (Tiêu đề 4)</option>
+                            </select>
+                        </div>
+                    </div>
                     <input type="text" value={sec.heading} onChange={e => handleSectionChange(sec.id, 'heading', e.target.value)} placeholder="VD: Yêu cầu thiết kế từ gia chủ..." className="w-full border border-gray-300 rounded p-2 focus:border-green-500 outline-none mt-1 font-semibold text-gray-800 bg-white" />
                 </div>
                 <div>
@@ -214,10 +313,10 @@ const Content = () => {
           {/* SEO SCORE PANEL cho Dự án */}
           <div className="mt-6">
             <SeoScorePanel
-              title={selectedProject?.title || ''}
-              content={sections.map(s => `${s.heading ? `<h2>${s.heading}</h2>` : ''}${s.paragraph || ''}`).join('')}
-              focusKeyword=""
-              metaDescription=""
+              title={seoTitle || selectedProject?.title || ''}
+              content={sections.map(s => `${s.heading ? `<${s.headingType || 'h2'}>${s.heading}</${s.headingType || 'h2'}>` : ''}${s.paragraph || ''}`).join('')}
+              focusKeyword={focusKeyword}
+              metaDescription={metaDescription}
               hasImage={sections.some(s => s.file || s.imageUrl)}
               type="project"
             />

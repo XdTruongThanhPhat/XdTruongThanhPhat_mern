@@ -15,7 +15,10 @@ export const addBlog = async (req, res) => {
         
         const b64 = Buffer.from(req.file.buffer).toString("base64");
         const dataURI = `data:${req.file.mimetype};base64,${b64}`;
-        const uploadResult = await cloudinary.uploader.upload(dataURI, { folder: 'TTP_Blogs' });
+        const uploadResult = await cloudinary.uploader.upload(dataURI, {
+            folder: 'TTP_Blogs',
+            transformation: [{ quality: 'auto:good', fetch_format: 'auto' }]
+        });
         
         const newBlog = await Blog.create({ 
             title, 
@@ -69,7 +72,10 @@ export const uploadBlogImage = async (req, res) => {
         
         const b64 = Buffer.from(req.file.buffer).toString("base64");
         const dataURI = `data:${req.file.mimetype};base64,${b64}`;
-        const uploadResult = await cloudinary.uploader.upload(dataURI, { folder: 'TTP_Blogs_Content' });
+        const uploadResult = await cloudinary.uploader.upload(dataURI, {
+            folder: 'TTP_Blogs_Content',
+            transformation: [{ quality: 'auto:good', fetch_format: 'auto' }]
+        });
         
         res.status(200).json({ success: true, url: uploadResult.secure_url });
     } catch (error) {
@@ -89,7 +95,10 @@ export const updateBlog = async (req, res) => {
         if (req.file) {
             const b64 = Buffer.from(req.file.buffer).toString("base64");
             const dataURI = `data:${req.file.mimetype};base64,${b64}`;
-            const uploadResult = await cloudinary.uploader.upload(dataURI, { folder: 'TTP_Blogs' });
+            const uploadResult = await cloudinary.uploader.upload(dataURI, {
+                folder: 'TTP_Blogs',
+                transformation: [{ quality: 'auto:good', fetch_format: 'auto' }]
+            });
             imageUrl = uploadResult.secure_url;
         }
 

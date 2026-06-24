@@ -87,6 +87,8 @@ const Hero = () => {
               src={optimizeCloudinaryUrl(slide.imageUrl, 1920)}
               alt={slide.title || 'Trường Thành Phát - Banner'}
               className="w-full h-full object-cover"
+              width={1920}
+              height={1080}
               fetchpriority={index === 0 ? "high" : "auto"}
               loading={index === 0 ? "eager" : "lazy"}
             />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { generateSlug } from '../utils/slugify';
-import { optimizeCloudinaryUrl } from '../utils/cloudinary';
+import { optimizeCloudinaryUrl, generateSrcSet, generateSizes } from '../utils/cloudinary';
 
 const FeaturedProjects = () => {
   const [projects, setProjects] = useState([]);
@@ -76,6 +76,8 @@ const FeaturedProjects = () => {
                 <div className="relative h-32 sm:h-48 md:h-64 overflow-hidden shrink-0">
                   <img
                     src={optimizeCloudinaryUrl(project.imageUrl, 600)}
+                    srcSet={generateSrcSet(project.imageUrl, [300, 400, 600])}
+                    sizes={generateSizes('card')}
                     alt={project.title}
                     className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
                   />

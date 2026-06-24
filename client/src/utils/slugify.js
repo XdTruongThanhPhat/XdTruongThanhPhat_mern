@@ -12,5 +12,13 @@ export const generateSlug = (text) => {
     .replace(/[^\w\-]+/g, '') // Xóa các ký tự không phải chữ, số hoặc -
     .replace(/\-\-+/g, '-') // Xóa nhiều - liên tiếp
     .replace(/^-+/, '') // Xóa - ở đầu
-    .replace(/-+$/, ''); // Xóa - ở cuối
+};
+
+export const removeAccents = (text) => {
+  if (!text) return '';
+  return text.toString()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D");
 };

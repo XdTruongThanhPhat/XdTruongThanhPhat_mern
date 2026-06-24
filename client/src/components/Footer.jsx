@@ -1,7 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
+  // TỐI ƯU: Chỉ tải Google Maps khi user scroll đến gần Footer (giảm ~500KB-1MB initial load)
+  const [showMap, setShowMap] = useState(false);
+  const mapRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShowMap(true);
+          observer.disconnect(); // Chỉ cần load 1 lần
+        }
+      },
+      { rootMargin: '200px' } // Bắt đầu tải trước khi footer xuất hiện 200px
+    );
+    if (mapRef.current) observer.observe(mapRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     // TỐI ƯU: Giảm padding top/bottom trên mobile (pt-10, pb-6)
     <footer className="bg-black text-white pt-10 md:pt-16 pb-6 md:pb-8 border-t-4 border-green-500 mt-5">
@@ -95,17 +113,21 @@ const Footer = () => {
             <p className="text-base md:text-lg font-bold uppercase tracking-widest mb-2 md:mb-4">Trụ sở văn phòng</p>
             <div className="w-6 md:w-8 h-1 bg-green-500 mb-4 md:mb-6"></div>
             {/* TỐI ƯU: Giảm chiều cao bản đồ trên mobile (h-40) */}
-            <div className="w-full h-40 md:h-56 rounded-md overflow-hidden border border-gray-800 shadow-sm relative group">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d338.9732422958237!2d108.22584900910367!3d16.01120131272239!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31421b1469409ea3%3A0xa0dc072d6c67fbdf!2zQ8O0bmcgVHkgS2nhur9uIFRyw7pjIC0gWMOieSBE4buxbmcgLSBO4buZaSBUaOG6pXQgVHLGsOG7nW5nIFRow6BuaCBQaMOhdA!5e0!3m2!1svi!2s!4v1776498577228!5m2!1svi!2s"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen=""
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
-              ></iframe>
+            <div ref={mapRef} className="w-full h-40 md:h-56 rounded-md overflow-hidden border border-gray-800 shadow-sm relative group">
+              {showMap ? (
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d338.9732422958237!2d108.22584900910367!3d16.01120131272239!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31421b1469409ea3%3A0xa0dc072d6c67fbdf!2zQ8O0bmcgVHkgS2nhur9uIFRyw7pjIC0gWMOieSBE4buxbmcgLSBO4buZaSBUaOG6pXQgVHLGsOG7nW5nIFRow6BuaCBQaMOhdA!5e0!3m2!1svi!2s!4v1776498577228!5m2!1svi!2s"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
+                ></iframe>
+              ) : (
+                <div className="w-full h-full bg-gray-800 animate-pulse"></div>
+              )}
             </div>
           </div>
 

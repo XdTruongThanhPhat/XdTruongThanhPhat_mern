@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { generateSlug } from '../utils/slugify';
-import { optimizeCloudinaryUrl } from '../utils/cloudinary';
+import { optimizeCloudinaryUrl, generateSrcSet, generateSizes } from '../utils/cloudinary';
 
 // HÀM LÀM SẠCH MÃ HTML TỪ DATABASE THÀNH TEXT THƯỜNG
 const stripHtml = (html) => {
@@ -87,6 +87,8 @@ const LatestBlogs = () => {
                   <Link to={`/tin-tuc/${generateSlug(featuredBlog.title)}-${featuredBlog._id}`} className="block relative aspect-[4/3] md:aspect-[16/10] overflow-hidden shrink-0">
                     <img
                       src={optimizeCloudinaryUrl(featuredBlog.imageUrl, 800)}
+                      srcSet={generateSrcSet(featuredBlog.imageUrl, [400, 600, 800, 1200])}
+                      sizes="(max-width: 640px) 66vw, (max-width: 1024px) 66vw, 50vw"
                       alt={featuredBlog.title}
                       className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-in-out"
                     />
@@ -151,6 +153,8 @@ const LatestBlogs = () => {
                         <div className="w-full sm:w-2/5 aspect-[4/3] rounded overflow-hidden shrink-0 relative">
                           <img
                             src={optimizeCloudinaryUrl(blog.imageUrl, 400)}
+                            srcSet={generateSrcSet(blog.imageUrl, [200, 300, 400])}
+                            sizes="(max-width: 640px) 33vw, (max-width: 1024px) 15vw, 10vw"
                             alt={blog.title}
                             className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                           />

@@ -3,7 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { generateSlug } from '../utils/slugify';
 import Breadcrumb from '../components/Breadcrumb';
-import { optimizeCloudinaryUrl } from '../utils/cloudinary';
+import { optimizeCloudinaryUrl, generateSrcSet, generateSizes } from '../utils/cloudinary';
 
 const CategoryProject = () => {
   // 1. CHUẨN HÓA BẢN ĐỒ ÁNH XẠ ĐÚNG 5 MỤC
@@ -164,6 +164,8 @@ const CategoryProject = () => {
                     <div className="relative aspect-[4/3] overflow-hidden shrink-0">
                         <img
                         src={optimizeCloudinaryUrl(project.mainImage, 600)} 
+                        srcSet={generateSrcSet(project.mainImage, [300, 400, 600])}
+                        sizes={generateSizes('card')}
                         alt={project.title || "Ảnh dự án Trường Thành Phát"}
                         loading="lazy"
                         className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"

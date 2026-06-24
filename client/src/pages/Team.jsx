@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Breadcrumb from '../components/Breadcrumb';
+import { optimizeCloudinaryUrl } from '../utils/cloudinary';
 
 const Team = () => {
   // Thay dữ liệu cứng bằng State rỗng chờ API
@@ -62,9 +63,10 @@ const Team = () => {
             {/* TỐI ƯU: Giảm chiều cao của Banner trên mobile (h-[25vh]) để không chiếm hết màn hình */}
             <div className="relative h-[25vh] sm:h-[40vh] md:h-[65vh]">
               <img 
-                src={teamData.bannerUrl} 
+                src={optimizeCloudinaryUrl(teamData.bannerUrl, 1920)} 
                 alt="TTP Team Group" 
                 className="w-full h-full object-cover"
+                fetchpriority="high"
               />
             </div>
           </div>
@@ -99,9 +101,10 @@ const Team = () => {
                   {/* TỐI ƯU: Giảm margin-bottom của ảnh */}
                   <div className="aspect-3/4 overflow-hidden rounded-sm mb-2 md:mb-6 bg-gray-50 border border-gray-100 shadow-sm relative">
                     <img 
-                      src={leader.imageUrl} 
+                      src={optimizeCloudinaryUrl(leader.imageUrl, 500)} 
                       alt={leader.name} 
                       className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                      loading="lazy"
                     />
                     <div className="absolute bottom-0 left-0 w-full h-1 bg-green-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
                   </div>
@@ -132,9 +135,10 @@ const Team = () => {
               {teamData.officeStaff.map((staff) => (
                 <div key={staff._id} className="aspect-3/4 overflow-hidden rounded-sm shadow-sm md:shadow-md hover:shadow-xl md:hover:shadow-2xl transition-all duration-500 group">
                   <img 
-                    src={staff.imageUrl} 
+                    src={optimizeCloudinaryUrl(staff.imageUrl, 400)} 
                     alt="TTP Staff" 
                     className="w-full h-full object-cover transition-all duration-700"
+                    loading="lazy"
                   />
                 </div>
               ))}

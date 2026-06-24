@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { Helmet } from 'react-helmet-async';
-import { generateSlug } from '../utils/slugify';
+import { generateSlug, removeAccents } from '../utils/slugify';
 import Breadcrumb from '../components/Breadcrumb';
-import { optimizeCloudinaryUrl } from '../utils/cloudinary';
+import { optimizeCloudinaryUrl, generateSrcSet, generateSizes } from '../utils/cloudinary';
 
 const ProjectDetail = () => {
   const { id } = useParams(); // Lấy ID công trình từ URL
@@ -23,6 +23,14 @@ const ProjectDetail = () => {
   const [relatedProjects, setRelatedProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // STATE: THÔNG TIN SEO ON-PAGE TỪ BACKEND
+  const [seoData, setSeoData] = useState({
+    focusKeyword: '',
+    lsiKeywords: '',
+    seoTitle: '',
+    metaDescription: ''
+  });
+
   // STATE: MỤC LỤC TỰ ĐỘNG (TOC)
   const [toc, setToc] = useState([]);
   const [showToc, setShowToc] = useState(true);
@@ -37,37 +45,51 @@ const ProjectDetail = () => {
     const fetchProjectDetails = async () => {
       setLoading(true);
       try {
-        // 1. Fetch danh sách dự án để lấy thông tin cơ bản & dự án liên quan
-        const projRes = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/list`);
-        const projData = await projRes.json();
+        // TỐI ƯU: Gọi 3 API SONG SONG thay vì nối đuôi nhau → giảm ~60% thời gian chờ
+        const [detailRes, projRes, contentRes] = await Promise.all([
+          fetch(`${import.meta.env.VITE_API_URL}/api/projects/detail/${realId}`),
+          fetch(`${import.meta.env.VITE_API_URL}/api/projects/list`),
+          fetch(`${import.meta.env.VITE_API_URL}/api/projects/content/${realId}`)
+        ]);
 
-        if (projData.success) {
-          // Tìm dự án hiện tại dùng realId (ObjectId thuần)
-          const currentProject = projData.projects.find(p => p._id === realId);
-          if (currentProject) {
-            setProjectData(currentProject);
-            setMainImage(currentProject.mainImage);
-            
-            // Gộp ảnh bìa và các ảnh dự án vào 1 mảng để đưa vào Gallery
-            const imagesArray = [currentProject.mainImage, ...(currentProject.projectImages || [])];
-            setAllImages(imagesArray);
+        const [detailData, projData, contentData] = await Promise.all([
+          detailRes.json(),
+          projRes.json(),
+          contentRes.json()
+        ]);
+
+        // 1. Xử lý chi tiết dự án hiện tại (API mới - trả đầy đủ projectImages)
+        if (detailData.success && detailData.project) {
+          const currentProject = detailData.project;
+          setProjectData(currentProject);
+          setMainImage(currentProject.mainImage);
+          
+          // Gộp ảnh bìa và các ảnh dự án vào 1 mảng để đưa vào Gallery
+          const imagesArray = [currentProject.mainImage, ...(currentProject.projectImages || [])];
+          setAllImages(imagesArray);
+
+          // 2. Xử lý dự án liên quan (API list nhẹ - không có projectImages)
+          if (projData.success) {
+            // Lọc ra các dự án liên quan: Ưu tiên cùng category, nếu không đủ thì lấy ngẫu nhiên
+            const sameCategory = projData.projects.filter(p => p._id !== realId && p.category === currentProject.category);
+            const otherProjects = projData.projects.filter(p => p._id !== realId && p.category !== currentProject.category);
+            const related = [...sameCategory, ...otherProjects].slice(0, 8);
+            setRelatedProjects(related);
           }
-
-          // Lọc ra các dự án liên quan: Ưu tiên cùng category, nếu không đủ thì lấy ngẫu nhiên
-          const sameCategory = projData.projects.filter(p => p._id !== realId && p.category === currentProject?.category);
-          const otherProjects = projData.projects.filter(p => p._id !== realId && p.category !== currentProject?.category);
-          const related = [...sameCategory, ...otherProjects].slice(0, 8);
-          setRelatedProjects(related);
         }
 
-        // 2. Fetch bài viết chi tiết (Content) của dự án này
-        const contentRes = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/content/${realId}`);
-        const contentData = await contentRes.json();
-
+        // 3. Xử lý bài viết chi tiết (Content) của dự án này
         if (contentData.success && contentData.content) {
-          setProjectContent(contentData.content.sections);
+          setProjectContent(contentData.content.sections || []);
+          setSeoData({
+            focusKeyword: contentData.content.focusKeyword || '',
+            lsiKeywords: contentData.content.lsiKeywords || '',
+            seoTitle: contentData.content.seoTitle || '',
+            metaDescription: contentData.content.metaDescription || ''
+          });
         } else {
           setProjectContent([]); // Nếu chưa có bài viết thì mảng rỗng
+          setSeoData({ focusKeyword: '', lsiKeywords: '', seoTitle: '', metaDescription: '' });
         }
 
       } catch (error) {
@@ -93,7 +115,7 @@ const ProjectDetail = () => {
           tocItems.push({
             id: `heading-${index}`,
             text: section.heading,
-            level: 'h2'
+            level: section.headingType || 'h2'
           });
         }
       });
@@ -253,6 +275,10 @@ const ProjectDetail = () => {
     ? projectData.description 
     : `Dự án ${projectData.title} tại ${projectData.info?.location || 'Đà Nẵng'}. Quy mô thiết kế gồm ${projectData.info?.floors || '-'} tầng, diện tích xây dựng ${projectData.info?.buildArea || '-'}, chi phí ${projectData.info?.cost || 'Liên hệ'}. Khám phá thiết kế và quá trình thi công chi tiết.`;
 
+  const displayTitle = seoData.seoTitle ? `${seoData.seoTitle} | Trường Thành Phát` : `${projectData.title} | Trường Thành Phát`;
+  const displayDesc = seoData.metaDescription ? seoData.metaDescription : projectDesc;
+  const keywordsContent = [seoData.focusKeyword, seoData.lsiKeywords].filter(Boolean).join(', ');
+
   const canonicalUrl = `https://truongthanhphatdn.vn/hang-muc/cong-trinh-chi-tiet/${generateSlug(projectData.title)}-${projectData._id}`;
 
   const schemaMarkup = {
@@ -265,27 +291,28 @@ const ProjectDetail = () => {
       "addressLocality": projectData.info?.location || "Đà Nẵng",
       "addressCountry": "VN"
     },
-    "description": projectDesc
+    "description": displayDesc
   };
 
   return (
     <>
       <Helmet>
-        <title>{projectData.title} | Trường Thành Phát</title>
-        <meta name="description" content={projectDesc} />
+        <title>{displayTitle}</title>
+        <meta name="description" content={displayDesc} />
+        {keywordsContent && <meta name="keywords" content={keywordsContent} />}
         <link rel="canonical" href={canonicalUrl} />
 
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={projectData.title} />
-        <meta property="og:description" content={projectDesc} />
+        <meta property="og:title" content={seoData.seoTitle || projectData.title} />
+        <meta property="og:description" content={displayDesc} />
         <meta property="og:url" content={canonicalUrl} />
         {mainImage && <meta property="og:image" content={mainImage} />}
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={projectData.title} />
-        <meta name="twitter:description" content={projectDesc} />
+        <meta name="twitter:title" content={seoData.seoTitle || projectData.title} />
+        <meta name="twitter:description" content={displayDesc} />
         {mainImage && <meta name="twitter:image" content={mainImage} />}
 
         {/* Dữ liệu cấu trúc Schema JSON-LD */}
@@ -321,6 +348,8 @@ const ProjectDetail = () => {
                 >
                   <img 
                     src={optimizeCloudinaryUrl(mainImage, 1200)} 
+                    srcSet={generateSrcSet(mainImage, [600, 800, 1200, 1600])}
+                    sizes={generateSizes('hero')}
                     alt={`${projectData.title} - Ảnh chính công trình`} 
                     style={{ maxWidth: '100%', maxHeight: '70vh', width: 'auto', height: 'auto', display: 'block', margin: '0 auto' }}
                     fetchpriority="high"
@@ -348,7 +377,7 @@ const ProjectDetail = () => {
                             mainImage === img && (!isLast || !hasMore) ? 'border-green-500 opacity-100' : 'border-transparent opacity-70 hover:opacity-100'
                           }`}
                         >
-                          <img src={optimizeCloudinaryUrl(img, 300)} alt={`Ảnh dự án ${projectData.title} - Hình ${idx + 1}`} loading="lazy" className="w-full h-full object-cover" />
+                          <img src={optimizeCloudinaryUrl(img, 300)} srcSet={generateSrcSet(img, [150, 300])} sizes={generateSizes('thumbnail')} alt={`Ảnh dự án ${projectData.title} - Hình ${idx + 1}`} loading="lazy" className="w-full h-full object-cover" />
                           
                           {isLast && hasMore && (
                             <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white text-lg font-bold hover:bg-black/80 transition-colors">
@@ -409,10 +438,15 @@ const ProjectDetail = () => {
                         {toc.map((item) => (
                           <li
                             key={item.id}
-                            className="cursor-pointer hover:text-green-600 transition-colors flex items-start gap-2 font-medium mt-3 text-base"
+                            className={`cursor-pointer hover:text-green-600 transition-colors flex items-start gap-2 font-medium mt-3 text-base ${
+                              item.level === 'h3' ? 'pl-4 text-sm' : 
+                              item.level === 'h4' ? 'pl-8 text-[13px]' : ''
+                            }`}
                             onClick={() => scrollToHeading(item.id)}
                           >
-                            <span className="text-green-500 mt-1">▪</span>
+                            <span className={item.level === 'h3' || item.level === 'h4' ? 'text-gray-400 mt-1 text-xs' : 'text-green-500 mt-1'}>
+                              {item.level === 'h3' || item.level === 'h4' ? '◦' : '▪'}
+                            </span>
                             <span className="flex-1 leading-snug">{item.text}</span>
                           </li>
                         ))}
@@ -422,35 +456,57 @@ const ProjectDetail = () => {
                 )}
 
                 {projectContent.length > 0 ? (
-                  projectContent.map((section, index) => (
-                    <div key={index}>
-                      {/* Render Heading nếu có */}
-                      {section.heading && (
-                        <h2 id={`heading-${index}`} className="text-xl md:text-2xl font-bold text-black mt-8 mb-4 first:mt-0" style={{ scrollMarginTop: '100px' }}>
-                          {section.heading}
-                        </h2>
-                      )}
-                      
-                      {/* Render Paragraph nếu có */}
-                      {section.paragraph && (
-                        <p className="text-justify text-base mb-6 text-gray-600 whitespace-pre-line">
-                          {section.paragraph}
-                        </p>
-                      )}
-                      
-                      {/* Render Image & Caption nếu có */}
-                      {section.imageUrl && (
-                        <div className="my-8">
-                           <img src={optimizeCloudinaryUrl(section.imageUrl, 1000)} alt={section.caption || `${projectData.title} - Ảnh chi tiết ${index + 1}`} loading="lazy" className="w-full rounded-sm object-cover" />
-                          {section.caption && (
-                            <div className="bg-gray-100 text-gray-500 text-center py-2 text-sm italic font-medium mt-1">
-                              {section.caption}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  ))
+                  projectContent.map((section, index) => {
+                    const HeadingTag = section.headingType || 'h2';
+                    
+                    // Xác định class CSS tương ứng với từng cấp Heading
+                    let headingClass = "font-bold text-black mt-8 mb-4 first:mt-0";
+                    if (HeadingTag === 'h1') headingClass += " text-2xl md:text-3xl";
+                    else if (HeadingTag === 'h2') headingClass += " text-xl md:text-2xl";
+                    else if (HeadingTag === 'h3') headingClass += " text-lg md:text-xl";
+                    else if (HeadingTag === 'h4') headingClass += " text-base md:text-lg";
+
+                    return (
+                      <div key={index}>
+                        {/* Render Heading nếu có */}
+                        {section.heading && (
+                          <HeadingTag 
+                            id={`heading-${index}`} 
+                            className={headingClass} 
+                            style={{ scrollMarginTop: '100px' }}
+                          >
+                            {section.heading}
+                          </HeadingTag>
+                        )}
+                        
+                        {/* Render Paragraph nếu có */}
+                        {section.paragraph && (
+                          <p className="text-justify text-base mb-6 text-gray-600 whitespace-pre-line">
+                            {section.paragraph}
+                          </p>
+                        )}
+                        
+                        {/* Render Image & Caption nếu có */}
+                        {section.imageUrl && (
+                          <div className="my-8 overflow-hidden rounded-md border border-gray-100/60 shadow-sm bg-[#f8f9fa]">
+                             <img 
+                               src={optimizeCloudinaryUrl(section.imageUrl, 1000)} 
+                               srcSet={generateSrcSet(section.imageUrl, [400, 600, 800, 1200])}
+                               sizes={generateSizes('article')}
+                               alt={removeAccents(section.caption) || `${removeAccents(projectData.title)} - Anh chi tiet ${index + 1}`} 
+                               loading="lazy" 
+                               className="w-full object-cover" 
+                             />
+                            {section.caption && (
+                              <div className="text-gray-500 text-center py-2.5 px-4 text-xs sm:text-sm italic font-medium">
+                                {section.caption}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
                 ) : (
                   <p className="text-center italic text-gray-500">Nội dung chi tiết đang được cập nhật...</p>
                 )}
@@ -517,7 +573,9 @@ const ProjectDetail = () => {
                   >
                     <div className="aspect-4/3 w-full overflow-hidden relative">
                       <img 
-                        src={optimizeCloudinaryUrl(item.mainImage, 600)} // Sử dụng ảnh đã tối ưu định dạng và kích thước (600px)
+                        src={optimizeCloudinaryUrl(item.mainImage, 600)}
+                        srcSet={generateSrcSet(item.mainImage, [300, 400, 600])}
+                        sizes={generateSizes('card')}
                         alt={item.title} 
                         className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
                         loading="lazy"
@@ -582,7 +640,9 @@ const ProjectDetail = () => {
              {allImages.map((img, idx) => (
                 <img 
                   key={idx}
-                  src={optimizeCloudinaryUrl(img, 150)} // Tối ưu kích thước nhỏ 150px cho thumbnails lightbox
+                  src={optimizeCloudinaryUrl(img, 150)}
+                  srcSet={generateSrcSet(img, [100, 150, 200])}
+                  sizes={generateSizes('thumbnail')}
                   alt={`Thumb ${idx}`}
                   onClick={() => setLightboxIndex(idx)}
                   className={`h-16 md:h-20 w-auto object-cover cursor-pointer border-2 transition-all rounded-sm ${lightboxIndex === idx ? 'border-green-500 opacity-100 scale-110' : 'border-transparent opacity-40 hover:opacity-100'}`}

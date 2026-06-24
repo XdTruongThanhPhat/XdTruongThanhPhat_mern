@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
-import { generateSlug } from '../utils/slugify';
+import { generateSlug, removeAccents } from '../utils/slugify';
 import Breadcrumb from '../components/Breadcrumb';
-import { optimizeCloudinaryUrl } from '../utils/cloudinary';
+import { optimizeCloudinaryUrl, generateSrcSet, generateSizes } from '../utils/cloudinary';
 
 // HÀM LOẠI BỎ THẺ HTML VÀ LẤY MÔ TẢ TÓM TẮT CHUẨN SEO
 const extractDescription = (htmlContent, maxLength = 155) => {
@@ -128,18 +128,50 @@ const NewsDetail = () => {
         return `<${tag} id="${id}"${attributes}>${innerText}</${tag}>`;
       });
 
-      // Tự động thêm alt và loading="lazy" cho tất cả hình ảnh trong nội dung bài viết để tối ưu Image SEO
-      let modifiedContent = newContent.replace(/<img(.*?)src="(.*?)"(.*?)>/gi, (match, before, src, after) => {
-        let newImg = match;
-        if (!/alt=/i.test(match)) {
-          newImg = `<img${before}src="${src}"${after} alt="${blog.title}" />`;
+      // Phân tích cú pháp HTML của bài viết qua DOMParser để tối ưu hóa SEO & hiển thị ảnh
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(newContent, 'text/html');
+      
+      const images = doc.querySelectorAll('img');
+      images.forEach((img) => {
+        if (!img.getAttribute('loading')) {
+          img.setAttribute('loading', 'lazy');
         }
-        if (!/loading=/i.test(match)) {
-          newImg = newImg.replace('<img', '<img loading="lazy"');
+        
+        let parent = img.parentElement;
+        let imageContainer = parent;
+        let captionElement = null;
+
+        // Xác định phần tử container chứa ảnh
+        if (parent) {
+          if (parent.tagName === 'P' || parent.classList.contains('ql-image-wrapper')) {
+            imageContainer = parent;
+          }
+          
+          // Tìm đoạn văn tiếp theo ngay sau container ảnh
+          const nextSib = imageContainer.nextElementSibling;
+          if (nextSib && nextSib.tagName === 'P') {
+            captionElement = nextSib;
+          }
         }
-        return newImg;
+
+        // Tạo thẻ alt không dấu từ nội dung chú thích hoặc tiêu đề bài viết
+        if (captionElement) {
+          const captionText = captionElement.textContent.trim();
+          if (captionText) {
+            img.setAttribute('alt', removeAccents(captionText));
+            // Gán class đặc biệt cho chú thích và container để CSS gộp thành 1 card
+            captionElement.classList.add('blog-image-caption');
+            imageContainer.classList.add('blog-image-container');
+          } else {
+            img.setAttribute('alt', removeAccents(blog.title));
+          }
+        } else {
+          img.setAttribute('alt', removeAccents(blog.title));
+        }
       });
 
+      const modifiedContent = doc.body.innerHTML;
       setBlogContentWithIds(modifiedContent);
       setToc(tocItems);
     }
@@ -273,7 +305,7 @@ const NewsDetail = () => {
 
             {/* Ảnh bìa */}
             <div className="w-full aspect-video rounded-md md:rounded-lg overflow-hidden mb-5 md:mb-8">
-              <img src={blog.imageUrl} alt={blog.title} className="w-full h-full object-cover" />
+              <img src={optimizeCloudinaryUrl(blog.imageUrl, 1200)} srcSet={generateSrcSet(blog.imageUrl, [400, 600, 800, 1200])} sizes={generateSizes('article')} alt={blog.title} className="w-full h-full object-cover" fetchpriority="high" />
             </div>
 
             {/* MỤC LỤC BÀI VIẾT */}
@@ -356,7 +388,7 @@ const NewsDetail = () => {
                   recentBlogs.map(item => (
                     <Link to={`/tin-tuc/${generateSlug(item.title)}-${item._id}`} key={item._id} className="group flex gap-3 md:gap-4 items-start border-b border-gray-50 pb-3 md:pb-0 md:border-none last:border-none">
                       <div className="w-20 h-16 md:w-24 md:h-20 shrink-0 overflow-hidden rounded border border-gray-100">
-                        <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <img src={optimizeCloudinaryUrl(item.imageUrl, 200)} srcSet={generateSrcSet(item.imageUrl, [100, 200])} sizes={generateSizes('thumbnail')} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
                       </div>
                       <div className="flex-1">
                         <h4 className="text-xs md:text-sm font-bold text-gray-800 line-clamp-2 md:line-clamp-3 leading-snug group-hover:text-green-600 transition-colors mb-1">
@@ -419,8 +451,31 @@ const NewsDetail = () => {
 
         .blog-content iframe.ql-video { width: 100%; aspect-ratio: 16/9; border-radius: 0.5rem; margin: 1.5rem 0 0px 0 !important; border: none; }
         
-        .blog-content p:has(img) { margin-bottom: 0px !important; }
-        .blog-content p:has(img) + p { margin-top: 0px !important; padding-top: 0.25rem !important; }
+        .blog-content .blog-image-container {
+          margin-bottom: 0px !important;
+        }
+        .blog-content .blog-image-container img {
+          margin-bottom: 0px !important;
+          border-bottom-left-radius: 0px !important;
+          border-bottom-right-radius: 0px !important;
+        }
+        
+        .blog-content .blog-image-caption {
+          background-color: #f8f9fa !important;
+          color: #6b7280 !important;
+          font-style: italic !important;
+          text-align: center !important;
+          padding: 10px 16px !important;
+          margin-top: 0px !important;
+          margin-bottom: 1.5rem !important;
+          font-size: 0.875rem !important;
+          font-weight: 500 !important;
+          border: 1px solid rgba(243, 244, 246, 0.6) !important;
+          border-top: none !important;
+          border-bottom-left-radius: 0.5rem !important;
+          border-bottom-right-radius: 0.5rem !important;
+          line-height: 1.5 !important;
+        }
         
         .blog-content .ql-align-center { text-align: center !important; }
         .blog-content .ql-align-right { text-align: right !important; }

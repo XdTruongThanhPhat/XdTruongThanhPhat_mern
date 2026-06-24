@@ -4,7 +4,10 @@ import cloudinary from "../config/cloudinary.js";
 const uploadToCloudinary = async (file) => {
     const b64 = Buffer.from(file.buffer).toString("base64");
     const dataURI = `data:${file.mimetype};base64,${b64}`;
-    const result = await cloudinary.uploader.upload(dataURI, { folder: 'TTP_Contents' });
+    const result = await cloudinary.uploader.upload(dataURI, {
+        folder: 'TTP_Contents',
+        transformation: [{ quality: 'auto:good', fetch_format: 'auto' }]
+    });
     return result.secure_url;
 };
 
@@ -13,6 +16,10 @@ export const upsertContent = async (req, res) => {
     try {
         const { projectId } = req.params;
         const sectionsData = req.body.sections ? JSON.parse(req.body.sections) : [];
+        const focusKeyword = req.body.focusKeyword || "";
+        const lsiKeywords = req.body.lsiKeywords || "";
+        const seoTitle = req.body.seoTitle || "";
+        const metaDescription = req.body.metaDescription || "";
 
         const contentImages = [];
         if (req.files && req.files['contentImages']) {
@@ -25,6 +32,7 @@ export const upsertContent = async (req, res) => {
         let imgIdx = 0;
         const formattedSections = sectionsData.map(sec => ({
             heading: sec.heading || "",
+            headingType: sec.headingType || "h2",
             paragraph: sec.paragraph || "",
             caption: sec.caption || "",
             imageUrl: sec.hasImage ? contentImages[imgIdx++] : (sec.imageUrl || "")
@@ -32,7 +40,13 @@ export const upsertContent = async (req, res) => {
 
         const content = await Content.findOneAndUpdate(
             { projectId },
-            { sections: formattedSections },
+            { 
+                sections: formattedSections,
+                focusKeyword,
+                lsiKeywords,
+                seoTitle,
+                metaDescription
+            },
             { upsert: true, new: true }
         );
 

@@ -1,22 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
-// IMPORT COMPONENTS
+// IMPORT COMPONENTS (Luôn cần, không lazy)
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-
-// IMPORT PAGES
-import Home from './pages/Home'; 
-import CategoryProject from './pages/CategoryProject'; 
-import ProjectDetail from './pages/ProjectDetail';
-import Quotation from './pages/Quotation';
-import Contact from './pages/Contact';
-import About from './pages/About';
-import Team from './pages/Team';
 import FloatingContact from './components/FloatingContact';
-import News from './pages/News';
-import NewsDetail from './pages/NewsDetail';
 import NotFound from './components/NotFound';
+
+// IMPORT PAGES — Trang chủ giữ import tĩnh (tương thích prerender)
+import Home from './pages/Home';
+
+// LAZY IMPORT — Các trang khác chỉ tải JS khi user truy cập (Code Splitting)
+const CategoryProject = lazy(() => import('./pages/CategoryProject'));
+const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
+const Quotation = lazy(() => import('./pages/Quotation'));
+const Contact = lazy(() => import('./pages/Contact'));
+const About = lazy(() => import('./pages/About'));
+const Team = lazy(() => import('./pages/Team'));
+const News = lazy(() => import('./pages/News'));
+const NewsDetail = lazy(() => import('./pages/NewsDetail'));
 
 
 
@@ -48,6 +50,11 @@ function App() {
         
         {/* MAIN CONTENT - Thay đổi theo Route */}
         <main id="main-content" className="flex-grow">
+          <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+              <p className="text-green-600 font-bold animate-pulse">Đang tải trang...</p>
+            </div>
+          }>
           <Routes>
             {/* 1. Trang chủ */}
             <Route path="/" element={<Home />} />
@@ -73,6 +80,7 @@ function App() {
             
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </Suspense>
         </main>
         <Footer />
         <FloatingContact />
