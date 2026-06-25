@@ -20,6 +20,8 @@ const News = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("Tất cả");
+  const [currentPage, setCurrentPage] = useState(1);
+  const blogsPerPage = 6;
 
   const categories = ["Tất cả", "Kinh nghiệm xây nhà", "Phong thủy nhà ở", "Xu hướng thiết kế"];
 
@@ -51,6 +53,22 @@ const News = () => {
   const filteredBlogs = activeCategory === "Tất cả"
     ? blogs
     : blogs.filter(b => b.category === activeCategory);
+
+  // Phân trang
+  const indexOfLastBlog = currentPage * blogsPerPage;
+  const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
+  const currentBlogs = filteredBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
+  const totalPages = Math.ceil(filteredBlogs.length / blogsPerPage);
+
+  // Reset về trang 1 khi đổi danh mục
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeCategory]);
+
+  // Scroll lên đầu khi chuyển trang
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
 
   if (loading) {
     return <div className="pt-24 md:pt-32 pb-16 min-h-screen flex justify-center items-center"><p className="animate-pulse text-green-600 font-bold text-sm md:text-base">Đang tải bài viết...</p></div>;
@@ -107,9 +125,10 @@ const News = () => {
         {filteredBlogs.length === 0 ? (
           <p className="text-center text-xs md:text-sm text-gray-400 italic py-10">Chưa có bài viết nào trong chuyên mục này.</p>
         ) : (
-          // TỐI ƯU: Ép 2 cột trên mobile (grid-cols-2), 3 cột trên PC (lg:grid-cols-3)
+          <>
+          {/* TỐI ƯU: Ép 2 cột trên mobile (grid-cols-2), 3 cột trên PC (lg:grid-cols-3) */}
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8">
-            {filteredBlogs.map(blog => (
+            {currentBlogs.map(blog => (
               <Link
                 to={`/tin-tuc/${generateSlug(blog.title)}-${blog._id}`}
                 key={blog._id}
@@ -151,6 +170,42 @@ const News = () => {
               </Link>
             ))}
           </div>
+
+          {/* PHÂN TRANG */}
+          {totalPages > 1 && (
+            <div className="mt-8 md:mt-16 flex justify-center items-center gap-1 md:gap-2">
+              <button 
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className={`p-1.5 md:p-2 border rounded-sm transition-colors ${currentPage === 1 ? 'text-gray-200 border-gray-100 cursor-not-allowed' : 'text-black border-gray-300 hover:bg-black hover:text-white'}`}
+              >
+                <svg className="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/></svg>
+              </button>
+
+              {[...Array(totalPages)].map((_, index) => (
+                <button
+                  key={index + 1}
+                  onClick={() => setCurrentPage(index + 1)}
+                  className={`w-7 h-7 md:w-10 md:h-10 text-[10px] md:text-xs font-bold transition-all duration-300 rounded-sm border ${
+                    currentPage === index + 1 
+                    ? 'bg-black text-white border-black' 
+                    : 'bg-white text-gray-400 border-gray-200 hover:border-black hover:text-black'
+                  }`}
+                >
+                  {index + 1}
+                </button>
+              ))}
+
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className={`p-1.5 md:p-2 border rounded-sm transition-colors ${currentPage === totalPages ? 'text-gray-200 border-gray-100 cursor-not-allowed' : 'text-black border-gray-300 hover:bg-black hover:text-white'}`}
+              >
+                <svg className="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          )}
+          </>
         )}
       </div>
     </section>
