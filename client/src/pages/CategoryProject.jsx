@@ -161,16 +161,23 @@ const CategoryProject = () => {
                       key={project._id}
                       className="group bg-white overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col h-full rounded-sm"
                     >
-                    <div className="relative aspect-[4/3] overflow-hidden shrink-0">
+                    <div className="relative aspect-[4/3] overflow-hidden shrink-0 bg-gray-100">
+                        {/* Layer nền mờ: ảnh nhỏ 50px + blur lấp đầy khoảng trống */}
+                        <img
+                        src={optimizeCloudinaryUrl(project.mainImage, 50)}
+                        alt="" aria-hidden="true"
+                        className="absolute inset-0 w-full h-full object-cover blur-2xl scale-125 pointer-events-none"
+                        />
+                        {/* Ảnh chính: hiển thị đầy đủ không bị crop */}
                         <img
                         src={optimizeCloudinaryUrl(project.mainImage, 600)} 
                         srcSet={generateSrcSet(project.mainImage, [300, 400, 600])}
                         sizes={generateSizes('card')}
                         alt={project.title || "Ảnh dự án Trường Thành Phát"}
                         loading="lazy"
-                        className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                        className="relative w-full h-full object-contain z-10 transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
                         />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
                             <div className="w-8 h-8 md:w-10 md:h-10 border-2 border-white rounded-full flex items-center justify-center">
                             <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/></svg>
                             </div>

@@ -71,17 +71,24 @@ const FeaturedProjects = () => {
                 key={project.id} 
                 className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 group cursor-pointer border border-gray-100 flex flex-col h-full"
               >
-                {/* PHẦN HÌNH ẢNH */}
+                {/* PHẦN HÌNH ẢNH - Blurred background fill */}
                 {/* TỐI ƯU: Giảm chiều cao ảnh trên Mobile (h-32 = 128px), PC giữ nguyên (md:h-64 = 256px) */}
-                <div className="relative h-32 sm:h-48 md:h-64 overflow-hidden shrink-0">
+                <div className="relative h-32 sm:h-48 md:h-64 overflow-hidden shrink-0 bg-gray-100">
+                  {/* Layer nền mờ: ảnh nhỏ 50px + blur lấp đầy khoảng trống */}
+                  <img
+                    src={optimizeCloudinaryUrl(project.imageUrl, 50)}
+                    alt="" aria-hidden="true"
+                    className="absolute inset-0 w-full h-full object-cover blur-2xl scale-125 pointer-events-none"
+                  />
+                  {/* Ảnh chính: hiển thị đầy đủ không bị crop */}
                   <img
                     src={optimizeCloudinaryUrl(project.imageUrl, 600)}
                     srcSet={generateSrcSet(project.imageUrl, [300, 400, 600])}
                     sizes={generateSizes('card')}
                     alt={project.title}
-                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                    className="relative w-full h-full object-contain z-10 transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
                   />
-                  <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300 z-20"></div>
                 </div>
 
                 {/* PHẦN NỘI DUNG */}

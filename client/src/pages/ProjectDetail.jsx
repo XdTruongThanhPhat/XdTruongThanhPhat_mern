@@ -343,18 +343,27 @@ const ProjectDetail = () => {
               {/* 1. GALLERY HÌNH ẢNH */}
               <div className="bg-white p-4 rounded-md shadow-sm border border-gray-100">
                 <div 
-                  className="w-full rounded-md overflow-hidden mb-4 relative group cursor-pointer bg-gray-100 flex items-center justify-center"
+                  className="w-full rounded-md overflow-hidden mb-4 relative group cursor-pointer bg-gray-100"
+                  style={{ maxHeight: '70vh' }}
                   onClick={() => openLightbox(allImages.indexOf(mainImage))}
                 >
+                  {/* Layer nền mờ: ảnh nhỏ 50px + blur lấp đầy khoảng trống khi ảnh không vừa khung */}
+                  <img 
+                    src={optimizeCloudinaryUrl(mainImage, 50)} 
+                    alt="" aria-hidden="true"
+                    className="absolute inset-0 w-full h-full object-cover blur-2xl scale-125 pointer-events-none"
+                  />
+                  {/* Ảnh chính: hiển thị đầy đủ không bị crop */}
                   <img 
                     src={optimizeCloudinaryUrl(mainImage, 1200)} 
                     srcSet={generateSrcSet(mainImage, [600, 800, 1200, 1600])}
                     sizes={generateSizes('hero')}
                     alt={`${projectData.title} - Ảnh chính công trình`} 
-                    style={{ maxWidth: '100%', maxHeight: '70vh', width: 'auto', height: 'auto', display: 'block', margin: '0 auto' }}
+                    className="relative z-10 w-full h-full object-contain"
+                    style={{ maxHeight: '70vh' }}
                     fetchpriority="high"
                   />
-                  <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-20">
                     <svg className="w-10 h-10 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
                   </div>
                 </div>
@@ -571,23 +580,30 @@ const ProjectDetail = () => {
                     key={item._id}
                     className="group block rounded-sm overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
                   >
-                    <div className="aspect-4/3 w-full overflow-hidden relative">
+                    <div className="aspect-4/3 w-full overflow-hidden relative bg-gray-100">
+                      {/* Layer nền mờ: lấp đầy khoảng trống khi ảnh không vừa khung */}
+                      <img 
+                        src={optimizeCloudinaryUrl(item.mainImage, 50)}
+                        alt="" aria-hidden="true"
+                        className="absolute inset-0 w-full h-full object-cover blur-2xl scale-125 pointer-events-none"
+                      />
+                      {/* Ảnh chính: hiển thị đầy đủ không bị crop */}
                       <img 
                         src={optimizeCloudinaryUrl(item.mainImage, 600)}
                         srcSet={generateSrcSet(item.mainImage, [300, 400, 600])}
                         sizes={generateSizes('card')}
                         alt={item.title} 
-                        className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                        className="relative w-full h-full object-contain z-10 transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
                         loading="lazy"
                       />
                       {/* Lớp phủ mờ (glassmorphism) hiển thị tên công trình */}
-                      <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm p-3 text-center transition-all duration-300 border-t border-gray-100/50">
+                      <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm p-3 text-center transition-all duration-300 border-t border-gray-100/50 z-20">
                         <h3 className="text-xs sm:text-sm font-bold text-gray-800 line-clamp-2 uppercase group-hover:text-green-600 transition-colors duration-300">
                           {item.title}
                         </h3>
                       </div>
                       {/* Lớp phủ nút Xem chi tiết nằm lệch lên trên, không che mất phần chữ mờ */}
-                      <div className="absolute inset-x-0 top-0 bottom-12 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <div className="absolute inset-x-0 top-0 bottom-12 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
                          <span className="text-white border border-white px-3 py-1 text-[10px] uppercase tracking-widest font-bold bg-black/30 backdrop-blur-sm rounded-sm">
                            Xem chi tiết
                          </span>
