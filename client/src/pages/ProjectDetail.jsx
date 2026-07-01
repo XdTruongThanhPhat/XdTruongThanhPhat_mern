@@ -6,6 +6,17 @@ import { generateSlug, removeAccents } from '../utils/slugify';
 import Breadcrumb from '../components/Breadcrumb';
 import { optimizeCloudinaryUrl, generateSrcSet, generateSizes } from '../utils/cloudinary';
 
+// Clean ký tự vô hình từ Quill editor (nbsp, zero-width spaces, soft hyphens)
+// để tránh trình duyệt ngắt từ sai khi render
+const cleanRichTextHtml = (html) => {
+  if (!html) return '';
+  return html
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\u00a0/g, ' ')
+    .replace(/[\u200b\u200c\u200d\ufeff]/g, '')
+    .replace(/&shy;|\u00ad/g, '');
+};
+
 const ProjectDetail = () => {
   const { id } = useParams(); // Lấy ID công trình từ URL
 
@@ -489,10 +500,11 @@ const ProjectDetail = () => {
                         )}
                         
                         {/* Render Paragraph nếu có */}
-                        {section.paragraph && (
-                          <p className="text-justify text-base mb-6 text-gray-600 whitespace-pre-line">
-                            {section.paragraph}
-                          </p>
+                        {section.paragraph && section.paragraph !== '<p><br></p>' && (
+                          <div 
+                            className="rich-text-content text-justify text-base mb-6 text-gray-600"
+                            dangerouslySetInnerHTML={{ __html: cleanRichTextHtml(section.paragraph) }}
+                          />
                         )}
                         
                         {/* Render Image & Caption nếu có */}

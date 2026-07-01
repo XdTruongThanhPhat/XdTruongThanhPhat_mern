@@ -2,8 +2,32 @@ import React, { useState, useEffect, useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { compressImageIfNeeded } from '../utils/compressImage';
 import SeoScorePanel from '../components/SeoScorePanel';
+import ReactQuill, { Quill } from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
+
+// ĐĂNG KÝ SIZE CHỮ THEO SỐ PIXEL (giống ManageBlog)
+const Size = Quill.import('attributors/style/size');
+Size.whitelist = ['12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px'];
+Quill.register(Size, true);
 
 const Content = () => {
+  // Cấu hình ReactQuill cho phần viết bài nội dung dự án
+  const quillModules = useMemo(() => ({
+    toolbar: [
+      [{ 'size': ['12px', '14px', false, '18px', '20px', '24px', '28px', '32px'] }],
+      ['bold', 'italic', 'underline'],
+      [{ 'align': [] }],
+      ['link'],
+      ['clean']
+    ]
+  }), []);
+
+  const quillFormats = [
+    'size',
+    'bold', 'italic', 'underline',
+    'align',
+    'link'
+  ];
   const [projects, setProjects] = useState([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
   
@@ -100,10 +124,19 @@ const Content = () => {
       const formData = new FormData();
 
       // Chuẩn bị dữ liệu JSON cho Backend
+      // Clean ký tự vô hình từ Quill (giống ManageBlog) để tránh ngắt từ sai
+      const cleanParagraph = (html) => {
+        if (!html) return '';
+        return html
+          .replace(/&nbsp;/g, ' ')
+          .replace(/\u00a0/g, ' ')
+          .replace(/[\u200b\u200c\u200d\ufeff]/g, '')
+          .replace(/&shy;|\u00ad/g, '');
+      };
       const sectionsData = sections.map(sec => ({
         heading: sec.heading,
         headingType: sec.headingType || 'h2',
-        paragraph: sec.paragraph,
+        paragraph: cleanParagraph(sec.paragraph),
         caption: sec.caption,
         imageUrl: sec.imageUrl, // Nếu không có file mới, backend sẽ lấy link cũ này
         hasImage: !!sec.file // Cờ báo cho Backend biết có file ảnh mới đính kèm
@@ -146,6 +179,39 @@ const Content = () => {
   // ================= GIAO DIỆN CHỈNH SỬA BÀI VIẾT =================
   if (selectedProject) {
     return (
+      <>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        .content-quill-editor .ql-editor {
+          min-height: 120px;
+          font-size: 1rem;
+          line-height: 1.7;
+          color: #374151;
+        }
+        .content-quill-editor .ql-editor p {
+          margin-bottom: 0.5rem;
+        }
+        .content-quill-editor .ql-editor a {
+          color: #16a34a;
+          text-decoration: underline;
+        }
+        .content-quill-editor .ql-toolbar.ql-snow {
+          border-radius: 0.375rem 0.375rem 0 0;
+          border-color: #d1d5db;
+          background: #f9fafb;
+        }
+        .content-quill-editor .ql-container.ql-snow {
+          border-radius: 0 0 0.375rem 0.375rem;
+          border-color: #d1d5db;
+        }
+        .content-quill-editor .ql-editor:focus {
+          outline: none;
+        }
+        .content-quill-editor .ql-container.ql-snow:focus-within {
+          border-color: #22c55e;
+        }
+        `
+      }} />
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-4xl">
         <div className="flex justify-between items-center mb-6 border-b pb-4">
           <div>
@@ -257,7 +323,16 @@ const Content = () => {
                 </div>
                 <div>
                     <label className="text-xs font-semibold text-gray-500 uppercase">Nội dung văn bản</label>
-                    <textarea rows="4" value={sec.paragraph} onChange={e => handleSectionChange(sec.id, 'paragraph', e.target.value)} placeholder="Nhập nội dung chi tiết..." className="w-full border border-gray-300 rounded p-2 focus:border-green-500 outline-none mt-1 bg-white"></textarea>
+                    <div className="content-quill-editor mt-1">
+                      <ReactQuill
+                        theme="snow"
+                        value={sec.paragraph || ''}
+                        onChange={(val) => handleSectionChange(sec.id, 'paragraph', val)}
+                        modules={quillModules}
+                        formats={quillFormats}
+                        placeholder="Nhập nội dung chi tiết..."
+                      />
+                    </div>
                 </div>
 
                 {/* Xử lý Hình Ảnh Nội Dung */}
@@ -323,6 +398,7 @@ const Content = () => {
           </div>
         </div>
       </div>
+      </>
     );
   }
 

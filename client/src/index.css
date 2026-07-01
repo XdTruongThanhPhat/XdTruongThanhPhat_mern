@@ -4,3 +4,30 @@
 :root {
   --primary-color: #f59e0b; /* Ví dụ màu vàng cam cho ngành xây dựng */
 }
+
+/* Rich text content styles (nội dung bài viết dự án từ Quill editor) */
+/* Dùng !important + selector * để override Tailwind preflight (giống .blog-content trong NewsDetail) */
+.rich-text-content { word-break: keep-all !important; overflow-wrap: break-word !important; word-wrap: break-word !important; overflow: hidden; max-width: 100%; }
+.rich-text-content * { word-break: keep-all !important; overflow-wrap: break-word !important; word-wrap: break-word !important; }
+.rich-text-content p {
+  margin-bottom: 0.75rem !important;
+  line-height: 1.7 !important;
+  color: #4b5563 !important;
+}
+.rich-text-content a {
+  color: #16a34a !important;
+  text-decoration: underline !important;
+  transition: color 0.2s;
+}
+.rich-text-content a:hover {
+  color: #15803d !important;
+}
+.rich-text-content strong {
+  font-weight: 700 !important;
+}
+.rich-text-content em {
+  font-style: italic !important;
+}
+.rich-text-content u {
+  text-decoration: underline !important;
+}
