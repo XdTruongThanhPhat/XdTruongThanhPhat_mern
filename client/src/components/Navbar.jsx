@@ -36,7 +36,7 @@ const Navbar = () => {
         { name: 'Biệt thự', path: '/hang-muc-cong-trinh/biet-thu' },
         { name: 'Căn hộ', path: '/hang-muc-cong-trinh/can-ho' },
         { name: 'Nhà phố', path: '/hang-muc-cong-trinh/nha-pho' },
-        { name: 'Công trình thực tế', path: '/hang-muc-cong-trinh/cong-trinh-thuc-te' },
+        { name: 'Công trình thi công', path: '/hang-muc-cong-trinh/cong-trinh-thuc-te' },
       ]
     },
     { name: 'Báo giá', path: '/bao-gia' },

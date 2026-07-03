@@ -13,7 +13,7 @@ const CategoryProject = () => {
     { name: "Biệt thự", slug: "biet-thu" },
     { name: "Căn hộ", slug: "can-ho" },
     { name: "Nhà phố", slug: "nha-pho" },
-    { name: "Công trình thực tế", slug: "cong-trinh-thuc-te" }
+    { name: "Công trình thi công", slug: "cong-trinh-thuc-te" }
   ];
 
   const { categorySlug } = useParams();
@@ -26,7 +26,7 @@ const CategoryProject = () => {
   const categorySEO = {
     "": {
       title: "Hạng Mục Công Trình | Trường Thành Phát – Thiết Kế & Xây Dựng Đà Nẵng",
-      description: "Khám phá danh mục công trình tiêu biểu của Trường Thành Phát: nhà phố, biệt thự, căn hộ, nội thất và công trình thực tế tại Đà Nẵng.",
+      description: "Khám phá danh mục công trình tiêu biểu của Trường Thành Phát: nhà phố, biệt thự, căn hộ, nội thất và công trình thi công tại Đà Nẵng.",
       canonical: "https://truongthanhphatdn.vn/hang-muc-cong-trinh"
     },
     "noi-that": {
@@ -50,8 +50,8 @@ const CategoryProject = () => {
       canonical: "https://truongthanhphatdn.vn/hang-muc-cong-trinh/nha-pho"
     },
     "cong-trinh-thuc-te": {
-      title: "Công Trình Thực Tế Đã Thi Công | Trường Thành Phát Đà Nẵng",
-      description: "Hình ảnh thực tế các công trình đã hoàn thành bởi Trường Thành Phát. Chứng minh năng lực thi công xây dựng uy tín tại Đà Nẵng.",
+      title: "Công Trình Thi Công | Trường Thành Phát Đà Nẵng",
+      description: "Hình ảnh các công trình thi công đã hoàn thành bởi Trường Thành Phát. Chứng minh năng lực thi công xây dựng uy tín tại Đà Nẵng.",
       canonical: "https://truongthanhphatdn.vn/hang-muc-cong-trinh/cong-trinh-thuc-te"
     }
   };

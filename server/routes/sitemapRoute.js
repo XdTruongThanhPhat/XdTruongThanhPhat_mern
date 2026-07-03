@@ -103,7 +103,7 @@ router.get('/sitemap.xml', async (req, res) => {
     <priority>0.8</priority>
   </url>
 
-  <!-- Hạng mục: Công trình thực tế -->
+  <!-- Hạng mục: Công trình thi công -->
   <url>
     <loc>${baseUrl}/hang-muc-cong-trinh/cong-trinh-thuc-te</loc>
     <lastmod>${latestProjectDate}</lastmod>

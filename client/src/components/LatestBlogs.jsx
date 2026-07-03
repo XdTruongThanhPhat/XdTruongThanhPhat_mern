@@ -113,7 +113,7 @@ const LatestBlogs = () => {
 
                     {/* MÔ TẢ (ĐÃ FIX): Sử dụng hàm stripHtml để lọc sạch mã code */}
                     <div className="flex-1 overflow-hidden mt-2 md:mt-0">
-                      <p className="text-gray-600 text-[11px] sm:text-xs md:text-base line-clamp-4 md:line-clamp-[10] lg:line-clamp-[12] leading-relaxed">
+                      <p className="text-gray-600 text-[11px] sm:text-xs md:text-base line-clamp-[18] md:line-clamp-[10] lg:line-clamp-[12] leading-relaxed">
                         {featuredBlog.content
                           ? stripHtml(featuredBlog.content)
                           : "Đang cập nhật nội dung chi tiết cho bài viết này..."}

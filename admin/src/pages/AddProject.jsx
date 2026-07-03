@@ -88,7 +88,7 @@ const AddProject = () => {
                 <option value="Biệt thự">Biệt thự</option>
                 <option value="Căn hộ">Căn hộ</option>
                 <option value="Nhà phố">Nhà phố</option>
-                <option value="Công trình thực tế">Công trình thực tế</option>
+                <option value="Công trình thi công">Công trình thi công</option>
               </select>
             </div>
           </div>
