@@ -1,5 +1,6 @@
 import Content from "../models/Content.js";
 import cloudinary from "../config/cloudinary.js";
+import { pingSitemap } from "../utils/pingSitemap.js";
 
 const uploadToCloudinary = async (file) => {
     const b64 = Buffer.from(file.buffer).toString("base64");
@@ -40,7 +41,7 @@ export const upsertContent = async (req, res) => {
 
         const content = await Content.findOneAndUpdate(
             { projectId },
-            { 
+            {
                 sections: formattedSections,
                 focusKeyword,
                 lsiKeywords,
@@ -49,7 +50,8 @@ export const upsertContent = async (req, res) => {
             },
             { upsert: true, new: true }
         );
-
+        // SEO: Thông báo Google sitemap đã cập nhật
+        pingSitemap('Cập nhật bài viết dự án: ' + projectId);
         res.status(200).json({ success: true, message: "Cập nhật bài viết thành công", content });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });

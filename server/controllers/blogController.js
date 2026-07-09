@@ -1,5 +1,6 @@
 import Blog from "../models/Blog.js";
 import cloudinary from "../config/cloudinary.js";
+import { pingSitemap } from "../utils/pingSitemap.js";
 
 export const getBlogs = async (req, res) => {
     try {
@@ -36,6 +37,8 @@ export const addBlog = async (req, res) => {
             );
             newBlog.createdAt = new Date(createdAt);
         }
+        // SEO: Thông báo Google sitemap đã cập nhật
+        pingSitemap('Thêm bài viết mới: ' + title);
         res.status(201).json({ success: true, blog: newBlog });
     } catch (error) { res.status(500).json({ success: false, message: error.message }); }
 };
@@ -43,6 +46,8 @@ export const addBlog = async (req, res) => {
 export const deleteBlog = async (req, res) => {
     try {
         await Blog.findByIdAndDelete(req.params.id);
+        // SEO: Thông báo Google sitemap đã cập nhật
+        pingSitemap('Xóa bài viết: ' + req.params.id);
         res.status(200).json({ success: true, message: "Đã xóa bài viết" });
     } catch (error) { res.status(500).json({ success: false, message: error.message }); }
 };
@@ -118,7 +123,8 @@ export const updateBlog = async (req, res) => {
             );
             blog.createdAt = new Date(createdAt);
         }
-
+        // SEO: Thông báo Google sitemap đã cập nhật
+        pingSitemap('Cập nhật bài viết: ' + blog.title);
         res.status(200).json({ success: true, blog });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });

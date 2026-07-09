@@ -45,7 +45,7 @@ const ProjectDetail = () => {
   // STATE: MỤC LỤC TỰ ĐỘNG (TOC)
   const [toc, setToc] = useState([]);
   const [showToc, setShowToc] = useState(true);
-  
+
   const [mainImage, setMainImage] = useState(null);
   const [allImages, setAllImages] = useState([]); // Gộp ảnh bìa và album ảnh lại
 
@@ -74,7 +74,7 @@ const ProjectDetail = () => {
           const currentProject = detailData.project;
           setProjectData(currentProject);
           setMainImage(currentProject.mainImage);
-          
+
           // Gộp ảnh bìa và các ảnh dự án vào 1 mảng để đưa vào Gallery
           const imagesArray = [currentProject.mainImage, ...(currentProject.projectImages || [])];
           setAllImages(imagesArray);
@@ -113,7 +113,7 @@ const ProjectDetail = () => {
     if (realId) {
       fetchProjectDetails();
       // Scroll lên đầu trang khi chuyển đổi giữa các dự án
-      window.scrollTo(0, 0); 
+      window.scrollTo(0, 0);
     }
   }, [id]);
 
@@ -226,7 +226,7 @@ const ProjectDetail = () => {
   const [formData, setFormData] = useState({
     name: '', phone: '', email: '', area: '', location: '', type: 'Nhà phố', budget: '1.8 - 2.3 tỷ', details: ''
   });
-  
+
   // State vô hiệu hóa nút bấm trong lúc đợi phản hồi
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -244,13 +244,13 @@ const ProjectDetail = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
-      
+
       const data = await res.json();
 
       if (data.success) {
         toast.success("Gửi yêu cầu thành công! Kiến trúc sư sẽ liên hệ lại sớm nhất.", { id: toastId });
         // Xóa trắng dữ liệu trên form
-        setFormData({ 
+        setFormData({
           name: '', phone: '', email: '', area: '', location: '', type: 'Nhà phố', budget: '1.8 - 2.3 tỷ', details: ''
         });
       } else {
@@ -282,8 +282,8 @@ const ProjectDetail = () => {
     );
   }
 
-  const projectDesc = projectData.description 
-    ? projectData.description 
+  const projectDesc = projectData.description
+    ? projectData.description
     : `Dự án ${projectData.title} tại ${projectData.info?.location || 'Đà Nẵng'}. Quy mô thiết kế gồm ${projectData.info?.floors || '-'} tầng, diện tích xây dựng ${projectData.info?.buildArea || '-'}, chi phí ${projectData.info?.cost || 'Liên hệ'}. Khám phá thiết kế và quá trình thi công chi tiết.`;
 
   const displayTitle = seoData.seoTitle ? `${seoData.seoTitle} | Trường Thành Phát` : `${projectData.title} | Trường Thành Phát`;
@@ -333,11 +333,11 @@ const ProjectDetail = () => {
       </Helmet>
       <section className="pt-32 pb-16 bg-gray-50 min-h-screen relative">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        {/* Breadcrumb SEO */}
-        <Breadcrumb items={[
-          { label: 'Hạng mục công trình', link: '/hang-muc-cong-trinh' },
-          { label: projectData.title }
-        ]} />
+          {/* Breadcrumb SEO */}
+          <Breadcrumb items={[
+            { label: 'Hạng mục công trình', link: '/hang-muc-cong-trinh' },
+            { label: projectData.title }
+          ]} />
 
           {/* TIÊU ĐỀ TRANG CHI TIẾT */}
           <div className="mb-8 border-b border-gray-200 pb-4">
@@ -347,29 +347,29 @@ const ProjectDetail = () => {
           </div>
 
           <div className="flex flex-col lg:flex-row gap-8 relative items-start">
-            
+
             {/* CỘT TRÁI: NỘI DUNG CÔNG TRÌNH */}
             <div className="lg:w-2/3 xl:w-3/4 flex flex-col gap-10">
-              
+
               {/* 1. GALLERY HÌNH ẢNH */}
               <div className="bg-white p-4 rounded-md shadow-sm border border-gray-100">
-                <div 
+                <div
                   className="w-full rounded-md overflow-hidden mb-4 relative group cursor-pointer bg-gray-100"
                   style={{ maxHeight: '70vh' }}
                   onClick={() => openLightbox(allImages.indexOf(mainImage))}
                 >
                   {/* Layer nền mờ: ảnh nhỏ 50px + blur lấp đầy khoảng trống khi ảnh không vừa khung */}
-                  <img 
-                    src={optimizeCloudinaryUrl(mainImage, 50)} 
+                  <img
+                    src={optimizeCloudinaryUrl(mainImage, 50)}
                     alt="" aria-hidden="true"
                     className="absolute inset-0 w-full h-full object-cover blur-2xl scale-125 pointer-events-none"
                   />
                   {/* Ảnh chính: hiển thị đầy đủ không bị crop */}
-                  <img 
-                    src={optimizeCloudinaryUrl(mainImage, 1200)} 
+                  <img
+                    src={optimizeCloudinaryUrl(mainImage, 1200)}
                     srcSet={generateSrcSet(mainImage, [600, 800, 1200, 1600])}
                     sizes={generateSizes('hero')}
-                    alt={`${projectData.title} - Ảnh chính công trình`} 
+                    alt={`${projectData.title} - Ảnh chính công trình`}
                     className="relative z-10 w-full h-full object-contain"
                     style={{ maxHeight: '70vh' }}
                     fetchpriority="high"
@@ -378,7 +378,7 @@ const ProjectDetail = () => {
                     <svg className="w-10 h-10 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
                   </div>
                 </div>
-                
+
                 {/* Thumbnails */}
                 {allImages.length > 1 && (
                   <div className="grid grid-cols-5 gap-2">
@@ -387,18 +387,17 @@ const ProjectDetail = () => {
                       const hasMore = remainingCount > 0;
 
                       return (
-                        <div 
-                          key={idx} 
+                        <div
+                          key={idx}
                           onClick={() => {
                             if (isLast && hasMore) openLightbox(idx);
                             else setMainImage(img);
                           }}
-                          className={`relative cursor-pointer aspect-video rounded-sm overflow-hidden border-2 transition-all ${
-                            mainImage === img && (!isLast || !hasMore) ? 'border-green-500 opacity-100' : 'border-transparent opacity-70 hover:opacity-100'
-                          }`}
+                          className={`relative cursor-pointer aspect-video rounded-sm overflow-hidden border-2 transition-all ${mainImage === img && (!isLast || !hasMore) ? 'border-green-500 opacity-100' : 'border-transparent opacity-70 hover:opacity-100'
+                            }`}
                         >
                           <img src={optimizeCloudinaryUrl(img, 300)} srcSet={generateSrcSet(img, [150, 300])} sizes={generateSizes('thumbnail')} alt={`Ảnh dự án ${projectData.title} - Hình ${idx + 1}`} loading="lazy" className="w-full h-full object-cover" />
-                          
+
                           {isLast && hasMore && (
                             <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white text-lg font-bold hover:bg-black/80 transition-colors">
                               +{remainingCount}
@@ -458,10 +457,9 @@ const ProjectDetail = () => {
                         {toc.map((item) => (
                           <li
                             key={item.id}
-                            className={`cursor-pointer hover:text-green-600 transition-colors flex items-start gap-2 font-medium mt-3 text-base ${
-                              item.level === 'h3' ? 'pl-4 text-sm' : 
-                              item.level === 'h4' ? 'pl-8 text-[13px]' : ''
-                            }`}
+                            className={`cursor-pointer hover:text-green-600 transition-colors flex items-start gap-2 font-medium mt-3 text-base ${item.level === 'h3' ? 'pl-4 text-sm' :
+                                item.level === 'h4' ? 'pl-8 text-[13px]' : ''
+                              }`}
                             onClick={() => scrollToHeading(item.id)}
                           >
                             <span className={item.level === 'h3' || item.level === 'h4' ? 'text-gray-400 mt-1 text-xs' : 'text-green-500 mt-1'}>
@@ -478,7 +476,7 @@ const ProjectDetail = () => {
                 {projectContent.length > 0 ? (
                   projectContent.map((section, index) => {
                     const HeadingTag = section.headingType || 'h2';
-                    
+
                     // Xác định class CSS tương ứng với từng cấp Heading
                     let headingClass = "font-bold text-black mt-8 mb-4 first:mt-0";
                     if (HeadingTag === 'h1') headingClass += " text-2xl md:text-3xl";
@@ -490,41 +488,54 @@ const ProjectDetail = () => {
                       <div key={index}>
                         {/* Render Heading nếu có */}
                         {section.heading && (
-                          <HeadingTag 
-                            id={`heading-${index}`} 
-                            className={headingClass} 
+                          <HeadingTag
+                            id={`heading-${index}`}
+                            className={headingClass}
                             style={{ scrollMarginTop: '100px' }}
                           >
                             {section.heading}
                           </HeadingTag>
                         )}
-                        
+
                         {/* Render Paragraph nếu có */}
                         {section.paragraph && section.paragraph !== '<p><br></p>' && (
-                          <div 
+                          <div
                             className="rich-text-content text-justify text-base mb-6 text-gray-600"
                             dangerouslySetInnerHTML={{ __html: cleanRichTextHtml(section.paragraph) }}
                           />
                         )}
-                        
-                        {/* Render Image & Caption nếu có */}
-                        {section.imageUrl && (
-                          <div className="my-8 overflow-hidden rounded-md border border-gray-100/60 shadow-sm bg-[#f8f9fa]">
-                             <img 
-                               src={optimizeCloudinaryUrl(section.imageUrl, 1000)} 
-                               srcSet={generateSrcSet(section.imageUrl, [400, 600, 800, 1200])}
-                               sizes={generateSizes('article')}
-                               alt={removeAccents(section.caption) || `${removeAccents(projectData.title)} - Anh chi tiet ${index + 1}`} 
-                               loading="lazy" 
-                               className="w-full object-cover" 
-                             />
-                            {section.caption && (
-                              <div className="text-gray-500 text-center py-2.5 px-4 text-xs sm:text-sm italic font-medium">
-                                {section.caption}
-                              </div>
-                            )}
-                          </div>
-                        )}
+
+                        {/* Render Images & Captions (hỗ trợ nhiều ảnh trong 1 section) */}
+                        {(() => {
+                          const urls = (section.imageUrls && section.imageUrls.length > 0) 
+                            ? section.imageUrls 
+                            : (section.imageUrl ? [section.imageUrl] : []);
+                          const caps = (section.captions && section.captions.length > 0)
+                            ? section.captions
+                            : (section.caption ? [section.caption] : []);
+                          if (urls.length === 0) return null;
+                          return (
+                            <div className="my-8 space-y-4">
+                              {urls.map((imgUrl, imgIdx) => (
+                                <div key={imgIdx} className="overflow-hidden rounded-md border border-gray-100/60 shadow-sm bg-[#f8f9fa]">
+                                   <img 
+                                     src={optimizeCloudinaryUrl(imgUrl, 1000)} 
+                                     srcSet={generateSrcSet(imgUrl, [400, 600, 800, 1200])}
+                                     sizes={generateSizes('article')}
+                                     alt={removeAccents(caps[imgIdx]) || `${removeAccents(projectData.title)} - Anh chi tiet ${index + 1}-${imgIdx + 1}`} 
+                                     loading="lazy" 
+                                     className="w-full object-cover" 
+                                   />
+                                  {caps[imgIdx] && (
+                                    <div className="text-gray-500 text-center py-2.5 px-4 text-xs sm:text-sm italic font-medium">
+                                      {caps[imgIdx]}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          );
+                        })()}
                       </div>
                     );
                   })
@@ -541,14 +552,14 @@ const ProjectDetail = () => {
                   <h3 className="text-green-500 text-lg font-bold uppercase tracking-wider">Nhận tư vấn ngay</h3>
                 </div>
                 <form onSubmit={handleSubmit} className="p-4 space-y-3">
-                  <input required type="text" placeholder="Họ và tên (*)" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all text-sm"/>
+                  <input required type="text" placeholder="Họ và tên (*)" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all text-sm" />
                   <div className="grid grid-cols-2 gap-2">
-                    <input required type="tel" placeholder="SĐT (*)" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-sm"/>
-                    <input required type="email" placeholder="Email (*)" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-sm"/>
+                    <input required type="tel" placeholder="SĐT (*)" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-sm" />
+                    <input required type="email" placeholder="Email (*)" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-sm" />
                   </div>
-                  <input required type="text" placeholder="Diện tích sàn & số tầng (*)" value={formData.area} onChange={(e) => setFormData({...formData, area: e.target.value})} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-sm"/>
-                  <input required type="text" placeholder="Địa phương muốn xây (*)" value={formData.location} onChange={(e) => setFormData({...formData, location: e.target.value})} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-sm"/>
-                  <select value={formData.type} onChange={(e) => setFormData({...formData, type: e.target.value})} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-sm text-gray-600">
+                  <input required type="text" placeholder="Diện tích sàn & số tầng (*)" value={formData.area} onChange={(e) => setFormData({ ...formData, area: e.target.value })} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-sm" />
+                  <input required type="text" placeholder="Địa phương muốn xây (*)" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-sm" />
+                  <select value={formData.type} onChange={(e) => setFormData({ ...formData, type: e.target.value })} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-sm text-gray-600">
                     <option>Loại hình xây dựng (*)</option>
                     <option>Nhà phố</option>
                     <option>Biệt thự</option>
@@ -557,16 +568,16 @@ const ProjectDetail = () => {
                   <div className="bg-gray-50 p-2 border border-gray-100 rounded-sm">
                     <p className="font-bold text-gray-700 mb-2 text-xs">Ngân sách dự kiến (*)</p>
                     <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
-                      <label className="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="budget" value="1.8 - 2.3 tỷ" checked={formData.budget === '1.8 - 2.3 tỷ'} onChange={(e) => setFormData({...formData, budget: e.target.value})} className="accent-green-500" /> 1.8 - 2.3 tỷ</label>
-                      <label className="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="budget" value="2.4 - 2.9 tỷ" checked={formData.budget === '2.4 - 2.9 tỷ'} onChange={(e) => setFormData({...formData, budget: e.target.value})} className="accent-green-500" /> 2.4 - 2.9 tỷ</label>
-                      <label className="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="budget" value="3 - 3.5 tỷ" checked={formData.budget === '3 - 3.5 tỷ'} onChange={(e) => setFormData({...formData, budget: e.target.value})} className="accent-green-500" /> 3 - 3.5 tỷ</label>
-                      <label className="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="budget" value="> 3.5 tỷ" checked={formData.budget === '> 3.5 tỷ'} onChange={(e) => setFormData({...formData, budget: e.target.value})} className="accent-green-500" /> {`> 3.5 tỷ`}</label>
+                      <label className="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="budget" value="1.8 - 2.3 tỷ" checked={formData.budget === '1.8 - 2.3 tỷ'} onChange={(e) => setFormData({ ...formData, budget: e.target.value })} className="accent-green-500" /> 1.8 - 2.3 tỷ</label>
+                      <label className="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="budget" value="2.4 - 2.9 tỷ" checked={formData.budget === '2.4 - 2.9 tỷ'} onChange={(e) => setFormData({ ...formData, budget: e.target.value })} className="accent-green-500" /> 2.4 - 2.9 tỷ</label>
+                      <label className="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="budget" value="3 - 3.5 tỷ" checked={formData.budget === '3 - 3.5 tỷ'} onChange={(e) => setFormData({ ...formData, budget: e.target.value })} className="accent-green-500" /> 3 - 3.5 tỷ</label>
+                      <label className="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="budget" value="> 3.5 tỷ" checked={formData.budget === '> 3.5 tỷ'} onChange={(e) => setFormData({ ...formData, budget: e.target.value })} className="accent-green-500" /> {`> 3.5 tỷ`}</label>
                     </div>
                   </div>
-                  <textarea rows="2" placeholder="Yêu cầu chi tiết nếu có!" value={formData.details} onChange={(e) => setFormData({...formData, details: e.target.value})} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-sm resize-none"></textarea>
+                  <textarea rows="2" placeholder="Yêu cầu chi tiết nếu có!" value={formData.details} onChange={(e) => setFormData({ ...formData, details: e.target.value })} className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-sm resize-none"></textarea>
                   <div className="pt-1">
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       disabled={isSubmitting}
                       className={`w-full text-white font-bold uppercase tracking-widest py-2.5 rounded-sm shadow-md transition-colors text-sm ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'}`}
                     >
@@ -587,24 +598,24 @@ const ProjectDetail = () => {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {relatedProjects.map((item) => (
-                  <Link 
+                  <Link
                     to={`/hang-muc/cong-trinh-chi-tiet/${generateSlug(item.title)}-${item._id}`} // Dùng slug + _id để SEO
                     key={item._id}
                     className="group block rounded-sm overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
                   >
                     <div className="aspect-4/3 w-full overflow-hidden relative bg-gray-100">
                       {/* Layer nền mờ: lấp đầy khoảng trống khi ảnh không vừa khung */}
-                      <img 
+                      <img
                         src={optimizeCloudinaryUrl(item.mainImage, 50)}
                         alt="" aria-hidden="true"
                         className="absolute inset-0 w-full h-full object-cover blur-2xl scale-125 pointer-events-none"
                       />
                       {/* Ảnh chính: hiển thị đầy đủ không bị crop */}
-                      <img 
+                      <img
                         src={optimizeCloudinaryUrl(item.mainImage, 600)}
                         srcSet={generateSrcSet(item.mainImage, [300, 400, 600])}
                         sizes={generateSizes('card')}
-                        alt={item.title} 
+                        alt={item.title}
                         className="relative w-full h-full object-contain z-10 transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
                         loading="lazy"
                       />
@@ -616,9 +627,9 @@ const ProjectDetail = () => {
                       </div>
                       {/* Lớp phủ nút Xem chi tiết nằm lệch lên trên, không che mất phần chữ mờ */}
                       <div className="absolute inset-x-0 top-0 bottom-12 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
-                         <span className="text-white border border-white px-3 py-1 text-[10px] uppercase tracking-widest font-bold bg-black/30 backdrop-blur-sm rounded-sm">
-                           Xem chi tiết
-                         </span>
+                        <span className="text-white border border-white px-3 py-1 text-[10px] uppercase tracking-widest font-bold bg-black/30 backdrop-blur-sm rounded-sm">
+                          Xem chi tiết
+                        </span>
                       </div>
                     </div>
                   </Link>
@@ -634,7 +645,7 @@ const ProjectDetail = () => {
           LIGHTBOX MODAL (Toàn màn hình) - Giữ nguyên logic
       ========================================= */}
       {isLightboxOpen && allImages.length > 0 && (
-        <div 
+        <div
           className="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center select-none backdrop-blur-sm"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
@@ -653,9 +664,9 @@ const ProjectDetail = () => {
           </button>
 
           <div className="w-full max-w-6xl px-4 md:px-20 flex items-center justify-center h-[70vh]">
-            <img 
+            <img
               src={optimizeCloudinaryUrl(allImages[lightboxIndex])} // Tải định dạng tự động tốt nhất (AVIF/WebP) để load nhanh mà giữ nguyên kích thước & chất lượng gốc
-              alt={`Gallery ${lightboxIndex}`} 
+              alt={`Gallery ${lightboxIndex}`}
               className="max-w-full max-h-full object-contain shadow-2xl"
             />
           </div>
@@ -665,17 +676,17 @@ const ProjectDetail = () => {
           </button>
 
           <div className="absolute bottom-5 left-0 right-0 flex justify-center gap-2 px-4 overflow-x-auto pb-4">
-             {allImages.map((img, idx) => (
-                <img 
-                  key={idx}
-                  src={optimizeCloudinaryUrl(img, 150)}
-                  srcSet={generateSrcSet(img, [100, 150, 200])}
-                  sizes={generateSizes('thumbnail')}
-                  alt={`Thumb ${idx}`}
-                  onClick={() => setLightboxIndex(idx)}
-                  className={`h-16 md:h-20 w-auto object-cover cursor-pointer border-2 transition-all rounded-sm ${lightboxIndex === idx ? 'border-green-500 opacity-100 scale-110' : 'border-transparent opacity-40 hover:opacity-100'}`}
-                />
-             ))}
+            {allImages.map((img, idx) => (
+              <img
+                key={idx}
+                src={optimizeCloudinaryUrl(img, 150)}
+                srcSet={generateSrcSet(img, [100, 150, 200])}
+                sizes={generateSizes('thumbnail')}
+                alt={`Thumb ${idx}`}
+                onClick={() => setLightboxIndex(idx)}
+                className={`h-16 md:h-20 w-auto object-cover cursor-pointer border-2 transition-all rounded-sm ${lightboxIndex === idx ? 'border-green-500 opacity-100 scale-110' : 'border-transparent opacity-40 hover:opacity-100'}`}
+              />
+            ))}
           </div>
         </div>
       )}

@@ -1,10 +1,12 @@
 # Trường Thành Phát - robots.txt
+# Lưu ý: File này là fallback. Nginx proxy /robots.txt đến API server.
+
 User-agent: *
 Allow: /
 
 # Chặn các đường dẫn không cần index
 Disallow: /api/
-Disallow: /*.json
+Disallow: /*.json$
 
 # Sitemap động (tự động cập nhật từ database)
 Sitemap: https://truongthanhphatdn.vn/sitemap.xml

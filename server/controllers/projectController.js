@@ -1,5 +1,6 @@
 import Project from "../models/Project.js";
 import cloudinary from "../config/cloudinary.js";
+import { pingSitemap } from "../utils/pingSitemap.js";
 
 // Upload 1 file lên Cloudinary với retry logic
 const uploadToCloudinary = async (file, retries = 3) => {
@@ -65,6 +66,8 @@ export const addProject = async (req, res) => {
             );
             newProject.createdAt = new Date(createdAt);
         }
+        // SEO: Thông báo Google sitemap đã cập nhật
+        pingSitemap('Thêm dự án mới: ' + title);
         res.status(201).json({ success: true, message: "Tạo dự án thành công", project: newProject });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -99,6 +102,8 @@ export const deleteProject = async (req, res) => {
     try {
         const { id } = req.params;
         await Project.findByIdAndDelete(id);
+        // SEO: Thông báo Google sitemap đã cập nhật
+        pingSitemap('Xóa dự án: ' + id);
         res.status(200).json({ success: true, message: "Đã xóa dự án thành công" });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -144,7 +149,8 @@ export const updateProject = async (req, res) => {
             );
             updatedProject.createdAt = new Date(createdAt);
         }
-
+        // SEO: Thông báo Google sitemap đã cập nhật
+        pingSitemap('Cập nhật dự án: ' + title);
         res.status(200).json({ success: true, message: "Cập nhật dự án thành công", project: updatedProject });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });

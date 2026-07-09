@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 
 const contentSchema = new mongoose.Schema({
-    projectId: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Project', 
+    projectId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Project',
         required: true,
         unique: true // Mỗi project thường chỉ có 1 bài viết chi tiết
     },

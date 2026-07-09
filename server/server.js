@@ -10,6 +10,7 @@ import bannerRouter from "./routes/bannerRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import contactRoutes from './routes/contactRoutes.js';
 import sitemapRoute from './routes/sitemapRoute.js';
+import ssrRoute from './routes/ssrRoute.js';
 import { setServers } from "dns";
 setServers(["8.8.8.8", "8.8.4.4"]);
 
@@ -70,6 +71,7 @@ app.use("/api/banners", bannerRouter);
 app.use("/api/auth", authRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api', sitemapRoute); // Sử dụng route sitemap
+app.use('/api/ssr', ssrRoute); // SSR cho search engine bots
 
 app.get("/", (req, res) => res.send("Server is running"));
 
