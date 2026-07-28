@@ -15,27 +15,16 @@
     <link rel="preconnect" href="https://res.cloudinary.com" />
     <link rel="dns-prefetch" href="https://res.cloudinary.com" />
 
-    <!-- SEO Căn bản -->
-    <title>TRƯỜNG THÀNH PHÁT</title>
-    <meta name="description" content="Công ty Trường Thành Phát chuyên tư vấn thiết kế kiến trúc, thi công xây dựng và hoàn thiện nội thất chuyên nghiệp tại Đà Nẵng." />
-    <meta name="keywords" content="thiết kế nhà, xây dựng nhà phố, biệt thự Đà Nẵng, nội thất, kiến trúc sư, thi công xây dựng, Trường Thành Phát, xây nhà trọn gói Đà Nẵng" />
-    <meta name="author" content="Xuân Hoàng" />
-    <meta name="robots" content="index, follow" />
-
-    <!-- Open Graph (Tối ưu hiển thị khi share link Zalo, Facebook) -->
-    <meta property="og:title" content="Trường Thành Phát - Thiết kế & Xây dựng tại Đà Nẵng" />
-    <meta property="og:description" content="Đơn vị thiết kế và thi công xây dựng nhà phố, biệt thự, nội thất uy tín tại Đà Nẵng." />
-    <meta property="og:image" content="https://truongthanhphatdn.vn/Logo.png" />
-    <meta property="og:url" content="https://truongthanhphatdn.vn/" />
-    <meta property="og:type" content="website" />
-    <meta property="og:locale" content="vi_VN" />
-    <meta property="og:site_name" content="Trường Thành Phát" />
-
-    <!-- Twitter Card (Tối ưu hiển thị khi share trên Twitter/X) -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Trường Thành Phát - Thiết kế & Xây dựng tại Đà Nẵng" />
-    <meta name="twitter:description" content="Đơn vị thiết kế và thi công xây dựng nhà phố, biệt thự, nội thất uy tín tại Đà Nẵng." />
-    <meta name="twitter:image" content="https://truongthanhphatdn.vn/Logo.png" />
+    <!--
+      SEO FIX: KHÔNG đặt meta OG, Twitter, description, keywords ở đây!
+      LÝ DO: Puppeteer prerender sẽ GHI CHỒNG thêm meta từ React Helmet
+      → tạo 2 thẻ <title>, 2 thẻ description → Google coi là trùng lặp
+      → 30 trang bị "Trang thay thế có thể chính tắc thích hợp" trên GSC.
+      
+      Mỗi trang React đã tự quản lý đầy đủ SEO meta qua <Helmet>.
+      Chỉ giữ <title> fallback ngắn cho lần tải đầu tiên (trước khi JS render).
+    -->
+    <title>Trường Thành Phát</title>
   </head>
   <body>
     <div id="root"></div>

@@ -93,7 +93,14 @@ router.get('/tin-tuc/:slug', async (req, res) => {
     const match = slug.match(/([a-f0-9]{24})$/i);
     const blogId = match ? match[1] : slug;
 
-    const blog = await Blog.findById(blogId);
+    // Fetch song song: bài viết chính + bài viết liên quan (để tạo internal links cho SEO)
+    const [blog, relatedBlogs] = await Promise.all([
+      Blog.findById(blogId),
+      Blog.find({ _id: { $ne: blogId } })
+        .select('title _id imageUrl')
+        .sort({ createdAt: -1 })
+        .limit(5)
+    ]);
     if (!blog) {
       return res.status(404).send('<!DOCTYPE html><html lang="vi"><head><title>Không tìm thấy</title></head><body><h1>Bài viết không tồn tại</h1></body></html>');
     }
@@ -186,6 +193,17 @@ router.get('/tin-tuc/:slug', async (req, res) => {
     <div>${blog.content || ''}</div>
   </article>
 
+  ${relatedBlogs.length > 0 ? `
+  <section>
+    <h2>Bài viết liên quan</h2>
+    <ul>
+      ${relatedBlogs.map(rb => {
+        const rbSlug = generateSlug(rb.title);
+        return `<li><a href="${BASE_URL}/tin-tuc/${rbSlug}-${rb._id}">${escapeHtml(rb.title)}</a></li>`;
+      }).join('\n      ')}
+    </ul>
+  </section>` : ''}
+
   <footer>
     <p>© Trường Thành Phát - Thiết kế &amp; Thi công xây dựng tại Đà Nẵng</p>
     <a href="${BASE_URL}">Trang chủ</a> |
@@ -218,10 +236,14 @@ router.get('/hang-muc/cong-trinh-chi-tiet/:slug', async (req, res) => {
     const match = slug.match(/([a-f0-9]{24})$/i);
     const projectId = match ? match[1] : slug;
 
-    // Fetch song song: chi tiết dự án + bài viết content
-    const [project, content] = await Promise.all([
+    // Fetch song song: chi tiết dự án + bài viết content + dự án liên quan (internal links)
+    const [project, content, relatedProjects] = await Promise.all([
       Project.findById(projectId),
-      Content.findOne({ projectId })
+      Content.findOne({ projectId }),
+      Project.find({ _id: { $ne: projectId } })
+        .select('title _id mainImage')
+        .sort({ createdAt: -1 })
+        .limit(5)
     ]);
 
     if (!project) {
@@ -346,6 +368,17 @@ router.get('/hang-muc/cong-trinh-chi-tiet/:slug', async (req, res) => {
 
     ${sectionsHtml}
   </article>
+
+  ${relatedProjects.length > 0 ? `
+  <section>
+    <h2>Dự án liên quan</h2>
+    <ul>
+      ${relatedProjects.map(rp => {
+        const rpSlug = generateSlug(rp.title);
+        return `<li><a href="${BASE_URL}/hang-muc/cong-trinh-chi-tiet/${rpSlug}-${rp._id}">${escapeHtml(rp.title)}</a></li>`;
+      }).join('\n      ')}
+    </ul>
+  </section>` : ''}
 
   <footer>
     <p>© Trường Thành Phát - Thiết kế &amp; Thi công xây dựng tại Đà Nẵng</p>
