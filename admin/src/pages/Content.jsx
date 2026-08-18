@@ -31,7 +31,7 @@ const Content = () => {
       [{ 'size': ['12px', '14px', false, '18px', '20px', '24px', '28px', '32px'] }],
       ['bold', 'italic', 'underline'],
       [{ 'align': [] }],
-      ['link'],
+      ['link', 'image', 'video'],
       ['clean']
     ]
   }), []);
@@ -40,7 +40,7 @@ const Content = () => {
     'size',
     'bold', 'italic', 'underline',
     'align',
-    'link'
+    'link', 'image', 'video'
   ];
   const [projects, setProjects] = useState([]);
   const [loadingProjects, setLoadingProjects] = useState(true);

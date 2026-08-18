@@ -7,6 +7,7 @@ import teamRouter from "./routes/teamRoutes.js";
 import testimonialRouter from "./routes/testimonialRoutes.js"
 import blogRouter from "./routes/blogRoutes.js";
 import bannerRouter from "./routes/bannerRoutes.js";
+import videoRouter from "./routes/videoRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import contactRoutes from './routes/contactRoutes.js';
 import sitemapRoute from './routes/sitemapRoute.js';
@@ -68,6 +69,7 @@ app.use("/api/team", teamRouter);
 app.use("/api/testimonials", testimonialRouter);
 app.use("/api/blogs", blogRouter);
 app.use("/api/banners", bannerRouter);
+app.use("/api/videos", videoRouter);
 app.use("/api/auth", authRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api', sitemapRoute); // Sử dụng route sitemap

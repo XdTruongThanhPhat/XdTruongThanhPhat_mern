@@ -19,6 +19,7 @@ import express from 'express';
 import Blog from '../models/Blog.js';
 import Project from '../models/Project.js';
 import Content from '../models/Content.js';
+import Video from '../models/Video.js';
 
 const router = express.Router();
 const BASE_URL = 'https://truongthanhphatdn.vn';
@@ -396,6 +397,69 @@ router.get('/hang-muc/cong-trinh-chi-tiet/:slug', async (req, res) => {
 
   } catch (error) {
     console.error('[SSR] Lỗi render dự án:', error);
+    res.status(500).send('<!DOCTYPE html><html><head><title>Lỗi</title></head><body><h1>Lỗi máy chủ</h1></body></html>');
+  }
+});
+
+// =============================================
+// ROUTE 3: SSR BÀI VIẾT VIDEO CHO BOTS
+// =============================================
+router.get('/video/:slug', async (req, res) => {
+  try {
+    const rawSlug = req.params.slug;
+    const parts = rawSlug.split('-');
+    const possibleId = parts[parts.length - 1];
+
+    let video = await Video.findById(possibleId);
+    if (!video) {
+      video = await Video.findOne({ _id: rawSlug });
+    }
+
+    if (!video) {
+      return res.status(404).send(`<!DOCTYPE html><html lang="vi"><head><title>Không tìm thấy video</title></head><body><h1>404 - Không tìm thấy video</h1></body></html>`);
+    }
+
+    const titleEscaped = escapeHtml(video.title);
+    const cleanContent = stripHtml(video.content);
+    const metaDesc = escapeHtml(video.metaDescription || video.description || cleanContent.substring(0, 155));
+    const canonicalUrl = `${BASE_URL}/video/${generateSlug(video.title)}-${video._id}`;
+
+    const schemaMarkup = {
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      "name": video.title,
+      "description": metaDesc,
+      "uploadDate": video.createdAt,
+      "embedUrl": video.youtubeUrl
+    };
+
+    const html = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>${titleEscaped} | Trường Thành Phát</title>
+  <meta name="description" content="${metaDesc}">
+  <link rel="canonical" href="${canonicalUrl}">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="${titleEscaped}">
+  <meta property="og:description" content="${metaDesc}">
+  <meta property="og:url" content="${canonicalUrl}">
+  <script type="application/ld+json">${JSON.stringify(schemaMarkup)}</script>
+</head>
+<body>
+  <article>
+    <h1>${titleEscaped}</h1>
+    ${video.description ? `<p>${escapeHtml(video.description)}</p>` : ''}
+    ${video.content || ''}
+  </article>
+</body>
+</html>`;
+
+    res.set('Content-Type', 'text/html; charset=utf-8');
+    res.set('Cache-Control', 'public, max-age=3600');
+    res.send(html);
+  } catch (error) {
+    console.error('[SSR] Lỗi render video:', error);
     res.status(500).send('<!DOCTYPE html><html><head><title>Lỗi</title></head><body><h1>Lỗi máy chủ</h1></body></html>');
   }
 });

@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { generateSlug, removeAccents } from '../utils/slugify';
 import Breadcrumb from '../components/Breadcrumb';
 import { optimizeCloudinaryUrl, generateSrcSet, generateSizes } from '../utils/cloudinary';
+import { transformYoutubeLinksToEmbed } from '../utils/embedVideo';
 
 // HÀM LOẠI BỎ THẺ HTML VÀ LẤY MÔ TẢ TÓM TẮT CHUẨN SEO
 const extractDescription = (htmlContent, maxLength = 155) => {
@@ -171,7 +172,7 @@ const NewsDetail = () => {
         }
       });
 
-      const modifiedContent = doc.body.innerHTML;
+      const modifiedContent = transformYoutubeLinksToEmbed(doc.body.innerHTML);
       setBlogContentWithIds(modifiedContent);
       setToc(tocItems);
     }
@@ -449,7 +450,9 @@ const NewsDetail = () => {
         /* Legacy: ảnh trong thẻ p (bài viết cũ không có wrapper) */
         .blog-content p > img { display: block; margin-left: auto; margin-right: auto; }
 
-        .blog-content iframe.ql-video { width: 100%; aspect-ratio: 16/9; border-radius: 0.5rem; margin: 1.5rem 0 0px 0 !important; border: none; }
+        .blog-content iframe.ql-video { width: 100%; aspect-ratio: 16/9; border-radius: 0.75rem; margin: 1.5rem 0 !important; border: none; }
+        .blog-content .blog-video-container { width: 100%; aspect-ratio: 16/9; border-radius: 0.75rem; overflow: hidden; margin: 1.5rem 0; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background-color: #000; }
+        .blog-content .blog-video-container iframe { width: 100% !important; height: 100% !important; border: 0 !important; }
         
         .blog-content .blog-image-container {
           margin-bottom: 0px !important;

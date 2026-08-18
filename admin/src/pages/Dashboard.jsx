@@ -12,6 +12,7 @@ const Dashboard = () => {
     { name: 'Nội dung dự án', path: '/content', icon: '📝' },
     { name: 'Quản lý Slide Banner', path: '/manage-banner', icon: '🖼️' },
     { name: 'Quản lý Tin tức (Blog)', path: '/manage-blog', icon: '📰' },
+    { name: 'Quản lý Video', path: '/manage-video', icon: '🎬' },
     { name: 'Quản lý Nhân sự', path: '/manage-member', icon: '👥' },
     { name: 'Quản lý Phản hồi', path: '/manage-testimonial', icon: '💬' },
     { name: 'Cài đặt Tài khoản', path: '/account-settings', icon: '⚙️' },

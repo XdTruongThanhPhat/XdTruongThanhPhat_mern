@@ -5,16 +5,17 @@ import { Helmet } from 'react-helmet-async';
 import { generateSlug, removeAccents } from '../utils/slugify';
 import Breadcrumb from '../components/Breadcrumb';
 import { optimizeCloudinaryUrl, generateSrcSet, generateSizes } from '../utils/cloudinary';
+import { transformYoutubeLinksToEmbed } from '../utils/embedVideo';
 
-// Clean ký tự vô hình từ Quill editor (nbsp, zero-width spaces, soft hyphens)
-// để tránh trình duyệt ngắt từ sai khi render
+// Clean ký tự vô hình từ Quill editor và tự động chuyển link YouTube thành iframe player
 const cleanRichTextHtml = (html) => {
   if (!html) return '';
-  return html
+  const cleaned = html
     .replace(/&nbsp;/g, ' ')
     .replace(/\u00a0/g, ' ')
     .replace(/[\u200b\u200c\u200d\ufeff]/g, '')
     .replace(/&shy;|\u00ad/g, '');
+  return transformYoutubeLinksToEmbed(cleaned);
 };
 
 const ProjectDetail = () => {

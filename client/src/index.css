@@ -31,3 +31,19 @@
 .rich-text-content u {
   text-decoration: underline !important;
 }
+
+/* Responsive YouTube Video Container */
+.blog-video-container {
+  width: 100% !important;
+  aspect-ratio: 16 / 9 !important;
+  border-radius: 0.75rem !important;
+  overflow: hidden !important;
+  margin: 1.5rem 0 !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+  background-color: #000 !important;
+}
+.blog-video-container iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: 0 !important;
+}

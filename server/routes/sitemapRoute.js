@@ -1,6 +1,7 @@
 import express from 'express';
 import Project from '../models/Project.js';
 import Blog from '../models/Blog.js';
+import Video from '../models/Video.js';
 
 const router = express.Router();
 
@@ -81,10 +82,11 @@ Sitemap: ${BASE_URL}/sitemap.xml
 // =============================================
 router.get('/sitemap.xml', async (req, res) => {
   try {
-    // 1. Lấy tất cả Dự án và Bài viết từ Database
-    const [projects, blogs] = await Promise.all([
+    // 1. Lấy tất cả Dự án, Bài viết và Video từ Database
+    const [projects, blogs, videos] = await Promise.all([
       Project.find({}).select('title updatedAt _id mainImage').sort({ createdAt: -1 }),
-      Blog.find({}).select('title updatedAt _id imageUrl').sort({ createdAt: -1 })
+      Blog.find({}).select('title updatedAt _id imageUrl').sort({ createdAt: -1 }),
+      Video.find({}).select('title updatedAt _id youtubeUrl content').sort({ createdAt: -1 })
     ]);
     
     const today = toISODate();
@@ -153,6 +155,14 @@ router.get('/sitemap.xml', async (req, res) => {
   <url>
     <loc>${BASE_URL}/hang-muc-cong-trinh/cong-trinh-thuc-te</loc>
     <lastmod>${latestProjectDate}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Trang Video Công Trình -->
+  <url>
+    <loc>${BASE_URL}/video</loc>
+    <lastmod>${today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -235,6 +245,23 @@ router.get('/sitemap.xml', async (req, res) => {
       <image:loc>${escapeXml(b.imageUrl)}</image:loc>
       <image:title>${escapeXml(b.title)}</image:title>
     </image:image>` : ''}
+  </url>`;
+      });
+    }
+
+    // 5. THÊM CÁC URL VIDEO CHI TIẾT (Dynamic từ Database)
+    if (videos && videos.length > 0) {
+      xml += `\n\n  <!-- ==================== VIDEO CHI TIẾT ==================== -->`;
+      videos.forEach((v) => {
+        const slug = generateSlug(v.title);
+        const lastmod = toISODate(v.updatedAt);
+        
+        xml += `
+  <url>
+    <loc>${BASE_URL}/video/${slug}-${v._id}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>`;
       });
     }

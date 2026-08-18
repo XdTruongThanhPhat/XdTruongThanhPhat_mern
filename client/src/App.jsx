@@ -19,6 +19,8 @@ const About = lazy(() => import('./pages/About'));
 const Team = lazy(() => import('./pages/Team'));
 const News = lazy(() => import('./pages/News'));
 const NewsDetail = lazy(() => import('./pages/NewsDetail'));
+const Videos = lazy(() => import('./pages/Videos'));
+const VideoDetail = lazy(() => import('./pages/VideoDetail'));
 
 
 
@@ -77,6 +79,9 @@ function App() {
 
             <Route path="/tin-tuc" element={<News />} />
             <Route path="/tin-tuc/:id" element={<NewsDetail />} />
+
+            <Route path="/video" element={<Videos />} />
+            <Route path="/video/:id" element={<VideoDetail />} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>

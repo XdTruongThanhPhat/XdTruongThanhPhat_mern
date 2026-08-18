@@ -39,6 +39,7 @@ const Navbar = () => {
         { name: 'Công trình thi công', path: '/hang-muc-cong-trinh/cong-trinh-thuc-te' },
       ]
     },
+    { name: 'Video', path: '/video' },
     { name: 'Báo giá', path: '/bao-gia' },
     {
       name: 'Về TTP',

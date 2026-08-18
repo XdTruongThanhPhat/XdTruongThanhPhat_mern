@@ -12,6 +12,7 @@ import ManageMember from './pages/ManageMember';
 import ManageTestimonial from './pages/ManageTestimonial';
 import ManageBanner from './pages/ManageBanner';
 import ManageBlog from './pages/ManageBlog';
+import ManageVideo from './pages/ManageVideo';
 import AccountSettings from './pages/AccountSettings';
 
 // COMPONENT BẢO VỆ ROUTE (Chỉ cho phép Admin đã đăng nhập)
@@ -52,6 +53,7 @@ function App() {
           
           <Route path="manage-banner" element={<ManageBanner />} />
           <Route path="manage-blog" element={<ManageBlog />} />
+          <Route path="manage-video" element={<ManageVideo />} />
 
           <Route path="account-settings" element={<AccountSettings />} />
         </Route>
